@@ -10,6 +10,9 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
 using System.IO;
+using distribution_copy.Models.AccessDetails;
+using distribution_copy.Models.AccountsResponse;
+using distribution_copy.Models.ProfileDetails;
 
 namespace distribution_copy.Services
 {
@@ -82,7 +85,7 @@ namespace distribution_copy.Services
                 if (response.IsSuccessStatusCode && response.StatusCode == HttpStatusCode.OK)
                 {
                     string result = response.Content.ReadAsStringAsync().Result;
-                    accounts = JsonConvert.DeserializeObject<Models.AccountsResponse.AccountList>(result);
+                    accounts = JsonConvert.DeserializeObject<Models.AccountsResponse.AccountsResponse.AccountList>(result);
                     return accounts;
                 }
                 else

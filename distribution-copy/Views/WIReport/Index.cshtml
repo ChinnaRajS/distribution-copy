@@ -1,4 +1,4 @@
-﻿@model distribution_copy.Models.InputModel
+﻿@model distribution_copy.Models.InputModel.InputModel
 
 @{
     ViewBag.Title = "Index";
@@ -246,7 +246,7 @@
         document.getElementById("State").disabled = true;
         document.getElementById("CreatedDate").disabled = true;
         document.getElementById("CreatedDate").value = "";
-         document.getElementById("WorkItemType").innerHTML = "<option value='0' >--ALL--</option>";
+         document.getElementById("WorkItemType").innerHTML = "<option value='0' >Empty List</option>";
          document.getElementById("AssignedTo").innerHTML = "<option value='0' >--ALL--</option>";
          document.getElementById("State").innerHTML = "<option value='0' >--ALL--</option>";
          document.getElementById("Sprint").innerHTML = "<option value='0' >--ALL--</option>";
@@ -254,11 +254,12 @@
         var inp = new Object();
         var o = document.getElementById("org");
         inp.OrganizationName = o.options[o.selectedIndex].text;
-        document.getElementById("ProjectName").innerHTML = "<option value='0'>--ALL--</option>";
+        document.getElementById("ProjectName").innerHTML = "<option value='0'>Empty List</option>";
 
 
         if (inp.OrganizationName == "--Choose Organisation--") {
-         document.getElementById('filters').hidden = true;
+            document.getElementById('filters').hidden = true;
+             document.getElementById("exc").disabled = true;
 
             document.getElementById('load').hidden = true;
             return;
@@ -487,5 +488,15 @@
     .select {
         height: 25px;
         overflow: scroll;
+    }
+
+    td.details-control {
+    background: url('../../Content/Images/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+
+    tr.details td.details-control {
+        background: url('../../Content/Images/details_close.png') no-repeat center center;
+
     }
 </style>

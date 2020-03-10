@@ -180,6 +180,7 @@
     </Compile>
     <Compile Include="Models\AccessDetails.cs" />
     <Compile Include="Models\AccountsResponse.cs" />
+    <Compile Include="Models\ExpandWI.cs" />
     <Compile Include="Models\InputModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\ProfileDetails.cs" />
@@ -200,6 +201,8 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\Images\details_close.png" />
+    <Content Include="Content\Images\details_open.png" />
     <Content Include="Content\Images\loadinggif.gif" />
     <Content Include="css\custom.css" />
     <Content Include="css\fontastic.css" />

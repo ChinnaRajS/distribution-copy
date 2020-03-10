@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using distribution_copy.Models.ResponseWI;
 
-namespace distribution_copy.Models
+namespace distribution_copy.Models.WorkItemType
 {
     public partial class WorkItemType
     {
