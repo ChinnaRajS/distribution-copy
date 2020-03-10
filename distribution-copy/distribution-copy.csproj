@@ -184,6 +184,7 @@
     <Compile Include="Models\AccountsResponse.cs" />
     <Compile Include="Models\InputModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\OrgModel.cs" />
     <Compile Include="Models\ProfileDetails.cs" />
     <Compile Include="Models\ProjectModel.cs" />
     <Compile Include="Models\ResponseWI.cs" />

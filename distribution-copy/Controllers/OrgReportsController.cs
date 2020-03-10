@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using distribution_copy.Class;
+using distribution_copy.Models;
 
 namespace distribution_copy.Controllers
 {
@@ -14,9 +15,14 @@ namespace distribution_copy.Controllers
         {
             return View();
         }
+        APIRequest req;
+        OrgModel org=new OrgModel();
         public void report(string organisation)
         {
-
+            req = new APIRequest(Session["PAT"].ToString());
+            
+            string projectlist=APIRequest()
+            
         }
     }
 }
