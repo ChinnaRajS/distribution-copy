@@ -172,6 +172,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\distributionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrgReportsController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Controllers\WIReportController.cs" />
     <Compile Include="Controllers\WorkItemAPIController.cs" />
@@ -866,6 +867,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="vendor\font-awesome\less\" />
     <Folder Include="vendor\font-awesome\scss\" />
+    <Folder Include="Views\OrgReports\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
