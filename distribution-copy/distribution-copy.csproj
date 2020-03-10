@@ -172,6 +172,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Class\APIRequest.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\distributionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -870,6 +871,7 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Shared\_Layout2.cshtml" />
+    <Content Include="Views\OrgReports\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
