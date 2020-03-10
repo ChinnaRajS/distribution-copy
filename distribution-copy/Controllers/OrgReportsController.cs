@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using distribution_copy.Class;
 
 namespace distribution_copy.Controllers
 {
@@ -12,6 +13,10 @@ namespace distribution_copy.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+        public void report(string organisation)
+        {
+
         }
     }
 }
