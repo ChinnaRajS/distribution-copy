@@ -21,7 +21,12 @@ namespace distribution_copy.Models
         public int Revision { get; set; }
         public string Visibility { get; set; }
         public DateTime LastUpdateTime { get; set; }
-
-
+        public orgCounts counts { get; set; }
     }
+    public class orgCounts
+    {
+        public int buildCount { get; set; }
+        public int repoCount { get; set; }
+    }
+
 }
