@@ -25,7 +25,8 @@ namespace distribution_copy.Models
     }
     public class orgCounts
     {
-        public int buildCount { get; set; }
+        public int buildDefCount { get; set; }
+        public int releaseDefCount { get; set; }
         public int repoCount { get; set; }
     }
 

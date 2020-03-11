@@ -10,8 +10,7 @@ using System.Web;
 namespace distribution_copy.Class
 {
     public class APIRequest
-    {
-        string version = ConfigurationManager.AppSettings["ApiVersion"];
+    {    
 
         HttpClient client;
         //Constructor for initialising Client
