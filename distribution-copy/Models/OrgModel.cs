@@ -7,6 +7,14 @@ namespace distribution_copy.Models
 {
     public class OrgModel
     {
-       public ProjectModel projectList { get; set; }
+        public int Count { get; set; }
+        public List<ProjectDetails> Value { get; set; }
+        public orgCounts counts { get; set; }
     }
+    public class countGen
+    {
+        public int Count { get; set; }
+    }
+
+  
 }

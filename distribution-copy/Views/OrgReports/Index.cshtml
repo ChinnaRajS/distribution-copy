@@ -33,15 +33,18 @@
 
          $('#org').change(function () {
        
-            var Org = $('#org').val();
-
+             var Org = $('#org').val();
+             console.log(Org);
             $.ajax({
                 type: 'get',
                 dataType: 'json',
                 data: { 'organisation': Org },
                 url: '@Url.Action("report","OrgReports")',
                 success: function (data) {
-                    
+                    alert(data);
+                },
+                failure: function(){
+                    alert("somethuf");
                 }
 
             });
