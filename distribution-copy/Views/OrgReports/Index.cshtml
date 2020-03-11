@@ -12,8 +12,14 @@
     <select class="form-control" id="org" name="departmentsDropdown"></select>
 </div>
 
+@*<div>
+    @Html.TextBox("Project Counts", null, new {id = "projCount", @class = "form-control"})
+</div>*@
+
 <script>
 
+
+    //Ajax Call to fetch Organization
     $(document).ready(function () {
      $.ajax({
                 type: 'get',
@@ -30,9 +36,8 @@
      });
 
 
+     $('#org').change(function () {
 
-         $('#org').change(function () {
-       
             var Org = $('#org').val();
 
             $.ajax({
@@ -41,11 +46,14 @@
                 data: { 'organisation': Org },
                 url: '@Url.Action("report","OrgReports")',
                 success: function (data) {
-                    
+
                 }
-
             });
-        })
-    });
+     })
 
+
+
+ 
+
+    });
 </script>
