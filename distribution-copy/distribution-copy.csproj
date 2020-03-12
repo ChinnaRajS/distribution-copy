@@ -869,7 +869,6 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Shared\_Layout2.cshtml" />
-    <Content Include="Views\Teams\Index.cshtml" />
     <Content Include="Views\Teams\Capacity.cshtml" />
     <Content Include="Views\Trace\Index.cshtml" />
   </ItemGroup>
