@@ -8,29 +8,28 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <div align="center">
-    <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
+    <label for="orgsDropdown" style="margin-top:30px;font-size:large"><b>Organisations</b></label>
     <select class="form-control" id="org" name="departmentsDropdown"></select>
 </div>
-<div align="center" style="vertical-align:middle;">
-    <br />
-    <br />
+<div align="center" style="margin-top:30px;">
+    
     <img src="~/Content/Images/loadinggif.gif" id="Load" width="150" height="150" />
 </div>
-<div id="OrgChange">
-    <div id="OrgCount" >
-        <div class="row" style="margin-left:auto;" >
-            <div  class=" col-4"><p id="BuildDef"></p></div>
-            <div  class="col-4"><p id="ReleaseDef"></p></div>        
+<div id="OrgChange" style="font-size:large; margin-top:30px">
+    <div id="OrgCount">
+        <div class="row" style="margin-left:auto;">
+            <div class=" col-4"><p id="BuildDef"></p></div>
+            <div class="col-4"><p id="ReleaseDef"></p></div>
             <div class="col-4"><p id="Process"></p> </div>
         </div>
     </div>
     <div id="projDrop" align="center">
-        <label style="margin-top:50px;"><b>Projects</b></label>
+        <label style="margin-top:50px;font-size:large"><b>Projects</b></label>
         <select class="form-control" id="projectDrop" name="departmentsDropdown"></select>
     </div>
     <div style="margin-top:50px;">
-        <div align="center" >
-            <p id="noProj"class="navbar-brand"></p>
+        <div align="center">
+            <p id="noProj" class="navbar-brand"></p>
         </div>
         <div class="row" id="ProjCounts" style="margin-left:auto;">
             <div class="col-4"><p id="PBuildDef"></p></div>
@@ -55,7 +54,7 @@
     $(document).ready(function () {
         $('#projDrop').hide();
         $('#Load').hide();
-       
+
      $.ajax({
                 type: 'get',
                 dataType: 'json',
@@ -70,8 +69,8 @@
                 }
      });
 
-        $('#org').change(function () { 
-          
+        $('#org').change(function () {
+
             $('#Load').show();
             $('#OrgChange').hide();
             $("#ProjCounts").hide();
@@ -80,16 +79,16 @@
                 alert("Please Select Organisation");
                 $('#Load').hide();
             }
-                   
+
             $.ajax({
-               
+
                 type: 'get',
                 dataType: 'json',
                 data: { 'organisation': Org },
                 url: '@Url.Action("report","OrgReports")',
                 success: function (data) {
-                    
-                    
+
+
                     //For Displaying The Project DropDown
                     $("#OrgChange").show();
                     $('#Load').hide();
@@ -122,7 +121,7 @@
                                 $("#ProjCounts").hide();
                                 /*$("#PBuildDef").hide();*/
                                 $("#noProj").show();
-                                $("#noProj").html("Project Not Selected");   
+                                $("#noProj").html("Project Not Selected");
                             }
                         }
 
