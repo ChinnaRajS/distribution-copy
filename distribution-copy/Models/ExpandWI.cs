@@ -117,7 +117,7 @@ namespace distribution_copy.Models.ExpandWI
         [JsonProperty(PropertyName = "System.Reason")]
         public string Reason { get; set; }
 
-        [JsonProperty(PropertyName = "System.Rev")]
+        [JsonProperty(PropertyName = "System.CreatedDate")]
         public DateTime CreatedDate { get; set; }
 
         [JsonProperty(PropertyName = "System.CreatedBy")]
