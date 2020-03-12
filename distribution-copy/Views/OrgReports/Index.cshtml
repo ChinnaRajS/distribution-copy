@@ -11,10 +11,51 @@
     <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
     <select class="form-control" id="org" name="departmentsDropdown"></select>
 </div>
+<div align="center" style="vertical-align:middle;">
+    <br />
+    <br />
+    <img src="~/Content/Images/loadinggif.gif" id="Load" width="150" height="150" />
+</div>
+<div id="OrgChange">
+    <div id="OrgCount" >
+        <div class="row" style="margin-left:auto;" >
+            <div  class=" col-4"><p id="BuildDef"></p></div>
+            <div  class="col-4"><p id="ReleaseDef"></p></div>        
+            <div class="col-4"><p id="Process"></p> </div>
+        </div>
+    </div>
+    <div id="projDrop" align="center">
+        <label style="margin-top:50px;"><b>Projects</b></label>
+        <select class="form-control" id="projectDrop" name="departmentsDropdown"></select>
+    </div>
+    <div style="margin-top:50px;">
+        <div align="center" >
+            <p id="noProj"class="navbar-brand"></p>
+        </div>
+        <div class="row" id="ProjCounts" style="margin-left:auto;">
+            <div class="col-4"><p id="PBuildDef"></p></div>
+            <div class="col-4"><p id="PReleaseDef"></p></div>
+        </div>
+    </div>
+</div>
+
+
+
+@*<p id="ReleaseDef"></p>
+    <p id="Process"></p>*@
+
+
+
+@*@Html.TextBox("BuildDef", new { id = "BuildDef" })
+    @Html.TextBox("Process" )
+    @Html.TextBox("ReleaseDef")*@
+
 
 <script>
-
     $(document).ready(function () {
+        $('#projDrop').hide();
+        $('#Load').hide();
+       
      $.ajax({
                 type: 'get',
                 dataType: 'json',
@@ -29,22 +70,69 @@
                 }
      });
 
-
-
-         $('#org').change(function () {
-       
-             var Org = $('#org').val();
-             console.log(Org);
+        $('#org').change(function () { 
+          
+            $('#Load').show();
+            $('#OrgChange').hide();
+            $("#ProjCounts").hide();
+            var Org = $('#org').val();
+            if (Org == "0") {
+                alert("Please Select Organisation");
+                $('#Load').hide();
+            }
+                   
             $.ajax({
+               
                 type: 'get',
                 dataType: 'json',
                 data: { 'organisation': Org },
                 url: '@Url.Action("report","OrgReports")',
                 success: function (data) {
-                    alert(data);
+                    
+                    
+                    //For Displaying The Project DropDown
+                    $("#OrgChange").show();
+                    $('#Load').hide();
+                    $("#BuildDef").html("Build Definition Count : " + data.counts.buildDefCount);
+                    $("#ReleaseDef").html("Release Definition Count : " + data.counts.releaseDefCount);
+                    $("#Process").html("Process Template Count : " + data.counts.processCount);
+
+                    $("#projDrop").show();
+                    var s = '<option value="0">--Choose Project--</option>';
+                    $("#projectDrop").empty();
+                    for (var i = 0; i < data.Value.length; i++) {
+                        s += '<option value="' + data.Value[i].Name + '">' + data.Value[i].Name + '</option>';
+                    }
+                    $("#projectDrop").append(s);
+
+
+
+                    //$('#ReleaseDef').append(data.counts.releaseDefCount);
+
+                    $('#projectDrop').change(function () {
+                        var selestedProj = $('#projectDrop').val();
+                        for (var i = 0; i < data.Value.length; i++) {
+                            if (data.Value[i].Name == selestedProj) {
+                                $("#noProj").hide();
+                                $("#ProjCounts").show();
+                                $("#PBuildDef").html("Build Definition Count : " + data.Value[i].counts.buildDefCount);
+                                $("#PReleaseDef").html("Release Definition Count : " + data.Value[i].counts.releaseDefCount);
+                            }
+                            else if (selestedProj == "0") {
+                                $("#ProjCounts").hide();
+                                /*$("#PBuildDef").hide();*/
+                                $("#noProj").show();
+                                $("#noProj").html("Project Not Selected");   
+                            }
+                        }
+
+                    });
                 },
-                failure: function(){
-                    alert("somethuf");
+                failure: function(data){
+                    if (data == null) {
+                        console.log(data);
+                         alert("Please Select Any Organnisation");
+                    }
                 }
 
             });

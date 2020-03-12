@@ -23,11 +23,6 @@ namespace distribution_copy.Models
         public DateTime LastUpdateTime { get; set; }
         public orgCounts counts { get; set; }
     }
-    public class orgCounts
-    {
-        public int buildDefCount { get; set; }
-        public int releaseDefCount { get; set; }
-        public int repoCount { get; set; }
-    }
+  
 
 }
