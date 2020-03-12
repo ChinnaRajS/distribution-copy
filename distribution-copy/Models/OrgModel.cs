@@ -22,6 +22,8 @@ namespace distribution_copy.Models
         public int repoCount { get; set; }
         public int UserCount { get; set; }
         public int processCount { get; set; }
+        public int WIcountOrg { get; set; }
+        public int WIcountType { get; set; }
     }
 
     public class MembersMod

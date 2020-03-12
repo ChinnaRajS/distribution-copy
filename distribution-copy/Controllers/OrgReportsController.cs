@@ -21,6 +21,8 @@ namespace distribution_copy.Controllers
         }
         APIRequest req;
         OrgModel org = new OrgModel();
+        orgCounts c = new orgCounts();
+
         string BaseURL = ConfigurationManager.AppSettings["BaseURL"];
         string BaseURLvsrm = ConfigurationManager.AppSettings["BaseURLvsrm"];
         string version = ConfigurationManager.AppSettings["ApiVersion"];
@@ -40,7 +42,7 @@ namespace distribution_copy.Controllers
             url = BaseURL + "/" + organisation + "/_apis/projects?api-version=" + version;
             response = req.ApiRequest(url);
             count = JsonConvert.DeserializeObject<countGen>(response);
-            org.counts.processCount = count.Count;
+            c.processCount = count.Count;
             foreach (var project in org.Value)
             {
                 url = BaseURL + organisation + "/" + project.Name + "/_apis/build/definitions?api-version=" + version;
@@ -48,29 +50,30 @@ namespace distribution_copy.Controllers
                 project.counts = new orgCounts();
                 count = JsonConvert.DeserializeObject<countGen>(response);               
                 project.counts.buildDefCount = count.Count;
-                org.counts.buildDefCount += count.Count;
+                c.buildDefCount += count.Count;
                 url = BaseURLvsrm + organisation + "/" + project.Name + "/_apis/release/definitions?api-version=" + version;
                 response = req.ApiRequest(url);
                 count= JsonConvert.DeserializeObject<countGen>(response);
                 project.counts.releaseDefCount = count.Count;
-                org.counts.releaseDefCount += count.Count;
+                c.releaseDefCount += count.Count;
             }
-
+            
             // Calling Repos Count
-            org = AllReposCount(organisation);
+             AllReposCount(organisation);
             // Calling Users Count
             AllUsersCount(organisation);
             // Calling WorkitemsCount Count
             AllWorKitemsCount(organisation);
-            
+            org.counts = c;
+            return Json(org, JsonRequestBehavior.AllowGet);
         }
-
+            
         //Author:Ravivarma (10/03/2020) -To get the count of all repositories in the organisation
         [HttpPost]
-        public OrgModel AllReposCount(string organisation)
+        public void AllReposCount(string organisation)
         {
             APIRequest req;
-            OrgModel org = new OrgModel();
+            //OrgModel org = new OrgModel();
             string url;
             try
             {
@@ -78,19 +81,19 @@ namespace distribution_copy.Controllers
                 req = new APIRequest(Session["PAT"].ToString());
                 string response = req.ApiRequest(url);
                 countGen count = JsonConvert.DeserializeObject<countGen>(response);
-                org.Count = count.Count;
+                c.repoCount = count.Count;
             }
             catch (Exception ex)
             {
 
             }
 
-            return org;
+            //return org;
         }
-
+       
         //Author:Ravivarma (11/03/2020) -To get the count of all users in the organisation
         [HttpPost]
-        public OrgModel AllUsersCount(string organisation)
+        public void AllUsersCount(string organisation)
         {
             bool added = false;
             HttpClient client = new HttpClient();
@@ -101,7 +104,7 @@ namespace distribution_copy.Controllers
             string response = req.ApiRequest(url);
             org = JsonConvert.DeserializeObject<OrgModel>(response);
             //org.Value = projModel.Value;
-            org.counts = new orgCounts();
+            //org.counts = new orgCounts();
             List<string> MemberCount;
             foreach (var projeId in org.Value)
             {
@@ -142,18 +145,19 @@ namespace distribution_copy.Controllers
 
                 }
                 
-                org.counts.UserCount = MemberCount.Count;
+                //org.counts.UserCount = MemberCount.Count;
+              c.UserCount = MemberCount.Count;
 
 
 
             }
 
-            return org;
+            //return org;
         }
 
         //Author:Ravivarma (11/03/2020) -To get the count of all Workitems in the organisation
         [HttpPost]
-        public OrgModel AllWorKitemsCount(string organisation)
+        public void AllWorKitemsCount(string organisation)
         {
             APIRequest req;
             OrgModel org = new OrgModel();
@@ -171,19 +175,19 @@ namespace distribution_copy.Controllers
                 {
                     identity.Add(id.Id);
                 }
-                org.Count=identity.Count;
+                c.WIcountOrg=identity.Count;
             }
             catch (Exception ex)
             {
 
             }
 
-            return org;
+            //return org;
         }
 
         //Author:Ravivarma (12/03/2020) -To get the count of all Workitems by types in the organisation
         [HttpPost]
-        public OrgModel AllWorkitemsCountByType(string organisation,string workitemtype)
+        public void AllWorkitemsCountByType(string organisation,string workitemtype)
         {
             APIRequest req;
             OrgModel org = new OrgModel();
@@ -201,14 +205,15 @@ namespace distribution_copy.Controllers
                 {
                     identity.Add(id.Id);
                 }
-                org.Count = identity.Count;
+                c.WIcountType = identity.Count;
+                
             }
             catch (Exception ex)
             {
 
             }
 
-            return org;
+            //return org;
         }
     }
 }
