@@ -74,10 +74,7 @@ namespace distribution_copy.Controllers
 
 
         }
-
-
-
-
+                     
         // GET: WIReport/Details/5
         public ActionResult Details(int id)
         {
