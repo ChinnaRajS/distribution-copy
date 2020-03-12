@@ -173,6 +173,7 @@
     <Compile Include="Controllers\distributionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TeamsController.cs" />
+    <Compile Include="Controllers\TraceController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Controllers\WIReportController.cs" />
     <Compile Include="Controllers\WorkItemAPIController.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="Models\ProfileDetails.cs" />
     <Compile Include="Models\ProjectModel.cs" />
     <Compile Include="Models\ResponseWI.cs" />
+    <Compile Include="Models\TraceInputModel.cs" />
     <Compile Include="Models\TeamDetails.cs" />
     <Compile Include="Models\WorkItemType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -869,6 +871,7 @@
     <Content Include="Views\Shared\_Layout2.cshtml" />
     <Content Include="Views\Teams\Index.cshtml" />
     <Content Include="Views\Teams\Capacity.cshtml" />
+    <Content Include="Views\Trace\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
