@@ -8,9 +8,17 @@ namespace distribution_copy.Models
     public class ProjectModel
     {
         public int Count { get; set; }
+        //public string value { get; set; }
         public List<ProjectDetails> Value { get; set; }
+        public List<ProjectDetails> WorkItems { get; set; }
         public ProjectDetails ProjectDetails { get; set; }
     }
+
+    public class AuthoredBy
+    {
+        public string descriptor { get; set; }
+    }
+
     public class ProjectDetails
     {
         public string Id { get; set; }
@@ -22,12 +30,11 @@ namespace distribution_copy.Models
         public string Visibility { get; set; }
         public DateTime LastUpdateTime { get; set; }
         public orgCounts counts { get; set; }
+        public AuthoredBy authoredBy { get; set; }
+        public string originId { get; set; }
+
+
     }
-    public class orgCounts
-    {
-        public int buildDefCount { get; set; }
-        public int releaseDefCount { get; set; }
-        public int repoCount { get; set; }
-    }
+  
 
 }

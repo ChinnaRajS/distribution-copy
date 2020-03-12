@@ -15,6 +15,25 @@ namespace distribution_copy.Models
     {
         public int Count { get; set; }
     }
+    public class orgCounts
+    {
+        public int buildDefCount { get; set; }
+        public int releaseDefCount { get; set; }
+        public int repoCount { get; set; }
+        public int UserCount { get; set; }
+    }
 
-  
+    public class MembersMod
+    {
+        public List<Member> members { get; set; }
+        public string continuationToken { get; set; }
+        public int totalCount { get; set; }
+    }
+    public class Member
+    {
+        public string id { get; set; }
+
+    }
+
+
 }
