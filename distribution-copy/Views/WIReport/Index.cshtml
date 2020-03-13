@@ -186,6 +186,7 @@
          inp.ProjectName = p.options[p.selectedIndex].text;
          if (inp.ProjectName == "--ALL--") {
             populateWorkItemTypes();
+            document.getElementById("Count").hidden = true;
             document.getElementById("filters").hidden = true;
             document.getElementById("AssignedTo").disabled = true;
             document.getElementById("Sprint").disabled = true;
@@ -498,12 +499,5 @@
         overflow: scroll;
     }
 
-    td.details-control {
-        background: url('../../Content/Images/details_open.png') no-repeat center center;
-        cursor: pointer;
-    }
 
-    tr.details td.details-control {
-        background: url('../../Content/Images/details_close.png') no-repeat center center;
-    }
 </style>

@@ -210,6 +210,8 @@
     <Content Include="Content\Icons\feature.png" />
     <Content Include="Content\Icons\task.png" />
     <Content Include="Content\Icons\malware.png" />
+    <Content Include="Content\Images\VS_logo.png" />
+    <Content Include="Content\Images\Wallpaper.png" />
     <Content Include="Content\Images\details_close.png" />
     <Content Include="Content\Images\details_open.png" />
     <Content Include="Content\Images\loadinggif.gif" />

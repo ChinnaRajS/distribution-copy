@@ -18,6 +18,15 @@
     .width {
         width: 250px;
     }
+
+    #load {
+        /*border: 12px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 12px solid #444444;
+            width: 70px;
+            height: 70px;
+            animation: spin 1s linear infinite;*/
+    }
 </style>
 <script>
         $(document).ready(function () {
@@ -44,11 +53,14 @@
                document.getElementById("table").hidden = true;
             document.getElementById("Count").hidden = true;
          document.getElementById("WorkItemType").innerHTML = "<option value='0' >--Empty--</option>";
-         document.getElementById("ProjectName").innerHTML = "<option value='0' >--Empty--</option>";
+        document.getElementById("ProjectName").innerHTML = "<option value='0' >Loading Projects...</option>";
+
         if (ORG == "--Choose Organisation--") {
 
             return;
         }
+        document.getElementById('load').hidden = false;
+
                 var inp = new Object();
         inp.OrganizationName = o.options[o.selectedIndex].text;
 
@@ -92,6 +104,8 @@
                     for (let i = 0; i < data.length; i++) {
                         document.getElementById("ProjectName").innerHTML += "<option value='" + data[i].Name + "'>" + data[i].Name + "</option>";
                     }
+        document.getElementById('load').hidden = true;
+
                 }
             ,
             failure:
@@ -104,6 +118,9 @@
     }
 
     function populateAll() {
+        document.getElementById('load').hidden = false;
+         document.getElementById("WorkItemType").innerHTML = "<option value='0' >Loading Types...</option>";
+
         var o = document.getElementById("org");
         var inp = new Object();
         inp.OrganizationName = o.options[o.selectedIndex].text;
@@ -114,6 +131,9 @@
         var p = document.getElementById("ProjectName");
         inp.ProjectName = p.options[p.selectedIndex].text;
         if (inp.ProjectName == "--Choose Project--") {
+        document.getElementById('load').hidden = true;
+        document.getElementById('table').hidden = true;
+
             return;
         }
         else {
@@ -132,16 +152,19 @@
                     for (let i = 0; i < data[3].length; i++) {
                         document.getElementById("WorkItemType").innerHTML += "<option value='" + data[3][i] + "'>" + data[3][i] + "</option>";
                     }
+        document.getElementById('load').hidden = true;
 
                 }
             ,
             failure:
                 function () { alert("Something went wrong"); }
         });
+
     }
     var table;
     function filter() {
-        //document.getElementById('load').hidden = false;
+
+        document.getElementById('load').hidden = false;
         //document.getElementById('Count').hidden = true;
         //document.getElementById('table').hidden = true;
 
@@ -168,6 +191,11 @@
             inp.ProjectName = p.options[p.selectedIndex].text;
 
         if (w.options[w.selectedIndex].value == "0") {
+        document.getElementById('load').hidden = true;
+            document.getElementById('table').hidden = true;
+            document.getElementById("Count").hidden = true;
+
+
             w.focus();
             return;
             //inp.WorkItemType = null;
@@ -231,7 +259,8 @@
                                 tr.addClass('shown');
 
                               }
-                              s =  '<table  style="width:100" class="dataTable table bg-dark table-dark" role="grid">';
+
+                              s =  '<table  style="width:100" class="dataTable table bg-dark table-dark" >';
 
                               j = 0;
     });
@@ -254,6 +283,7 @@
                     document.getElementById("table").hidden = false;
                     document.getElementById("Count").hidden = false;
 
+        document.getElementById('load').hidden = true;
 
                 }
             ,
@@ -262,6 +292,7 @@
                     alert("Something went wrong");
                 }
         });
+
 
     }
 
@@ -304,6 +335,7 @@
         @Html.ValidationMessageFor(model => model.WIType, "", new { @class = "text-danger" })
 
     </div>
+
     <div class="mt-30px">
         @*<button id="exc" type="submit" class="btn btn-success ml-5" disabled>Download Excel</button>*@
     </div>
@@ -311,7 +343,10 @@
 
 
 </div>
+<img id="load" style="margin-left:42%" height="100" width="100" src="../Content/Images/loadinggif.gif" hidden />
+
 <div><p id="Count" class="display-4" style="font-size:15px"></p></div>
+
 <div id="table">
 
 
@@ -325,20 +360,66 @@
     tr.shown td.details-control {
         background: url('../../Content/Images/details_close.png') no-repeat center center;
     }
+     input[type=search] {
+        width: 220px;
+        height: 30px;
+        padding: 6px 12px;
+        font-size: 12px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        margin-right: 20px;
+    }
+
+    select[name=dataTable_length] {
+        width: 70px;
+        height: 30px;
+        padding: 6px 12px;
+        font-size: 12px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    }
+td[colspan='7']{
+   background-color: lightgrey;
+}
 </style>
 <script>
 
-        var s = '<table  style="width:100" class="dataTable table bg-dark table-dark" role="grid">';
+        var s = '<table  style="width:100" class="dataTable table bg-dark table-dark" >';
    var j = 0;
     function format(d,margin) {
-       
+
         let id = d[1];
+        document.getElementById('load').hidden = false;
 
      @*var data= $.parseJSON($.ajax({
             type: "POST",
             url: '@Url.Action("Relation", "Trace")',
             data: {id}
-    
+
      }).responseText);*@
         var data = $.parseJSON($.ajax({
             type: 'GET',
@@ -352,8 +433,12 @@
         console.log(data);
 
         if (data == null || (data.Forward.length == 0 && j == 0)) {
+        document.getElementById('load').hidden = true;
+
             return s+'<tr style="background-color:#ffb3b3"><td style="padding-left:42%" class="text-dark">No Child relation for this Work item</td></tr>';
-        } else if(data == null || (data.Forward.length == 0)){
+        } else if (data == null || (data.Forward.length == 0)) {
+        document.getElementById('load').hidden = true;
+
             return null;
         }
         j++;
@@ -362,7 +447,7 @@
         OrganizationName = o.options[o.selectedIndex].text;
         var col = "";
         var ico = "";
-        
+
         for (let i = 0; i < data.Forward.length; i++) {
             if (data.Forward[i].fields.WorkItemType == 'Feature') {
                 ico = "<img src='../Content/Icons/feature.png' style='padding-left:" + margin + "px'/>";
@@ -382,11 +467,14 @@
             else if (data.Forward[i].fields.WorkItemType == 'User Story') {
                 ico = "<img src='../Content/Icons/us.png' style='padding-left:" + margin + "px'/>";
             }
-            s += "<tr class='bg-dark' ><td style='' class=''>" + ico + "</td><td style='padding-left:" + margin + "px'>" + data.Forward[i].id + "</td><td style='width:170px;'padding-left:" + margin + "px''  ><a href='https://dev.azure.com/" + OrganizationName + "/" + data.Forward[i].fields.TeamProject + "/_workitems/edit/" + data.Forward[i].id + "' target='_blank' style='padding-left:" + margin + "px'>" + data.Forward[i].fields.Title + "</a></td><td style='padding-left:" + margin + "px' >" + data.Forward[i].fields.TeamProject + "</td><td style='padding-left:" + margin + "px' >" + data.Forward[i].fields.IterationPath + "</td><td style='padding-left:" + margin + "px' >" + data.Forward[i].fields.State + "</td><td style='padding-left:" + margin + "px' >" + data.Forward[i].fields.WorkItemType + "</td></tr>";
+            else {
+                ico = '#';
+            }
+            s += "<tr class='bg-dark' ><td style='width:50px;'>" + ico + "</td><td style='width:118px;'>" + data.Forward[i].id + "</td><td style='width:346px;'  ><a href='https://dev.azure.com/" + OrganizationName + "/" + data.Forward[i].fields.TeamProject + "/_workitems/edit/" + data.Forward[i].id + "' target='_blank'>" + data.Forward[i].fields.Title + "</a></td><td style='width:169px;'>" + data.Forward[i].fields.TeamProject + "</td><td style='width:158px;'>" + data.Forward[i].fields.IterationPath + "</td><td style='width:144px;'>" + data.Forward[i].fields.State + "</td><td style='width:142px;'>" + data.Forward[i].fields.WorkItemType + "</td></tr>";
             if (data.Forward[i].relations != null) {
                 var p = [0, data.Forward[i].id];
-                
-                format(p,margin+20);
+
+                format(p,margin+15);
                 //for (var j = 0; j < data.Forward[i].relations.length; j++) {
 
                 //    if (data.Forward[i].relations[0].rel == "System.LinkTypes.Hierarchy-Forward") {
@@ -395,6 +483,7 @@
                 //        var p = [0, relid];
                 //        format(p);
                 //    }
+        document.getElementById('load').hidden = true;
 
                 }
             }
@@ -402,7 +491,6 @@
             //for (let i = 0; i < data.Reverse.length; i++) {
             //     s += "<tr style='background-color:powderblue'><td></td><td style=''>" + data.Reverse[i].id + "</td><td><a href='https://dev.azure.com/" + OrganizationName + "/" + data.Reverse[i].fields.TeamProject+ "/_workitems/edit/" + data.Reverse[i].id + "' target='_blank'>" + data.Reverse[i].fields.Title+ "</a></td><td>" + data.Reverse[i].fields.TeamProject + "</td><td>" + data.Reverse[i].fields.IterationPath+ "</td><td>" + data.Reverse[i].fields.State + "</td><td>" + data.Reverse[i].fields.WorkItemType + "</td></tr>";
             //}
-            console.log(s);
             return s;
 
             //console.log(data);
