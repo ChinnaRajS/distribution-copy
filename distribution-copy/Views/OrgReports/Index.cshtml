@@ -7,9 +7,31 @@
 }
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<div align="center">
-    <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
-    <select class="form-control" id="org" name="departmentsDropdown"></select>
+@*<div align="center">
+        <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
+        <select class="form-control" id="org" name="departmentsDropdown"></select>
+    </div>*@
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-4">
+            <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
+            <select class="form-control" id="org" name="departmentsDropdown"></select>
+        </div>
+        <div class="col-md-4">
+            @Html.Label("WorkItem Type", htmlAttributes: new { @class = "control-label", style = "padding-right:21px" })
+
+            @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "WorkItemType", style = "opacity:0.8" })
+
+            @Html.ValidationMessageFor(model => model.WorkItemType, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-4">
+            <div id="projDrop">
+                <label style="margin-top:50px;"><b>Projects</b></label>
+                <select class="form-control" id="projectDrop" name="departmentsDropdown"></select>
+            </div>
+        </div>
+
+    </div>
 </div>
 <div align="center" style="vertical-align:middle;">
     <br />
@@ -27,12 +49,10 @@
             <div class="col-4"><p id="Users"></p> </div>
             <div class="col-4"><p id="WIcount"></p> </div>
             <div class="col-4"><p id="WIcountByType"></p></div>
-
         </div>
     </div>
-    <div id="projDrop" align="center">
-        <label style="margin-top:50px;"><b>Projects</b></label>
-        <select class="form-control" id="projectDrop" name="departmentsDropdown"></select>
+    <div align="center">
+
     </div>
     <div style="margin-top:50px;">
         <div align="center">
@@ -51,13 +71,8 @@
     <p id="Process"></p>*@
 
 
-<div style="margin-left:440px" >
+<div style="margin-left:440px">
 
-    @Html.Label("WorkItem Type", htmlAttributes: new { @class = "control-label", style = "padding-right:21px"});
-
-    @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "WorkItemType", style = "opacity:0.8" })
-
-    @Html.ValidationMessageFor(model => model.WorkItemType, "", new { @class = "text-danger" })
 
 </div>
 
@@ -66,6 +81,8 @@
     $(document).ready(function () {
         $('#projDrop').hide();
         $('#Load').hide();
+           var Org = $('#org').val();
+
 
         $.ajax({
             type: 'get',
@@ -82,34 +99,8 @@
             }
         });
 
+        function GetReport(data) {
 
-        //$('#org').change(function () {
-
-            var Org = $('#org').val();
-
-
-            $('#org').change(function () {
-
-                $('#Load').show();
-                $('#OrgChange').hide();
-                $("#ProjCounts").hide();
-                var Org = $('#org').val();
-                if (Org == "0") {
-                    alert("Please Select Organisation");
-                    $('#Load').hide();
-                }
-
-
-                $.ajax({
-
-                    type: 'get',
-                    dataType: 'json',
-                    data: { 'organisation': Org },
-                    url: '@Url.Action("report","OrgReports")',
-                    success: function (data) {
-
-
-                        //For Displaying The Project DropDown
                         $("#OrgChange").show();
                         $('#Load').hide();
                         $("#BuildDef").html("Build Definition Count : " + data.counts.buildDefCount);
@@ -146,8 +137,74 @@
                                     $("#noProj").html("Project Not Selected");
                                 }
                             }
+                });
 
-                        });
+        }
+
+
+        //$('#org').change(function () {
+
+
+            $('#org').change(function () {
+
+                $('#Load').show();
+                $('#OrgChange').hide();
+                $("#ProjCounts").hide();
+                var Org = $('#org').val();
+                if (Org == "0") {
+                    alert("Please Select Organisation");
+                    $('#Load').hide();
+                }
+
+
+                $.ajax({
+
+                    type: 'get',
+                    dataType: 'json',
+                    data: { 'organisation': Org },
+                    url: '@Url.Action("report","OrgReports")',
+                    success: function (data) {
+
+                        GetReport(data);
+                        //For Displaying The Project DropDown
+                        //$("#OrgChange").show();
+                        //$('#Load').hide();
+                        //$("#BuildDef").html("Build Definition Count : " + data.counts.buildDefCount);
+                        //$("#ReleaseDef").html("Release Definition Count : " + data.counts.releaseDefCount);
+                        //$("#Process").html("Process Template Count : " + data.counts.processCount);
+                        //$("#Project").html("Project Count : " + data.Count);
+                        //$("#Users").html("Org Level Uesrs Count : " + data.counts.UserCount);
+                        //$("#Repos").html("Repos Count : " + data.counts.repoCount);
+                        //$("#WIcount").html("WorkItemsInOrg Count : " + data.counts.WIcountOrg);
+                        //$("#WIcountByType").html("WorkItemsInType Count : " + data.counts.WIcountType);
+
+
+                        //$("#projDrop").show();
+                        //var s = '<option value="0">--Choose Project--</option>';
+                        //$("#projectDrop").empty();
+                        //for (var i = 0; i < data.Value.length; i++) {
+                        //    s += '<option value="' + data.Value[i].Name + '">' + data.Value[i].Name + '</option>';
+                        //}
+                        //$("#projectDrop").append(s);
+                        ////$('#ReleaseDef').append(data.counts.releaseDefCount);
+                        //$('#projectDrop').change(function () {
+                        //    var selestedProj = $('#projectDrop').val();
+                        //    for (var i = 0; i < data.Value.length; i++) {
+                        //        if (data.Value[i].Name == selestedProj) {
+                        //            $("#noProj").hide();
+                        //            $("#ProjCounts").show();
+                        //            $("#PBuildDef").html("Build Definition Count : " + data.Value[i].counts.buildDefCount);
+                        //            $("#PReleaseDef").html("Release Definition Count : " + data.Value[i].counts.releaseDefCount);
+                        //        }
+                        //        else if (selestedProj == "0") {
+                        //            $("#ProjCounts").hide();
+                        //            /*$("#PBuildDef").hide();*/
+                        //            $("#noProj").show();
+                        //            $("#noProj").html("Project Not Selected");
+                        //        }
+                        //    }
+
+                        //});
                     },
                     failure: function (data) {
                         if (data == null) {
@@ -197,9 +254,9 @@
                     type: 'Post',
                     dataType: 'json',
                     data: { 'organisation': Org, 'workitemtype': WIType },
-                    url: '@Url.Action("AllWorkitemsCountByType","OrgReports")',
+                    url: '@Url.Action("report","OrgReports")',
                     success: function (data) {
-
+                                                $("#WIcountByType").html("WorkItemsInType Count : " + data.counts.WIcountType);
                     }
                 });
             })
