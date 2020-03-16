@@ -15,6 +15,7 @@
 <div class="col-md-5" style="margin-left:30px">
     <label for="orgsDropdown" style="margin-top:30px;"><b>Organisations</b></label>
     <select class="form-control" id="org" name="departmentsDropdown"></select>
+    <label id="NoOrg" class="text-danger">!!!!Please Select Organisation</label>
 </div>
 
 <div align="center" style="margin-top:10px">
@@ -22,25 +23,25 @@
 </div>
 <div id="OrgChange" style="margin-left:30px">
     <div id="OrgCount">
-        <div class="row" style="font-size:large;margin-left:30px">
+        <div class="row" style="font-size:medium;margin-left:30px">
             <div class="col-4"><p id="Project"></p> </div>
             <div class=" col-4"><p id="BuildDef"></p></div>
             <div class="col-4"><p id="ReleaseDef"></p></div>
         </div>
-        <div class="row" style="font-size:large;margin-left:30px">
+        <div class="row" style="font-size:medium;margin-left:30px">
 
             <div class="col-4"><p id="Process"></p> </div>
             <div class="col-4"><p id="Repos"></p> </div>
             <div class="col-4"><p id="Users"></p> </div>
         </div>
-        <div class="row" style="font-size:large;margin-left:30px">
+        <div class="row" style="font-size:medium;margin-left:30px">
             <div class="col-4"><p id="WIcount" class="Wi"></p> </div>
 
         </div>
     </div>
 </div>
 <div class="row ">
-    <div class="col-4 WorkItemType" style="margin-left:50px" id="WItypeDrop">
+    <div class="col-4" style="margin-left:50px" id="WItypeDrop">
         @*@Html.Label("WorkItem Type", htmlAttributes: new { @class = "", style = "padding-right:21px" })*@
 
         <label style="margin-top:20px;" class="WorkItemType"><b>WorkItem Type</b></label>
@@ -69,15 +70,16 @@
         </div>
         <div class="row"style="margin-left:30px">
             <div class="col-4"><p id="PRepo"></p></div>
-            <div class="col-4"><p id="PWorkItem" class="WI"></p></div>
+            <div class="col-4"><p id="PWorkItem"class="WI"></p></div>
         </div>
     </div>
 </div>
 <script>
     //Ajax Call to fetch Organization
     $(document).ready(function () {
-
+        $("#NoOrg").hide();
         $('#Load').hide();
+        $('#WItypeErr').hide();
         $('.WorkItemType').hide();
         var Org = $('#org').val();
 
@@ -160,7 +162,9 @@
                 $('.WorkItemType').hide();
                 Org = $('#org').val();
                 if (Org == "0") {
-                    alert("Please Select Organisation");
+                    $("#NoOrg").show();
+                    $("#noProj").hide();
+                    $("#WItypeErr").hide();
                     $('#Load').hide();
                 }
 
@@ -217,8 +221,15 @@
              Org = $('#org').val();
              WIType = $('#WorkItemType').val();
 
-                console.log(WIType);
-                console.log(Org);
+                //console.log(WIType);
+                //console.log(Org);
+                if (WIType == "0") {
+                             $("#WIcountByType").hide();
+                            $("#WItypeErr").show();
+                            $("#WItypeErr").html("!!!!please select any workitem type");
+                    $("#PWorkItem").hide();
+                    return;
+                        }
                 $.ajax({
                     type: 'Post',
                     dataType: 'json',
