@@ -24,6 +24,8 @@ namespace distribution_copy.Models
         public int processCount { get; set; }
         public int WIcountOrg { get; set; }
         public int WIcountType { get; set; }
+        public int ProjWIcountByType { get; set; }
+        
     }
 
     public class MembersMod

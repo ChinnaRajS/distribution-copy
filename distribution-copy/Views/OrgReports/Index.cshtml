@@ -11,78 +11,79 @@
         <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
         <select class="form-control" id="org" name="departmentsDropdown"></select>
     </div>*@
-<div class="row">
-    <div class="col-md-12">
-        <div class="col-md-4">
-            <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
-            <select class="form-control" id="org" name="departmentsDropdown"></select>
-        </div>
-        <div class="col-md-4">
-            @Html.Label("WorkItem Type", htmlAttributes: new { @class = "control-label", style = "padding-right:21px" })
 
-            @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "WorkItemType", style = "opacity:0.8" })
-
-            @Html.ValidationMessageFor(model => model.WorkItemType, "", new { @class = "text-danger" })
-        </div>
-        <div class="col-md-4">
-            <div id="projDrop">
-                <label style="margin-top:50px;"><b>Projects</b></label>
-                <select class="form-control" id="projectDrop" name="departmentsDropdown"></select>
-            </div>
-        </div>
-
-    </div>
+<div class="col-md-5" style="margin-left:30px">
+    <label for="orgsDropdown" style="margin-top:30px;"><b>Organisations</b></label>
+    <select class="form-control" id="org" name="departmentsDropdown"></select>
 </div>
-<div align="center" style="vertical-align:middle;">
-    <br />
-    <br />
+
+<div align="center" style="margin-top:10px">
     <img src="~/Content/Images/loadinggif.gif" id="Load" width="150" height="150" />
 </div>
-<div id="OrgChange">
+<div id="OrgChange" style="margin-left:30px">
     <div id="OrgCount">
-        <div class="row" style="margin-left:auto;">
+        <div class="row" style="font-size:large;margin-left:30px">
             <div class="col-4"><p id="Project"></p> </div>
             <div class=" col-4"><p id="BuildDef"></p></div>
             <div class="col-4"><p id="ReleaseDef"></p></div>
+        </div>
+        <div class="row" style="font-size:large;margin-left:30px">
+
             <div class="col-4"><p id="Process"></p> </div>
             <div class="col-4"><p id="Repos"></p> </div>
             <div class="col-4"><p id="Users"></p> </div>
-            <div class="col-4"><p id="WIcount"></p> </div>
-            <div class="col-4"><p id="WIcountByType"></p></div>
+        </div>
+        <div class="row" style="font-size:large;margin-left:30px">
+            <div class="col-4"><p id="WIcount" class="Wi"></p> </div>
+
+        </div>
+    </div>
+</div>
+<div class="row ">
+    <div class="col-4 WorkItemType" style="margin-left:50px" id="WItypeDrop">
+        @*@Html.Label("WorkItem Type", htmlAttributes: new { @class = "", style = "padding-right:21px" })*@
+
+        <label style="margin-top:20px;" class="WorkItemType"><b>WorkItem Type</b></label>
+        @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "--Workitem Types--" }), htmlAttributes: new { @class = "form-control WorkItemType", id = "WorkItemType", style = "opacity:0.8" })
+
+        @Html.ValidationMessageFor(model => model.WorkItemType, "", new { @class = "text-danger" })
+        <label id="WItypeErr" class="text-danger "> </label>
+    </div>
+    <div class="col-4" style="font-size:large;margin-top:50px"><p id="WIcountByType"></p></div>
+</div>
+<div style="margin-top:10px;">
+    <div class="col-md-5" style="margin-left:40px">
+        <div id="projDrop " class="WorkItemType">
+            <label style="margin-top:20px;" class=""><b>Projects</b></label>
+            <select class="form-control " id="projectDrop" name="departmentsDropdown"></select>
         </div>
     </div>
     <div align="center">
-
+        <p id="noProj"></p>
     </div>
-    <div style="margin-top:50px;">
-        <div align="center">
-            <p id="noProj" class="navbar-brand"></p>
-        </div>
-        <div class="row" id="ProjCounts" style="margin-left:auto;">
+    <div id="ProjCounts" class="" style="margin-top:20px;margin-left:35px; font-size:large;">
+        <div class="row" style="margin-left:30px">
             <div class="col-4"><p id="PBuildDef"></p></div>
             <div class="col-4"><p id="PReleaseDef"></p></div>
+            <div class="col-4"><p id="PUser"></p></div>
+        </div>
+        <div class="row"style="margin-left:30px">
+            <div class="col-4"><p id="PRepo"></p></div>
+            <div class="col-4"><p id="PWorkItem" class="WI"></p></div>
         </div>
     </div>
 </div>
-
-
-
-@*<p id="ReleaseDef"></p>
-    <p id="Process"></p>*@
-
-
-<div style="margin-left:440px">
-
-
-</div>
-
 <script>
     //Ajax Call to fetch Organization
     $(document).ready(function () {
-        $('#projDrop').hide();
-        $('#Load').hide();
-           var Org = $('#org').val();
 
+        $('#Load').hide();
+        $('.WorkItemType').hide();
+        var Org = $('#org').val();
+
+        var ProjWICount;
+        var selestedProj;
+        var WIType
 
         $.ajax({
             type: 'get',
@@ -103,32 +104,38 @@
 
                         $("#OrgChange").show();
                         $('#Load').hide();
-                        $("#BuildDef").html("Build Definition Count : " + data.counts.buildDefCount);
-                        $("#ReleaseDef").html("Release Definition Count : " + data.counts.releaseDefCount);
-                        $("#Process").html("Process Template Count : " + data.counts.processCount);
-                        $("#Project").html("Project Count : " + data.Count);
-                        $("#Users").html("Org Level Uesrs Count : " + data.counts.UserCount);
-                        $("#Repos").html("Repos Count : " + data.counts.repoCount);
-                        $("#WIcount").html("WorkItemsInOrg Count : " + data.counts.WIcountOrg);
-                        $("#WIcountByType").html("WorkItemsInType Count : " + data.counts.WIcountType);
+                        $("#BuildDef").html("Build Definitions  : " + data.counts.buildDefCount);
+                        $("#ReleaseDef").html("Release Definitions  : " + data.counts.releaseDefCount);
+                        $("#Process").html("Process Templates : " + data.counts.processCount);
+                        $("#Project").html("Projects : " + data.Count);
+                        $("#Users").html("Users : " + data.counts.UserCount);
+                        $("#Repos").html("Repositories : " + data.counts.repoCount);
+                        $("#WIcount").html("WorkItems : " + data.counts.WIcountOrg);
+                        $(".WorkItemType").show();
 
-
-                        $("#projDrop").show();
                         var s = '<option value="0">--Choose Project--</option>';
                         $("#projectDrop").empty();
                         for (var i = 0; i < data.Value.length; i++) {
                             s += '<option value="' + data.Value[i].Name + '">' + data.Value[i].Name + '</option>';
                         }
                         $("#projectDrop").append(s);
+                        WIType=$('#WorkItemType').val()
                         //$('#ReleaseDef').append(data.counts.releaseDefCount);
                         $('#projectDrop').change(function () {
-                            var selestedProj = $('#projectDrop').val();
+                            selestedProj = $('#projectDrop').val();
                             for (var i = 0; i < data.Value.length; i++) {
                                 if (data.Value[i].Name == selestedProj) {
                                     $("#noProj").hide();
                                     $("#ProjCounts").show();
-                                    $("#PBuildDef").html("Build Definition Count : " + data.Value[i].counts.buildDefCount);
-                                    $("#PReleaseDef").html("Release Definition Count : " + data.Value[i].counts.releaseDefCount);
+                                    $("#PBuildDef").html("Build Definitions : " + data.Value[i].counts.buildDefCount);
+                                    $("#PReleaseDef").html("Release Definitions : " + data.Value[i].counts.releaseDefCount);
+                                    $("#PUser").html("Users : " + data.Value[i].counts.UserCount);
+                                    $("#PRepo").html("Repositories : " + data.Value[i].counts.repoCount);
+                                    if ($('#WorkItemType') != "0")
+                                        $("#PWorkItem").html(WIType + "s : " + ProjWICount);
+                                    else
+                                        $("#PWorkItem").hide();
+
                                 }
                                 else if (selestedProj == "0") {
                                     $("#ProjCounts").hide();
@@ -150,7 +157,8 @@
                 $('#Load').show();
                 $('#OrgChange').hide();
                 $("#ProjCounts").hide();
-                var Org = $('#org').val();
+                $('.WorkItemType').hide();
+                Org = $('#org').val();
                 if (Org == "0") {
                     alert("Please Select Organisation");
                     $('#Load').hide();
@@ -166,45 +174,7 @@
                     success: function (data) {
 
                         GetReport(data);
-                        //For Displaying The Project DropDown
-                        //$("#OrgChange").show();
-                        //$('#Load').hide();
-                        //$("#BuildDef").html("Build Definition Count : " + data.counts.buildDefCount);
-                        //$("#ReleaseDef").html("Release Definition Count : " + data.counts.releaseDefCount);
-                        //$("#Process").html("Process Template Count : " + data.counts.processCount);
-                        //$("#Project").html("Project Count : " + data.Count);
-                        //$("#Users").html("Org Level Uesrs Count : " + data.counts.UserCount);
-                        //$("#Repos").html("Repos Count : " + data.counts.repoCount);
-                        //$("#WIcount").html("WorkItemsInOrg Count : " + data.counts.WIcountOrg);
-                        //$("#WIcountByType").html("WorkItemsInType Count : " + data.counts.WIcountType);
 
-
-                        //$("#projDrop").show();
-                        //var s = '<option value="0">--Choose Project--</option>';
-                        //$("#projectDrop").empty();
-                        //for (var i = 0; i < data.Value.length; i++) {
-                        //    s += '<option value="' + data.Value[i].Name + '">' + data.Value[i].Name + '</option>';
-                        //}
-                        //$("#projectDrop").append(s);
-                        ////$('#ReleaseDef').append(data.counts.releaseDefCount);
-                        //$('#projectDrop').change(function () {
-                        //    var selestedProj = $('#projectDrop').val();
-                        //    for (var i = 0; i < data.Value.length; i++) {
-                        //        if (data.Value[i].Name == selestedProj) {
-                        //            $("#noProj").hide();
-                        //            $("#ProjCounts").show();
-                        //            $("#PBuildDef").html("Build Definition Count : " + data.Value[i].counts.buildDefCount);
-                        //            $("#PReleaseDef").html("Release Definition Count : " + data.Value[i].counts.releaseDefCount);
-                        //        }
-                        //        else if (selestedProj == "0") {
-                        //            $("#ProjCounts").hide();
-                        //            /*$("#PBuildDef").hide();*/
-                        //            $("#noProj").show();
-                        //            $("#noProj").html("Project Not Selected");
-                        //        }
-                        //    }
-
-                        //});
                     },
                     failure: function (data) {
                         if (data == null) {
@@ -226,7 +196,7 @@
                         success:
                             function (data) {
                                 console.log(data);
-                                document.getElementById("WorkItemType").innerHTML = "<option value='0' >--ALL--</option>";
+                                document.getElementById("WorkItemType").innerHTML = "<option value='0' >--Select Workitem Type--</option>";
                                 for (let i = 0; i < data.length; i++) {
                                     document.getElementById("WorkItemType").innerHTML += "<option value='" + data[i] + "'>" + data[i] + "</option>";
                                 }
@@ -243,20 +213,38 @@
 
             })
             //Sending type value to controller
-            $('#WorkItemType').change(function () {
-                var Org = $('#org').val();
-                var WIType = $('#WorkItemType').val();
+            $('.WorkItemType').change(function () {
+             Org = $('#org').val();
+             WIType = $('#WorkItemType').val();
 
                 console.log(WIType);
                 console.log(Org);
-
                 $.ajax({
                     type: 'Post',
                     dataType: 'json',
-                    data: { 'organisation': Org, 'workitemtype': WIType },
+                    data: { 'organisation': Org, 'workitemtype': WIType, 'projectName': selestedProj },
                     url: '@Url.Action("report","OrgReports")',
                     success: function (data) {
-                                                $("#WIcountByType").html("WorkItemsInType Count : " + data.counts.WIcountType);
+                        if (WIType == "0") {
+                             $("#WIcountByType").hide();
+                            $("#WItypeErr").show();
+                            $("#WItypeErr").html("!!!!please select any workitem type");
+                            $("#PWorkItem").hide();
+
+                        }
+                        else {
+                            $("#WIcountByType").show();
+                            $("#WItypeErr").hide();
+                            ProjWICount = data.counts.ProjWIcountByType;
+                            $("#WIcountByType").html(WIType + "s : " + data.counts.WIcountType);
+                            if (selestedProj != "0") {
+                                $("#PWorkItem").show();
+                                $("#PWorkItem").html(WIType + "s : " + data.counts.ProjWIcountByType);
+
+                            }
+
+                        }
+
                     }
                 });
             })
