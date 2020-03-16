@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using distribution_copy.Models.ProjectModel;
 
-namespace distribution_copy.Models
+namespace distribution_copy.Models.OrgModel
 {
     public class OrgModel
     {

@@ -6,7 +6,8 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using distribution_copy.Class;
-using distribution_copy.Models;
+using distribution_copy.Models.OrgModel;
+using distribution_copy.Models.ProjectModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-
+using distribution_copy.Models.OrgModel;
 namespace distribution_copy.Models.ProjectModel
 {
     public class ProjectModel
