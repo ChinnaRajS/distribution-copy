@@ -1,8 +1,356 @@
-﻿
+﻿@model distribution_copy.Models.InputModel.InputModel
 @{
     ViewBag.Title = "Capacity";
     Layout = "~/Views/Shared/_DashBoard.cshtml";
 }
+<style>
+    .sizeNormal {
+        font-size: 16px;
+    }
 
-<h2>Capacity</h2>
+    .borderRadius {
+        border-radius: 10px;
+    }
+
+    input[type=search] {
+        width: 220px;
+        height: 30px;
+        padding: 6px 12px;
+        font-size: 12px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        margin-right: 20px;
+    }
+
+    select[name=dataTable_length] {
+        width: 70px;
+        height: 30px;
+        padding: 6px 12px;
+        font-size: 12px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    }
+
+    .width {
+        width: 250px;
+    }
+
+    .fwidth {
+        width: 200px;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-radius: 3px;
+        border-style: hidden; /* hide standard table (collapsed) border */
+        box-shadow: 0 0 0 1px #666; /* this draws the table border  */
+    }
+
+    /*td {
+        border: 1px solid #ccc;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+        table td {
+            border: 5px solid black;
+        }
+
+        table tr:first-child td {
+            border-top: 0;
+        }
+
+        table tr td:first-child {
+            border-left: 0;
+        }
+
+        table tr:last-child td {
+            border-bottom: 0;
+        }
+
+        table tr td:last-child {
+            border-right: 0;
+        }
+
+    .select {
+        height: 25px;
+        overflow: scroll;
+    }
+
+    td.details-control {
+        background: url('../../Content/Images/details_open.png') no-repeat center center;
+        cursor: pointer;
+    }
+
+    tr.details td.details-control {
+        background: url('../../Content/Images/details_close.png') no-repeat center center;
+    }*/
+</style>
+
+
+<script>
+    $(document).ready(function () {
+         document.getElementById('load').hidden = true;
+       $.ajax({
+                type: 'get',
+                dataType: 'json',
+                url: '@Url.Action("AccountList","Account")',
+                success: function (data) {
+                var s = '<option value="0">--Choose Organisation--</option>';
+                $("#org").empty();
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].accountName + '">' + data[i].accountName + '</option>';
+                    }
+                $("#org").append(s);
+           }
+
+       });
+     });
+
+    var i = 0;
+    var t;
+    function disable() {
+        if ((document.getElementById("org").value == "") || (document.getElementById("pat").value == "")) {
+            document.getElementById("submit").disabled = true;
+        }
+        else
+            document.getElementById("submit").disabled = false;
+    }
+
+    function FillProjects() {
+        document.getElementById('load').hidden = false;
+       document.getElementById("IterationPaths").innerHTML = "<option value='0'>Empty List</option>";
+        var o = document.getElementById("org");
+        var ORG = o.options[o.selectedIndex].text;
+        if (ORG == "--Choose Organisation--") {
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ProjectList", "Account")',
+            data: { ORG },
+
+            success:
+                function(data) {
+                    console.log(data);
+                    document.getElementById("ProjectName").innerHTML = "<option value='0'>--ALL--</option>";
+                    for (let i = 0; i < data.length; i++) {
+                        document.getElementById("ProjectName").innerHTML += "<option value='" + data[i].Name + "'>" + data[i].Name + "</option>";
+                    }
+                     document.getElementById('load').hidden = true;
+                }            
+            ,
+            failure:
+                function() { alert("Something went wrong, Please try Again"); }
+
+        });
+
+    }
+
+    function FillIterationPaths() {
+         document.getElementById('load').hidden = false;
+         var o = document.getElementById("org");
+        var ORG = o.options[o.selectedIndex].text;
+        if (ORG == "--Choose Organisation--") {
+            return;
+        }
+        var o = document.getElementById("ProjectName");
+        var project = o.options[o.selectedIndex].text;
+        if (project == "--Choose Project--") {
+            return;
+        }
+         $.ajax({
+            type: "POST",
+            url: '@Url.Action("IterationsList", "Teams")',
+            data: { 'ORG':  ORG , 'project': project  },
+
+            success:
+                function(data) {
+                    console.log(data);
+
+                    document.getElementById("IterationPaths").innerHTML = "<option value='0'>--ALL--</option>";
+                    for (let j = 0; j < data.length; j++) {
+                        let iterationpaths = data[j];
+                        for (let i = 0; i < iterationpaths.value.length; i++) {
+                            var IsExists = false;
+                            var ddloption =  document.getElementById('IterationPaths').options;
+                            for(var m = 0; m < ddloption.length; m++)
+                            {
+                                if (ddloption[m].value === iterationpaths.value[i].path)
+                                {
+                                    IsExists = true;
+                                    break;
+                                }
+                            }
+                            if (!IsExists) {
+                                 document.getElementById("IterationPaths").innerHTML += "<option value='" + iterationpaths.value[i].path + "'>" + iterationpaths.value[i].path + "</option>";
+                            }
+                        }
+                    }
+                     document.getElementById('load').hidden = true;
+
+                }
+            ,
+            failure:
+                function() { alert("Something went wrong, Please try Again"); }
+
+        });
+    }
+
+    function GetCapacityReport() {
+        $('.dvTableData').html('');
+         document.getElementById('load').hidden = false;
+        var org = $('#org').children("option:selected").val();
+
+        var project =$('#ProjectName').children("option:selected").val();
+
+        var iteration =$('#IterationPaths').children("option:selected").val();
+         $.ajax({
+            type: "POST",
+            url: '@Url.Action("CapacityReport", "Teams")',
+            data: { 'org':  org , 'project': project,'iterationPath':iteration  },
+
+            success:
+                function (data) {
+                    var tabledata;
+                     
+                    if (data.currentTeamCapacities.length > 0) {
+                         tabledata = "<table class='dataTable'><thead> <tr><th>Iteration Path</th><th>Team Name</th><th>CurrentCapacity</th><th>CurrentWorking Days</th></tr></thead><tbody>";
+                        for (let i = 0; i < data.currentTeamCapacities.length; i++) {
+                              let row = data.currentTeamCapacities[i];
+                            tabledata += "<tr><td>" + row.iterationPath + "</td><td>" + row.teamName + "</td><td>" + row.currentCapacity + "</td><td>" + row.currentWorkingDays + "</td></tr > ";
+                        }
+                        tabledata += "</tbody></table>";
+                        console.log(tabledata);
+                        $('#tblCurrentTeamCapacity').append(tabledata);
+                    }
+                    tabledata = '';
+                     if (data.totalTeamCapacities.length > 0) {
+                         tabledata = "<table class='dataTable'><thead> <tr><th>Iteration Path</th><th>Team Name</th><th>totalCapacity</th><th>Iteration Start</th><th>Iteration End</th><th>Total Working Days </th></tr></thead><tbody>";
+                         for (let i = 0; i < data.totalTeamCapacities.length; i++) {
+                            let row = data.totalTeamCapacities[i];
+                            tabledata += "<tr><td>" + row.iterationPath + "</td><td>" + row.teamName + "</td><td>" + row.totalCapacity + "</td><td>" + row.iterationStart + "</td><td>" + row.iterationEnd + "</td><td>" + row.totalWorkingDays + "</td></tr > ";
+                        }
+                         tabledata += "</tbody></table>";
+                         console.log(tabledata);
+                        $('#tblTotalTeamCapacity').append(tabledata);
+                    }
+                    tabledata = '';
+                     if (data.capacitybyTeamMembers.length > 0) {
+                         tabledata = "<table class='dataTable'><thead> <tr><th>Team Member</th><th>Capacity Per Day</th><th>Iteration Path</th><th>Team Name</th><th>Iteration Start</th><th>Iteration End</th></tr></thead><tbody>";
+                         for (let i = 0; i < data.capacitybyTeamMembers.length; i++) {
+                             let row = data.capacitybyTeamMembers[i];
+                            tabledata += "<tr><td>" + row.teamMember + "</td><td>" + row.capacityPerDay + "</td><td>" + row.iterationPath + "</td><td>" + row.teamName + "</td><td>" + row.iterationStart + "</td><td>" + row.iterationEnd + "</td></tr > ";
+                        }
+                         tabledata += "</tbody></table>";
+                         console.log(tabledata);
+                        $('#tblCapacitybyTeamMember').append(tabledata);
+                    }
+                    tabledata = '';
+                    if (data.leavesbyTeamMembers.length > 0) {
+                       
+                         tabledata = "<table class='dataTable'><thead> <tr><th>Team Member</th><th>No of Days Leave</th><th>IterationPath</th><th>Team Name</th><th>Leave From</th><th>Leave To</th></tr></thead><tbody>";
+                        for (let i = 0; i < data.currentTeamCapacities.length; i++) {
+                             let row = data.leavesbyTeamMembers[i];
+                            tabledata += "<tr><td>" + row.teamMember + "</td><td>" + row.NoOfdaysLeave + "</td><td>" + row.iterationPath + "</td><td>" + row.teamName + "</td><td>" + row.LeaveFrom + "</td><td>" + row.LeaveTo + "</td></tr > ";
+                        }
+                        tabledata += "</tbody></table>";
+                        console.log(tabledata);
+                        $('#tblLeavesbyTeamMember').append(tabledata);
+                    }
+                    tabledata = '';
+                    $('.dataTable').DataTable();
+                    document.getElementById('load').hidden = true;
+                }
+            ,
+            failure:
+                function() { alert("Something went wrong, Please try Again"); }
+
+        });
+    }
+
+</script>
+
+<div class="breadcrumb-holder">
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Team Capacity</li>
+        </ul>
+    </div>
+</div>
+<div class="form-horizontal" style="font-size:16px;margin-left:1.5%">
+
+    <div class="form-row">
+        <div class="col-xs-4">
+
+            @Html.Label("Organization", htmlAttributes: new { @class = "control-label display-4  sizeNormal", style = "padding-right:40px" })
+
+            @Html.DropDownListFor(model => model.OrganizationName, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "org", onchange = "FillProjects()", style = "opacity:0.8;" })
+
+            @Html.ValidationMessageFor(model => model.OrganizationName, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="col-xs-4 ml-5">
+
+            @Html.Label("Project Name ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:35px" })
+
+            @Html.DropDownListFor(model => model.ProjectName, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "ProjectName", onchange = "FillIterationPaths()", style = "opacity:0.8" })
+
+            @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+
+        </div>
+
+        <div class="ml-5">
+
+            @Html.Label("Iteration Paths", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:21px" })
+
+            @Html.DropDownListFor(model => model.IterationPaths, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "IterationPaths", onchange = "GetCapacityReport()", style = "opacity:0.8" })
+
+            @Html.ValidationMessageFor(model => model.IterationPaths, "", new { @class = "text-danger" })
+
+        </div>
+    </div>
+    <img id="load" style="margin-left:45%" height="100" width="100" src="~/Content/Images/loadinggif.gif" hidden />
+    <div id="tblCurrentTeamCapacity" class="dvTableData">
+
+    </div>
+    <div id="tblTotalTeamCapacity" class="dvTableData">
+
+    </div>
+    <div id="tblCapacitybyTeamMember" class="dvTableData">
+
+    </div>
+    <div id="tblLeavesbyTeamMember" class="dvTableData">
+
+    </div>
+
+</div>
 

@@ -26,7 +26,30 @@
             width: 70px;
             height: 70px;
             animation: spin 1s linear infinite;*/
+        position:sticky;
+        z-index: 3;
+        -webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+
+
     }
+    #overlay {
+        position: fixed;
+        display: none;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+     
+        z-index: 2;
+    }
+
 </style>
 <script>
         $(document).ready(function () {
@@ -48,6 +71,7 @@
         var t;
 
     function populateProjects() {
+          document.getElementById("overlay").style.display = "block";
         var o = document.getElementById("org");
         var ORG = o.options[o.selectedIndex].text;
                document.getElementById("table").hidden = true;
@@ -105,7 +129,7 @@
                         document.getElementById("ProjectName").innerHTML += "<option value='" + data[i].Name + "'>" + data[i].Name + "</option>";
                     }
         document.getElementById('load').hidden = true;
-
+                      document.getElementById("overlay").style.display = "none";
                 }
             ,
             failure:
@@ -118,8 +142,11 @@
     }
 
     function populateAll() {
+          document.getElementById("overlay").style.display = "block";
+
         document.getElementById('load').hidden = false;
-         document.getElementById("WorkItemType").innerHTML = "<option value='0' >Loading Types...</option>";
+        document.getElementById('table').hidden = true;
+        document.getElementById('Count').hidden = true;
 
         var o = document.getElementById("org");
         var inp = new Object();
@@ -132,13 +159,13 @@
         inp.ProjectName = p.options[p.selectedIndex].text;
         if (inp.ProjectName == "--Choose Project--") {
         document.getElementById('load').hidden = true;
-        document.getElementById('table').hidden = true;
 
             return;
         }
         else {
 
         }
+         document.getElementById("WorkItemType").innerHTML = "<option value='0' >Loading Types...</option>";
 
         $.ajax({
             type: "POST",
@@ -153,6 +180,7 @@
                         document.getElementById("WorkItemType").innerHTML += "<option value='" + data[3][i] + "'>" + data[3][i] + "</option>";
                     }
         document.getElementById('load').hidden = true;
+          document.getElementById("overlay").style.display = "none";
 
                 }
             ,
@@ -163,6 +191,7 @@
     }
     var table;
     function filter() {
+          document.getElementById("overlay").style.display = "block";
 
         document.getElementById('load').hidden = false;
         //document.getElementById('Count').hidden = true;
@@ -226,22 +255,47 @@
                            document.getElementById("table").innerHTML = "";
                     }
                     var tabledata;
+                    var icon="";
                     if (data.length > 0) {
-                        tabledata = "<table id='dataTable' class='table' ><thead> <tr><th></th><th>Id</th><th>Title</th><th>Project</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody class='text-dark'>";
+                        tabledata = "<table id='dataTable' class='table' ><thead> <tr><th><img src='../Content/Icons/structure.png' /></th><th>Id</th><th>Title</th><th>Sprint</th><th>State</th><th>Type</th><th></th></tr></thead><tbody class='text-dark'>";
                         for (let i = 0; i < data.length; i++) {
-                            tabledata += "<tr style='background-color:lightgrey'><td class='details-control'></td><td style=''>" + data[i].id + "</td><td><a href='https://dev.azure.com/" + inp.OrganizationName + "/" + data[i]["fields"]["System.TeamProject"] + "/_workitems/edit/" + data[i].id + "' target='_blank'>" + data[i]["fields"]["System.Title"] + "</a></td><td>" + data[i]["fields"]["System.TeamProject"] + "</td><td>" + data[i]["fields"]["System.IterationPath"] + "</td><td>" + data[i]["fields"]["System.State"] + "</td><td>" + data[i]["fields"]["System.WorkItemType"] + "</td></tr>";
+                              if (data[i]["fields"]["System.WorkItemType"] == 'Feature') {
+                icon = "<img src='../Content/Icons/feature.png' ";
+            }
+            else if (data[i]["fields"]["System.WorkItemType"] == 'Task') {
+                icon = "<img src='../Content/Icons/task.png' />";
+            }
+            else if (data[i]["fields"]["System.WorkItemType"] == 'Bug') {
+                icon = "<img src='../Content/Icons/bug.png' />";
+            }
+            else if (data[i]["fields"]["System.WorkItemType"] == 'Epic') {
+                icon = "<img src='../Content/Icons/epic.png'/>";
+            }
+            else if (data[i]["fields"]["System.WorkItemType"] == 'Product Backlog Item') {
+                icon = "<img src='../Content/Icons/pbi.png' />";
+            }
+            else if (data[i]["fields"]["System.WorkItemType"] == 'User Story') {
+                icon = "<img src='../Content/Icons/us.png' />";
+            }
+            else {
+                icon = '#';
+            }
+                            tabledata += "<tr style='background-color:lightgrey' class='details-control'><td>"+icon+"</td><td style=''>" + data[i].id + "</td><td><a href='https://dev.azure.com/" + inp.OrganizationName + "/" + data[i]["fields"]["System.TeamProject"] + "/_workitems/edit/" + data[i].id + "' target='_blank' class='text-dark'>" + data[i]["fields"]["System.Title"] + "</a></td><td>" + data[i]["fields"]["System.IterationPath"] + "</td><td>" + data[i]["fields"]["System.State"] + "</td><td>" + data[i]["fields"]["System.WorkItemType"] + "</td><td class='details-control' style='vertical-align:top'></td></tr>";
                         }
                         document.getElementById("Count").innerHTML = " Count = " + data.length;
                         tabledata += "</tbody></table>";
                         table.innerHTML = tabledata;
                         table = $('#dataTable').DataTable();
-                          $('#dataTable tbody').on('click', 'td.details-control', function () {
+                          $('#dataTable tbody').on('click', 'tr.details-control', function () {
                          var tr = $(this).closest('tr');
                          var row = table.row(tr);
                             if ( row.child.isShown() ) {
-            // This row is already open - close it
-                             row.child.hide();
-                                tr.removeClass('shown');
+                                // This row is already open - close it
+                                $('div.slider', row.child()).slideUp(function () {
+                                    row.child.hide();
+                                    tr.removeClass('shown');
+                                });
+
 
                                 }
                             else {
@@ -250,17 +304,23 @@
                                 for (var n = 0; n < a.length; n++) {
                                     console.log(a[n]);
                                     var hiderow = table.row(a[n]);
+                                    $('div.slider', hiderow.child()).slideUp(function () {
                                     hiderow.child.hide();
+                                    });
+                                    a[n].classList.remove("shown");
+
+                                    
                                     //a[n].nextSibling.innerHTML = '';
-                                a[n].classList.remove("shown");
+                              
 
                                 }
-                                row.child(format(row.data(),5)+'</table>').show();
+                                row.child(format(row.data(), 5) + '</table></div>').show();
                                 tr.addClass('shown');
+                                $('div.slider', row.child()).slideDown('1000');
 
                               }
 
-                              s =  '<table  style="width:100" class="dataTable table bg-dark table-dark" >';
+                              s =  '<div class="slider"><table  style="width:100" class="dataTable table bg-dark table-dark">';
 
                               j = 0;
     });
@@ -271,12 +331,13 @@
                         $(".current").addClass("bg-primary");
                     }
                     else{
-                        tabledata = "<table id='dataTable'><thead class='borderRadius'> <tr><th></th><th>Id</th><th>Title</th><th>Project</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody><table>";
+                        tabledata = "<table id='dataTable'><thead class='borderRadius'> <tr><th></th><th>Id</th><th>Title</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody><table>";
                         table.innerHTML = tabledata;
                         $('#dataTable').DataTable();
                         $('#dataTable').addClass('table table-dark ');
                         $('#dataTable.thead').addClass('text-light');
                         $('div.thead').addClass('text-light');
+
                     }
                     document.getElementById("Count").innerHTML = " Count : " + data.length;
                     i++;
@@ -284,6 +345,7 @@
                     document.getElementById("Count").hidden = false;
 
         document.getElementById('load').hidden = true;
+          document.getElementById("overlay").style.display = "none";
 
                 }
             ,
@@ -305,8 +367,8 @@
         </ul>
     </div>
 </div>
-
-<div class="form-row ml-2">
+<div id="overlay"></div>
+<div  class="form-row ml-2" >
     <div class="col-xs-4">
 
         @Html.Label("Organization", htmlAttributes: new { @class = "control-label display-4  sizeNormal", style = "padding-right:40px" })
@@ -343,7 +405,8 @@
 
 
 </div>
-<img id="load" style="margin-left:42%" height="100" width="100" src="../Content/Images/loadinggif.gif" hidden />
+<img id="load" style="margin-left: 42%; margin-top: 5%;" height="100" width="100" src="../content/images/loadinggif.gif" hidden />
+
 
 <div><p id="Count" class="display-4" style="font-size:15px"></p></div>
 
@@ -360,7 +423,8 @@
     tr.shown td.details-control {
         background: url('../../Content/Images/details_close.png') no-repeat center center;
     }
-     input[type=search] {
+
+    input[type=search] {
         width: 220px;
         height: 30px;
         padding: 6px 12px;
@@ -370,7 +434,6 @@
         background-color: #fff;
         background-image: none;
         border: 1px solid #ccc;
-        border-radius: 6px;
         -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
         box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
         -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
@@ -402,18 +465,18 @@
         transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
         transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
     }
-td[colspan='7']{
-   background-color: lightgrey;
-}
+
+    td[colspan='7'] {
+        background-color: lightgrey;
+    }
 </style>
 <script>
 
-        var s = '<table  style="width:100" class="dataTable table bg-dark table-dark" >';
+        var s = '<div class="slider"><table  style="width:100" class="dataTable table bg-dark table-dark" >';
    var j = 0;
     function format(d,margin) {
 
         let id = d[1];
-        document.getElementById('load').hidden = false;
 
      @*var data= $.parseJSON($.ajax({
             type: "POST",
@@ -447,7 +510,6 @@ td[colspan='7']{
         OrganizationName = o.options[o.selectedIndex].text;
         var col = "";
         var ico = "";
-
         for (let i = 0; i < data.Forward.length; i++) {
             if (data.Forward[i].fields.WorkItemType == 'Feature') {
                 ico = "<img src='../Content/Icons/feature.png' style='padding-left:" + margin + "px'/>";
@@ -470,9 +532,9 @@ td[colspan='7']{
             else {
                 ico = '#';
             }
-            s += "<tr class='bg-dark' ><td style='width:50px;'>" + ico + "</td><td style='width:118px;'>" + data.Forward[i].id + "</td><td style='width:346px;'  ><a href='https://dev.azure.com/" + OrganizationName + "/" + data.Forward[i].fields.TeamProject + "/_workitems/edit/" + data.Forward[i].id + "' target='_blank'>" + data.Forward[i].fields.Title + "</a></td><td style='width:169px;'>" + data.Forward[i].fields.TeamProject + "</td><td style='width:158px;'>" + data.Forward[i].fields.IterationPath + "</td><td style='width:144px;'>" + data.Forward[i].fields.State + "</td><td style='width:142px;'>" + data.Forward[i].fields.WorkItemType + "</td></tr>";
+            s += "<tr class='bg-dark' ><td style='width:4%'>" + ico + "</td><td style='width:5%;padding-left:40px'>" + data.Forward[i].id + "</td><td style=''  ><a href='https://dev.azure.com/" + OrganizationName + "/" + data.Forward[i].fields.TeamProject + "/_workitems/edit/" + data.Forward[i].id + "' target='_blank' class='text-light'>" + data.Forward[i].fields.Title + "</a></td><td style=''>" + data.Forward[i].fields.IterationPath + "</td><td style=''>" + data.Forward[i].fields.State + "</td><td style=';vertical-align:top'>" + data.Forward[i].fields.WorkItemType + "</td></tr>";
             if (data.Forward[i].relations != null) {
-                var p = [0, data.Forward[i].id];
+                var p = [0,data.Forward[i].id];
 
                 format(p,margin+15);
                 //for (var j = 0; j < data.Forward[i].relations.length; j++) {
@@ -483,7 +545,6 @@ td[colspan='7']{
                 //        var p = [0, relid];
                 //        format(p);
                 //    }
-        document.getElementById('load').hidden = true;
 
                 }
             }
@@ -500,3 +561,8 @@ td[colspan='7']{
         }
 
 </script>
+<style>
+    div.slider {
+    display: none;
+}
+</style>
