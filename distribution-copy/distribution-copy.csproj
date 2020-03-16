@@ -180,6 +180,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Exetnsion.cs" />
     <Compile Include="Models\AccessDetails.cs" />
     <Compile Include="Models\AccountsResponse.cs" />
     <Compile Include="Models\ExpandWI.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="Models\ProfileDetails.cs" />
     <Compile Include="Models\ProjectModel.cs" />
     <Compile Include="Models\ResponseWI.cs" />
+    <Compile Include="Models\TeamCapacity.cs" />
     <Compile Include="Models\TraceInputModel.cs" />
     <Compile Include="Models\TeamDetails.cs" />
     <Compile Include="Models\WorkItemType.cs" />

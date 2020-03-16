@@ -13,6 +13,7 @@ namespace distribution_copy.Models
     }
     public class Iterations
     {
+        public string team { get; set; }
         public string id { get; set; }
         public string name { get; set; }
         public string path { get; set; }
