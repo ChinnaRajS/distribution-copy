@@ -12,33 +12,37 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top bg-dark">
+<body style="background-image:url(../../Content/Images/Wallpaper.png)">
+    @*<div class="navbar navbar-inverse navbar-fixed-top bg-dark">
         <div class="container">
-            <div class="navbar-header">
+            <div class="navbar-heade*@@*r">*@
                 @*<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                  
                 </button>*@
-                @Html.Label("Custom Report", new { @class = "navbar-brand text-light display-4", style = "font-size:25px" })
-            </div>
-            <div class="navbar-collapse collapse">
+                @*@Html.Label("Custom Report", new { @class = "navbar-brand text-light display-4", style = "font-size:25px" })
+            </div>*@
+            @*<div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
                     <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
                 </ul>
-            </div>
-            <div>
+            </div>*@
+            @*<div>
                 @if(Session["visited"]!=null){
                     Html.ActionLink("Signout", "Index", "Home", new { area = "" }, new { @class = "navbar-brand text-light display-4", style = "font-size:20px" });
                         }
-            </div>
-        </div>
-    </div>
+            </div>*@
+        @*</div>
+    </div>*@
     <div class="container body-content">
         @RenderBody()
 
         <footer class="fixed-bottom">
-    
+            <div class="navbar">
+                <a style="float:left;font-size:14px" class="text-light display-4 " href="https://www.ecanarys.com" target="_blank" >
+                    Developed by Canarys Automations Pvt Ltd
+                </a>
+            </div>
         </footer>
     </div>
 

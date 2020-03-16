@@ -5,6 +5,10 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using distribution_copy.Models;
+using distribution_copy.Models.AccessDetails;
+using distribution_copy.Models.AccountsResponse;
+using distribution_copy.Models.InputModel;
+using distribution_copy.Models.ProfileDetails;
 using distribution_copy.Services;
 
 namespace distribution_copy.Controllers
