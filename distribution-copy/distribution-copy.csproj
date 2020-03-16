@@ -177,6 +177,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Exetnsion.cs" />
     <Compile Include="Models\AccessDetails.cs" />
     <Compile Include="Models\AccountsResponse.cs" />
     <Compile Include="Models\ExpandWI.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="Models\ProfileDetails.cs" />
     <Compile Include="Models\ProjectModel.cs" />
     <Compile Include="Models\ResponseWI.cs" />
+    <Compile Include="Models\TeamCapacity.cs" />
     <Compile Include="Models\TraceInputModel.cs" />
     <Compile Include="Models\TeamDetails.cs" />
     <Compile Include="Models\WorkItemType.cs" />
@@ -201,6 +203,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="Content\Icons\pbi.png" />
     <Content Include="charts.html" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -210,6 +213,13 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\Icons\bug.png" />
+    <Content Include="Content\Icons\epic.png" />
+    <Content Include="Content\Icons\feature.png" />
+    <Content Include="Content\Icons\task.png" />
+    <Content Include="Content\Icons\malware.png" />
+    <Content Include="Content\Images\VS_logo.png" />
+    <Content Include="Content\Images\Wallpaper.png" />
     <Content Include="Content\Images\details_close.png" />
     <Content Include="Content\Images\details_open.png" />
     <Content Include="Content\Images\loadinggif.gif" />
@@ -587,6 +597,7 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="css\icon.css" />
     <None Include="Properties\PublishProfiles\samplecustomreport - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - Web Deploy.pubxml" />
@@ -667,6 +678,7 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
+    <Content Include="Content\Icons\us.png" />
     <Content Include="vendor\bootstrap\css\bootstrap-grid.css" />
     <Content Include="vendor\bootstrap\css\bootstrap-grid.min.css" />
     <Content Include="vendor\bootstrap\css\bootstrap-reboot.css" />
