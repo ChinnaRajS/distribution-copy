@@ -17,7 +17,7 @@ namespace distribution_copy.Controllers
         public ActionResult Index()
         {
             var PAT = Session["PAT"].ToString();
-          //  Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", "", token)));
+          //Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", "", token)));
             Org.pat = PAT;
             return View();
         }
@@ -52,16 +52,17 @@ namespace distribution_copy.Controllers
         // public ActionResult GetTestSuits(string planid)
         {
             TestSuit dataretrive = new TestSuit();
-
+            
             dataretrive = logic.TestSuit(planid);
+            foreach(var inf in dataretrive.value)
+            {
+                TestCasesFromSuits testresult=logic.TestCaseFromSuit(inf.plan.id.ToString(),inf.id.ToString());     
+            }
             //  ViewBag.datastore = dataretrive;
             ViewBag.data1234 = dataretrive;
             Session["responsedata"] = dataretrive;
-
             //     return View("TestDisplay");
             return Json(dataretrive, JsonRequestBehavior.AllowGet);
         }
-
-
     }
 }
