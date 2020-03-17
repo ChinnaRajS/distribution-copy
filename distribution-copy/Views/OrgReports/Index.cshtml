@@ -12,77 +12,71 @@
         <select class="form-control" id="org" name="departmentsDropdown"></select>
     </div>*@
 
-<div class="col-md-5" style="margin-left:30px">
+<div class="col-md-5" style="margin-left:60px">
     <label for="orgsDropdown" style="margin-top:30px;"><b>Organisations</b></label>
     <select class="form-control" id="org" name="departmentsDropdown"></select>
-    <label id="NoOrg" class="text-danger">!!!!Please Select Organisation</label>
+    <label id="NoOrg" class="text-danger" hidden>!!!!Please Select Organisation</label>
 </div>
-
 <div align="center" style="margin-top:10px">
-    <img src="~/Content/Images/loadinggif.gif" id="Load" width="150" height="150" />
+    <img src="~/Content/Images/loadinggif.gif" id="Load" width="150" height="150" hidden />
 </div>
-<div id="OrgChange" style="margin-left:30px">
-    <div id="OrgCount">
-        <div class="row" style="font-size:medium;margin-left:30px">
-            <div class="col-4"><p id="Project"></p> </div>
-            <div class=" col-4"><p id="BuildDef"></p></div>
-            <div class="col-4"><p id="ReleaseDef"></p></div>
-        </div>
-        <div class="row" style="font-size:medium;margin-left:30px">
-
-            <div class="col-4"><p id="Process"></p> </div>
-            <div class="col-4"><p id="Repos"></p> </div>
-            <div class="col-4"><p id="Users"></p> </div>
-        </div>
-        <div class="row" style="font-size:medium;margin-left:30px">
-            <div class="col-4"><p id="WIcount" class="Wi"></p> </div>
-
-        </div>
+<div id="OrgChange" style="margin-left:30px" hidden>
+    <div class="row" style="font-size:medium;margin-left:50px">
+        <div class="col-4"><p id="Project"></p> </div>
+        <div class=" col-4"><p id="BuildDef"></p></div>
+        <div class="col-4"><p id="ReleaseDef"></p></div>
     </div>
-</div>
-<div class="row ">
-    <div class="col-4" style="margin-left:50px" id="WItypeDrop">
-        @*@Html.Label("WorkItem Type", htmlAttributes: new { @class = "", style = "padding-right:21px" })*@
+    <div class="row" style="font-size:medium;margin-left:50px">
+        <div class="col-4"><p id="Process"></p> </div>
+        <div class="col-4"><p id="Repos"></p> </div>
+        <div class="col-4"><p id="Users"></p> </div>
+    </div>
+    <div class="row" style="font-size:medium;margin-left:50px">
+        <div class="col-4"><p id="WIcount" class="Wi"></p> </div>
+    </div>
+  
+    <div class="row ">
+        <div class="col-4" style="margin-left:50px" id="WItypeDrop">
+            @*@Html.Label("WorkItem Type", htmlAttributes: new { @class = "", style = "padding-right:21px" })*@
 
-        <label style="margin-top:20px;" class="WorkItemType"><b>WorkItem Type</b></label>
-        @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "--Workitem Types--" }), htmlAttributes: new { @class = "form-control WorkItemType", id = "WorkItemType", style = "opacity:0.8" })
+            <label style="margin-top:20px;" class="WorkItemType"><b>WorkItem Type</b></label>
+            @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "--Workitem Types--" }), htmlAttributes: new { @class = "form-control WorkItemType", id = "WorkItemType", style = "opacity:0.8" })
 
-        @Html.ValidationMessageFor(model => model.WorkItemType, "", new { @class = "text-danger" })
-        <label id="WItypeErr" class="text-danger "> </label>
-    </div>
-    <div class="col-4" style="font-size:large;margin-top:50px"><p id="WIcountByType"></p></div>
-</div>
-<div style="margin-top:10px;">
-    <div class="col-md-5" style="margin-left:40px">
-        <div id="projDrop " class="WorkItemType">
-            <label style="margin-top:20px;" class=""><b>Projects</b></label>
-            <select class="form-control " id="projectDrop" name="departmentsDropdown"></select>
+            @Html.ValidationMessageFor(model => model.WorkItemType, "", new { @class = "text-danger" })
+            <label id="WItypeErr" hidden="hidden" class="text-danger ">!!!!please select any workitem type </label>
         </div>
+        <div class="col-4" style="font-size:large;margin-top:50px"><p id="WIcountByType" hidden="hidden"></p></div>
     </div>
-    <div align="center">
-        <p id="noProj"></p>
-    </div>
-    <div id="ProjCounts" class="" style="margin-top:20px;margin-left:35px; font-size:large;">
-        <div class="row" style="margin-left:30px">
-            <div class="col-4"><p id="PBuildDef"></p></div>
-            <div class="col-4"><p id="PReleaseDef"></p></div>
-            <div class="col-4"><p id="PUser"></p></div>
+    <div style="margin-top:10px;">
+        <div class="col-md-5" style="margin-left:36px">
+            <div id="projDrop " class="WorkItemType">
+                <label style="margin-top:20px;" class=""><b>Projects</b></label>
+                <select class="form-control " id="projectDrop" name="departmentsDropdown"></select>
+                <p id="noProj" hidden="hidden" class="text-danger ">!!!!please select the project</p>
+            </div>
         </div>
-        <div class="row"style="margin-left:30px">
-            <div class="col-4"><p id="PRepo"></p></div>
-            <div class="col-4"><p id="PWorkItem"class="WI"></p></div>
+        <div id="ProjCounts" hidden="hidden" style="margin-top:20px;margin-left:35px; font-size:large;">
+            <div class="row" style="margin-left:30px">
+                <div class="col-4"><p id="PBuildDef"></p></div>
+                <div class="col-4"><p id="PReleaseDef"></p></div>
+                <div class="col-4"><p id="PUser"></p></div>
+            </div>
+            <div class="row" style="margin-left:30px">
+                <div class="col-4"><p id="PRepo"></p></div>
+                <div class="col-4"><p id="PWorkItem" hidden></p></div>
+            </div>
         </div>
     </div>
 </div>
 <script>
     //Ajax Call to fetch Organization
-    $(document).ready(function () {
-        $("#NoOrg").hide();
-        $('#Load').hide();
-        $('#WItypeErr').hide();
-        $('.WorkItemType').hide();
+    $(document).ready(function () {       
+        var load = document.getElementById('Load');
+        var orgchange= document.getElementById('OrgChange');
+        var ProjCounts= document.getElementById('ProjCounts');       
+        var wicounts = document.getElementsByClassName('WorkItemType');
+        wicounts.hidden = true;
         var Org = $('#org').val();
-
         var ProjWICount;
         var selestedProj;
         var WIType
@@ -103,86 +97,71 @@
         });
 
         function GetReport(data) {
-
-                        $("#OrgChange").show();
-                        $('#Load').hide();
+                        orgchange.hidden = false;      
+                        load.hidden = true;
                         $("#BuildDef").html("Build Definitions  : " + data.counts.buildDefCount);
                         $("#ReleaseDef").html("Release Definitions  : " + data.counts.releaseDefCount);
                         $("#Process").html("Process Templates : " + data.counts.processCount);
                         $("#Project").html("Projects : " + data.Count);
                         $("#Users").html("Users : " + data.counts.UserCount);
                         $("#Repos").html("Repositories : " + data.counts.repoCount);
-                        $("#WIcount").html("WorkItems : " + data.counts.WIcountOrg);
-                        $(".WorkItemType").show();
-
+                        $("#WIcount").html("WorkItems : " + data.counts.WIcountOrg);    
+                        wicounts.hidden = false;
                         var s = '<option value="0">--Choose Project--</option>';
                         $("#projectDrop").empty();
                         for (var i = 0; i < data.Value.length; i++) {
                             s += '<option value="' + data.Value[i].Name + '">' + data.Value[i].Name + '</option>';
                         }
                         $("#projectDrop").append(s);
-                        WIType=$('#WorkItemType').val()
-                        //$('#ReleaseDef').append(data.counts.releaseDefCount);
+                        WIType = $('#WorkItemType').val()
+                    
                         $('#projectDrop').change(function () {
                             selestedProj = $('#projectDrop').val();
                             for (var i = 0; i < data.Value.length; i++) {
                                 if (data.Value[i].Name == selestedProj) {
-                                    $("#noProj").hide();
-                                    $("#ProjCounts").show();
+                                    /*$("#noProj").hide(); */                                   
+                                    ProjCounts.hidden = false;
                                     $("#PBuildDef").html("Build Definitions : " + data.Value[i].counts.buildDefCount);
                                     $("#PReleaseDef").html("Release Definitions : " + data.Value[i].counts.releaseDefCount);
                                     $("#PUser").html("Users : " + data.Value[i].counts.UserCount);
                                     $("#PRepo").html("Repositories : " + data.Value[i].counts.repoCount);
-                                    if ($('#WorkItemType') != "0")
+                                    if ($('#WorkItemType') != "0") {
+                                        document.getElementById('PWorkItem').hidden=false;
                                         $("#PWorkItem").html(WIType + "s : " + ProjWICount);
+                                    }
                                     else
-                                        $("#PWorkItem").hide();
-
+                                         document.getElementById('PWorkItem').hidden=true;
                                 }
                                 else if (selestedProj == "0") {
-                                    $("#ProjCounts").hide();
-                                    /*$("#PBuildDef").hide();*/
-                                    $("#noProj").show();
-                                    $("#noProj").html("Project Not Selected");
+                                    ProjCounts.hidden = true;                                 
+                                    document.getElementById('noProj').hidden = false;
                                 }
                             }
-                });
-
+                        });
         }
-
-
-        //$('#org').change(function () {
-
-
             $('#org').change(function () {
-
-                $('#Load').show();
-                $('#OrgChange').hide();
-                $("#ProjCounts").hide();
-                $('.WorkItemType').hide();
+                load.hidden = false;
+                orgchange.hidden = true;
+                ProjCounts.hidden = true;
+                document.getElementById('WIcountByType').hidden = true;
+                document.getElementById('NoOrg').hidden = true;
                 Org = $('#org').val();
                 if (Org == "0") {
-                    $("#NoOrg").show();
+                    document.getElementById('NoOrg').hidden = false;
                     $("#noProj").hide();
-                    $("#WItypeErr").hide();
-                    $('#Load').hide();
+                    document.getElementById('WItypeErr').hidden=true;
+                    load.hidden = true;
                 }
-
-
                 $.ajax({
-
                     type: 'get',
                     dataType: 'json',
                     data: { 'organisation': Org },
                     url: '@Url.Action("report","OrgReports")',
                     success: function (data) {
-
                         GetReport(data);
-
                     },
                     failure: function (data) {
                         if (data == null) {
-
                             alert("Please Select Any Organnisation");
                         }
                     }
@@ -204,11 +183,9 @@
                                 for (let i = 0; i < data.length; i++) {
                                     document.getElementById("WorkItemType").innerHTML += "<option value='" + data[i] + "'>" + data[i] + "</option>";
                                 }
-
                             },
                         failure:
                             function () { alert("Something went wrong"); }
-
                     });
                 }
                 else {
@@ -221,13 +198,10 @@
              Org = $('#org').val();
              WIType = $('#WorkItemType').val();
 
-                //console.log(WIType);
-                //console.log(Org);
-                if (WIType == "0") {
-                             $("#WIcountByType").hide();
-                            $("#WItypeErr").show();
-                            $("#WItypeErr").html("!!!!please select any workitem type");
-                    $("#PWorkItem").hide();
+                 if (WIType == "0") {
+                    document.getElementById('WItypeErr').hidden = false;
+                    document.getElementById('WIcountByType').hidden = true;
+                    document.getElementById('PWorkItem').hidden=true;
                     return;
                         }
                 $.ajax({
@@ -238,33 +212,23 @@
                     success: function (data) {
                         if (WIType == "0") {
                              $("#WIcountByType").hide();
-                            $("#WItypeErr").show();
-                            $("#WItypeErr").html("!!!!please select any workitem type");
-                            $("#PWorkItem").hide();
-
+                            document.getElementById('WItypeErr').hidden=false;                        
+                            document.getElementById('PWorkItem').hidden=true;
                         }
                         else {
-                            $("#WIcountByType").show();
-                            $("#WItypeErr").hide();
+                            document.getElementById('WIcountByType').hidden = false;
+                            document.getElementById('WItypeErr').hidden=true;
                             ProjWICount = data.counts.ProjWIcountByType;
                             $("#WIcountByType").html(WIType + "s : " + data.counts.WIcountType);
                             if (selestedProj != "0") {
-                                $("#PWorkItem").show();
+                                document.getElementById('PWorkItem').hidden=false;
                                 $("#PWorkItem").html(WIType + "s : " + data.counts.ProjWIcountByType);
-
                             }
-
                         }
-
                     }
                 });
             })
-
-
         })
-
-
-
 </script>
 
 
