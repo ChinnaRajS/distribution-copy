@@ -27,7 +27,7 @@ namespace distribution_copy.Controllers
         string BaseURLvsrm = ConfigurationManager.AppSettings["BaseURLvsrm"];
         string version = ConfigurationManager.AppSettings["ApiVersion"];
         string version1 = "5.1-preview";
-        public JsonResult report(string organisation, string workitemtype=null)
+        public JsonResult report(string organisation, string workitemtype = null)
         {
             if (organisation == "0")
                 return Json(null);
@@ -35,7 +35,7 @@ namespace distribution_copy.Controllers
             {
                 c.WIcountType = GetWorkitemCount(organisation, workitemtype);
                 org.counts = c;
-                return Json(org,JsonRequestBehavior.AllowGet);
+                return Json(org, JsonRequestBehavior.AllowGet);
             }
             req = new APIRequest(Session["PAT"].ToString());
             string url;
@@ -192,7 +192,7 @@ namespace distribution_copy.Controllers
         }
 
         //Author:Ravivarma (12/03/2020) -To get the count of all Workitems by types in the organisation
-      
+
         public int GetWorkitemCount(string organisation, string workitemtype)
         {
             int result = 0;

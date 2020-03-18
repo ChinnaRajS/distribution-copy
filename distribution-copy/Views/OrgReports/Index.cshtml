@@ -17,6 +17,87 @@
             <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
             <select class="form-control" id="org" name="departmentsDropdown"></select>
         </div>
+        <div id="OrgChange">
+            <div id="OrgCount">
+
+                <div class="row">
+                    <ul class="list-group" style="width:45%; margin-left:20px; padding:10px;">
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
+                            Project Count
+                            <span class="badge badge-primary badge-pill" id="Project"></span>
+                        </li>
+
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
+                            BuildDefinition Count
+                            <span class="badge badge-primary badge-pill" id="BuildDef"></span>
+                        </li>
+
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
+                            Release Definition Count
+                            <span class="badge badge-primary badge-pill" id="ReleaseDef"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
+                            Process Template Count
+                            <span class="badge badge-primary badge-pill" id="Process"></span>
+                        </li>
+                    </ul>
+
+                    <ul class="list-group" style="width:45%; margin-left:20px; padding:10px;">
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
+                            Repos Count
+                            <span class="badge badge-primary badge-pill" id="Repos"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
+                            Org Level Users Count
+                            <span class="badge badge-primary badge-pill" id="Users"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
+                            Work Item Count
+                            <span class="badge badge-primary badge-pill" id="WIcount"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
+                            Work Item Count By Type
+                            <span class="badge badge-primary badge-pill" id="WIcountByType"></span>
+                        </li>
+                        @*<div class=" col-4"><p id="BuildDef"></p></div>
+                            <div class="col-4"><p id="ReleaseDef"></p></div>
+                            <div class="col-4"><p id="Process"></p> </div>
+                            <div class="col-4"><p id="Repos"></p> </div>
+                            <div class="col-4"><p id="Users"></p> </div>
+                            <div class="col-4"><p id="WIcount"></p> </div>
+                            <div class="col-4"><p id="WIcountByType"></p></div>*@
+                    </ul>
+
+                </div>
+            </div>
+
+
+            @*<div id="OrgCount">
+
+                    <div class="row" style="margin-left:auto;">
+                        <div class="col-4"><p id="Project"></p> </div>
+                        <div class=" col-4"><p id="BuildDef"></p></div>
+                        <div class="col-4"><p id="ReleaseDef"></p></div>
+                        <div class="col-4"><p id="Process"></p> </div>
+                        <div class="col-4"><p id="Repos"></p> </div>
+                        <div class="col-4"><p id="Users"></p> </div>
+                        <div class="col-4"><p id="WIcount"></p> </div>
+                        <div class="col-4"><p id="WIcountByType"></p></div>
+                    </div>
+                </div>*@
+            <div align="center">
+
+            </div>
+            <div style="margin-top:50px;">
+                <div align="center">
+                    <p id="noProj" class="navbar-brand"></p>
+                </div>
+                <div class="row" id="ProjCounts" style="margin-left:auto;">
+                    <div class="col-4"><p id="PBuildDef"></p></div>
+                    <div class="col-4"><p id="PReleaseDef"></p></div>
+                </div>
+            </div>
+        </div>
         <div class="col-md-4">
             @Html.Label("WorkItem Type", htmlAttributes: new { @class = "control-label", style = "padding-right:21px" })
 
@@ -38,32 +119,7 @@
     <br />
     <img src="~/Content/Images/loadinggif.gif" id="Load" width="150" height="150" />
 </div>
-<div id="OrgChange">
-    <div id="OrgCount">
-        <div class="row" style="margin-left:auto;">
-            <div class="col-4"><p id="Project"></p> </div>
-            <div class=" col-4"><p id="BuildDef"></p></div>
-            <div class="col-4"><p id="ReleaseDef"></p></div>
-            <div class="col-4"><p id="Process"></p> </div>
-            <div class="col-4"><p id="Repos"></p> </div>
-            <div class="col-4"><p id="Users"></p> </div>
-            <div class="col-4"><p id="WIcount"></p> </div>
-            <div class="col-4"><p id="WIcountByType"></p></div>
-        </div>
-    </div>
-    <div align="center">
 
-    </div>
-    <div style="margin-top:50px;">
-        <div align="center">
-            <p id="noProj" class="navbar-brand"></p>
-        </div>
-        <div class="row" id="ProjCounts" style="margin-left:auto;">
-            <div class="col-4"><p id="PBuildDef"></p></div>
-            <div class="col-4"><p id="PReleaseDef"></p></div>
-        </div>
-    </div>
-</div>
 
 
 
@@ -103,14 +159,14 @@
 
                         $("#OrgChange").show();
                         $('#Load').hide();
-                        $("#BuildDef").html("Build Definition Count : " + data.counts.buildDefCount);
-                        $("#ReleaseDef").html("Release Definition Count : " + data.counts.releaseDefCount);
-                        $("#Process").html("Process Template Count : " + data.counts.processCount);
-                        $("#Project").html("Project Count : " + data.Count);
-                        $("#Users").html("Org Level Uesrs Count : " + data.counts.UserCount);
-                        $("#Repos").html("Repos Count : " + data.counts.repoCount);
-                        $("#WIcount").html("WorkItemsInOrg Count : " + data.counts.WIcountOrg);
-                        $("#WIcountByType").html("WorkItemsInType Count : " + data.counts.WIcountType);
+                        $("#BuildDef").html("" + data.counts.buildDefCount);//Build def Cou
+                        $("#ReleaseDef").html("" + data.counts.releaseDefCount);//Release
+                        $("#Process").html("" + data.counts.processCount);//Process
+                        $("#Project").html("" + data.Count);//Project Count
+                        $("#Users").html("" + data.counts.UserCount);//Org User
+                        $("#Repos").html("" + data.counts.repoCount);//Repo
+                        $("#WIcount").html("" + data.counts.WIcountOrg);//WIInOrg
+                        $("#WIcountByType").html("" + data.counts.WIcountType);//WICountty
 
 
                         $("#projDrop").show();
