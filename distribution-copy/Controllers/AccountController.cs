@@ -124,6 +124,8 @@ namespace distribution_copy.Controllers
                 }
                 wiqlResponse = JsonConvert.DeserializeObject<ResponseWI>(responseBody);
             }
+            if (wiqlResponse == null)
+                return null;
 
             if (wiqlResponse.workItems == null || wiqlResponse.workItems.Count == 0)
                 return null;

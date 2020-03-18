@@ -148,6 +148,8 @@ namespace distribution_copy.Controllers
                     var teamiteration = iterations.FirstOrDefault(x => x.path == item.IterationPath && x.team == item.teamName);
                     CurrentTeamCapacity currentTeamCapacity = new CurrentTeamCapacity();
                     TotalTeamCapacity totalTeamCapacity = new TotalTeamCapacity();
+                    CapacitybyTeamMember capacitybyTeamMember = new CapacitybyTeamMember();
+                    LeavesbyTeamMember leavesbyTeamMember = new LeavesbyTeamMember();
                     double currentCapacity = 0;
                     double TotalCapacity = 0;
                     if (teamiteration != null)
@@ -169,6 +171,22 @@ namespace distribution_copy.Controllers
                         foreach (var member in item.value)
                         {
                             currentCapacity += (Convert.ToDouble(member.activities[0].capacityPerDay));
+
+                            capacitybyTeamMember.teamMember = member.teamMember.displayName;
+                            capacitybyTeamMember.iterationPath = teamiteration.path;
+                            capacitybyTeamMember.iterationStart = teamiteration.attributes.startDate;
+                            capacitybyTeamMember.iterationEnd = teamiteration.attributes.finishDate;
+                            capacitybyTeamMember.capacityPerDay = member.activities[0].capacityPerDay;
+                            capacitybyTeamMember.teamName = teamiteration.team;
+                            capacity.capacitybyTeamMembers.Add(capacitybyTeamMember);
+                            
+                            leavesbyTeamMember.teamMember = member.teamMember.displayName;
+                            leavesbyTeamMember.teamName = teamiteration.team;
+                            leavesbyTeamMember.LeaveFrom = "";
+                            leavesbyTeamMember.LeaveTo ="";
+                            leavesbyTeamMember.NoOfdaysLeave = member.daysOff.Count>0?member.daysOff[0]:"0";
+                            leavesbyTeamMember.iterationPath = teamiteration.path;
+                            capacity.leavesbyTeamMembers.Add(leavesbyTeamMember);
                         }
                         currentTeamCapacity.currentCapacity = (currentCapacity * Convert.ToDouble(currentTeamCapacity.currentWorkingDays)).ToString();
                         totalTeamCapacity.totalCapacity = (currentCapacity * Convert.ToDouble(totalTeamCapacity.totalWorkingDays)).ToString();
