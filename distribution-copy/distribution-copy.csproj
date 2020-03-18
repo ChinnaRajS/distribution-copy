@@ -180,16 +180,20 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Exetnsion.cs" />
     <Compile Include="Models\AccessDetails.cs" />
     <Compile Include="Models\AccountsResponse.cs" />
     <Compile Include="Models\ExpandWI.cs" />
     <Compile Include="Models\InputModel.cs" />
+    <Compile Include="Models\IterationDetails.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\ProfileDetails.cs" />
     <Compile Include="Models\ProjectModel.cs" />
     <Compile Include="Models\ResponseWI.cs" />
+    <Compile Include="Models\TeamCapacity.cs" />
     <Compile Include="Models\TraceExportModel.cs" />
     <Compile Include="Models\TraceInputModel.cs" />
+    <Compile Include="Models\TeamDetails.cs" />
     <Compile Include="Models\WorkItemType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AccountService.cs" />
@@ -883,7 +887,6 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Shared\_Layout2.cshtml" />
-    <Content Include="Views\Teams\Index.cshtml" />
     <Content Include="Views\Teams\Capacity.cshtml" />
     <Content Include="Views\Trace\Index.cshtml" />
   </ItemGroup>
