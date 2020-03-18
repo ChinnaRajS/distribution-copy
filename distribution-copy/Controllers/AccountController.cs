@@ -375,7 +375,7 @@ namespace distribution_copy.Controllers
             response.value = new List<Value>();
             response = (ResponseWI)Filter(inp, 1);
             //response.value = JsonConvert.DeserializeObject<List<Value>>(new JavaScriptSerializer().Serialize(Filter(inp,1).Data));
-            generateExcel(response, inp);
+            generateExcel(response, inp );
             return RedirectToAction("../WIReport/Index");
         }
         public void generateExcel(ResponseWI wi, InputModel inp)
@@ -447,5 +447,6 @@ namespace distribution_copy.Controllers
                 Response.End();
             }
         }
+      
     }
 }

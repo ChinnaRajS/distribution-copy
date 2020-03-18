@@ -188,6 +188,7 @@
     <Compile Include="Models\ProfileDetails.cs" />
     <Compile Include="Models\ProjectModel.cs" />
     <Compile Include="Models\ResponseWI.cs" />
+    <Compile Include="Models\TraceExportModel.cs" />
     <Compile Include="Models\TraceInputModel.cs" />
     <Compile Include="Models\WorkItemType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -213,15 +214,11 @@
     <Content Include="Content\Icons\task.png" />
     <Content Include="Content\Icons\malware.png" />
     <Content Include="Content\Images\loadinggif2.gif" />
-    <Content Include="Content\Images\details_open2.png" />
-    <Content Include="Content\Images\details_close2.png" />
     <Content Include="Content\Images\details_open.png" />
     <Content Include="Content\Images\details_close.png" />
     <Content Include="Content\Images\loadinggif.gif" />
     <Content Include="Content\Images\VS_logo.png" />
     <Content Include="Content\Images\Wallpaper.png" />
-    <Content Include="Content\Images\details_close1.png" />
-    <Content Include="Content\Images\details_open1.png" />
     <Content Include="Content\Images\loadinggif1.gif" />
     <Content Include="css\custom.css" />
     <Content Include="css\fontastic.css" />
