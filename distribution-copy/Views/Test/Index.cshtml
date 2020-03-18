@@ -1,0 +1,262 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_DashBoard.cshtml";
+    ViewBag.Title = "Index";
+}
+<script scr="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script scr="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<style>
+    .sizeNormal {
+        font-size: 16px;
+    }
+
+    .borderRadius {
+        border-radius: 10px;
+    }
+
+    .width {
+        width: 250px;
+    }
+</style>
+<div class="breadcrumb-holder">
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Reports   </li>
+        </ul>
+    </div>
+</div>
+
+<div class="form-horizontal" style="font-size:16px;margin-left:1.5%">
+
+
+    <div class="form-row">
+        <div class="col-xs-4">
+            <label class="control-label display-4  sizeNormal" style="padding-right:40px">Organization</label>
+            <select name="cs3" id="OrganizationDrop" class="form-control borderRadius width" style="opacity:0.8;"> </select>
+        </div>
+
+        <div class="col-xs-4 ml-5">
+
+            <label class="control-label display-4  sizeNormal" style="padding-right:40px">Project Name</label>
+            <select name="cs3" id="ddlProjectvalue" class="form-control borderRadius width" style="opacity:0.8;"> </select>
+        </div>
+
+        <div class="ml-5">
+            <label class="control-label display-4  sizeNormal" style="padding-right:40px">Test Plan</label>
+            <select name="cs3" id="TestPlanDrop" class="form-control borderRadius width" style="opacity:0.8;"> </select>
+        </div>
+    </div>
+</div>
+
+<br />
+<div>
+    <table id="DataTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Suite</th>
+                <th>Planned</th>
+                <th>Executed</th>
+                <th>Executed %</th>
+                <th>Pass</th>
+                <th>Fail</th>
+                <th>Pass Based on Executed %</th>
+                <th>Pass Based on Planing %</th>
+                <th>Not Executed</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Suite 1</td>
+                <td>4</td>
+                <td>1</td>
+                <td>61 %</td>
+                <td>1</td>
+                <td>2</td>
+                <td>25 %</td>
+                <td>31 %</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>Suite 2</td>
+                <td>5</td>
+                <td>4</td>
+                <td>90 %</td>
+                <td>3</td>
+                <td>2</td>
+                <td>55 %</td>
+                <td>13 %</td>
+                <td>1</td>
+            </tr>
+        <tfoot>
+            <tr>
+                <th>Suite</th>
+                <th>Planned</th>
+                <th>Executed</th>
+                <th>Executed %</th>
+                <th>Pass</th>
+                <th>Fail</th>
+                <th>Pass Based on Executed %</th>
+                <th>Pass Based on Planing %</th>
+                <th>Not Executed</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+
+
+
+
+
+
+<script>
+    
+
+    $(document).ready(function () {
+         $('#DataTable').DataTable();
+        //GetOrganization
+            $.ajax({
+                url: '@Url.Action("GetOrganization", "Test")',
+                type: 'Get',
+                data: {},
+                dataType: 'json',
+                success: function (data) {
+                    var count = Object.keys(data).length;
+                    if (count >= 1) {
+                        var optionhtml1 = '<option value="' +
+                            0 + '">' + "--Select Organization--" + '</option>';
+                        $("#OrganizationDrop").append(optionhtml1);
+                        $.each(data.value, function (i) {
+
+                            var optionhtml = '<option value="' +
+                                data.value[i].accountId + '">' + data.value[i].accountName + '</option>';
+                            $("#OrganizationDrop").append(optionhtml);
+                        });
+                        //   alert('Request Successful');
+                    };
+                },
+
+                error: function (request, error) {
+                    alert('Invalid Details');
+                }
+            });
+
+
+
+
+        //Select All CheckBox
+           $("#selectAll").on("click", function () {
+
+               $("#DataTable tr").each(function () {
+                   //var isChecked = $("#chkPassport").is(":checked");
+                   if ($(this).find("input").is(":checked")) {
+                       $(this).find("input").attr('checked', false);
+                   }
+                   else {
+                       $(this).find("input").attr('checked', true);
+                   }
+               });
+           });
+
+           $('#OrganizationDrop').change(function () {
+               var orgName=$("#OrganizationDrop option:selected").text();
+                var pat = $('#PAT').val();
+                if (orgName != null || orgName != "" && pat != null || pat != "")
+                    $.ajax({
+                        url:'@Url.Action("GetProjects","Test")',
+                        type: 'Get',
+                        data: { 'orgName': orgName },
+                        dataType: 'json',
+                        success: function (data) {
+                            var count = Object.keys(data).length;
+                            if (count >= 1) {
+                                var optionhtml1 = '<option value="' +
+                                    0 + '">' + "--Select Project--" + '</option>';
+                                $("#ddlProjectvalue").append(optionhtml1);
+                                $.each(data.value, function (i) {
+                                    var optionhtml = '<option value="' +
+                                        data.value[i].id + '">' + data.value[i].name + '</option>';
+                                    $("#ddlProjectvalue").append(optionhtml);
+                                });
+                                //   alert('Request Successful');
+                            };
+                        },
+
+                        error: function (request, error) {
+                            alert('Invalid Details');
+                        }
+                    });
+            })
+
+
+            $('#ddlProjectvalue').change(function () {
+                var selectedText = $("#ddlProjectvalue").find("option:selected").text();
+                var selectedValue = $("#ddlProjectvalue").val();
+                $('#testPlanDrop').show();
+                $.ajax({
+                    url:'@Url.Action("GetJsonPlans", "Test")',
+                    type: 'Get',
+                    data: { 'selectedProject': selectedText },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.count<1)
+                        {
+                            alert('No Test Plans Found')
+                        }
+                        var count = Object.keys(data).length;
+                        if (count >= 1) {
+                            var optionhtml1 = '<option value="' +
+                                0 + '">' + "--Select Test Plan--" + '</option>';
+                            $("#TestPlanDrop").append(optionhtml1);
+
+                            $.each(data.value, function (i) {
+                                var optionhtml = '<option value="' +
+                                    data.value[i].id + '">' + data.value[i].name + '</option>';
+
+                                $("#TestPlanDrop").append(optionhtml);
+                            });
+                            //      alert('Request Successful');
+                        };
+                    },
+
+                    error: function (request, error) {
+                        alert('Request Failed');
+                    }
+                });
+            });
+
+
+
+          $('#TestPlanDrop').change(function () {
+                var selectedText = $("#ddlProjectvalue").find("option:selected").text();
+                var selectedValue = $("#ddlProjectvalue").val();
+                $('#testPlanDrop').show();
+                $.ajax({
+                    url:'@Url.Action("GetJsonPlans", "Test")',
+                    type: 'Get',
+                    data: { 'selectedProject': selectedText },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.count<1)
+                        {
+                            alert('No Test Suites Found')
+                        }
+                        var count = Object.keys(data).length;
+                       
+                            $.each(data.value, function (i) {
+                               var tableData = "<tr class='tableData'><td>" + data.value[i].workItem.id + "</td><td>" + data.value[i].workItem.name + "</td><td><input type='checkbox' name='ID' value=" + data.value[i].workItem.id + "  class='custom-checkbox chkCheckBoxId' /></td></tr>"
+                                $("#DataTable").append(tableData);
+                            });
+                            //      alert('Request Successful');
+                       
+                    },
+
+                    error: function (request, error) {
+                        alert('Request Failed');
+                    }
+                });
+            });
+    })
+</script>

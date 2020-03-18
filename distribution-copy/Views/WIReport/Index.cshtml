@@ -1,4 +1,4 @@
-﻿@model distribution_copy.Models.InputModel
+﻿@model distribution_copy.Models.InputModel.InputModel
 
 @{
     ViewBag.Title = "Index";
@@ -91,7 +91,7 @@
             inp.WorkItemType = null;
         else
             inp.WorkItemType = w.options[w.selectedIndex].text;
-               
+
 
         if (AssignedTo.options[AssignedTo.selectedIndex].value == "0")
             inp.AssignedTo = null;
@@ -151,7 +151,7 @@
                     else{
                         tabledata = "<table id='dataTable'><thead class='borderRadius'> <tr><th>Id</th><th>Title</th><th>Project</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody><table>";
                         table.innerHTML = tabledata;
-                        $('#dataTable').DataTable();                 
+                        $('#dataTable').DataTable();
                         $('#dataTable').addClass('table table-dark ');
                         $('#dataTable.thead').addClass('text-light');
                         $('div.thead').addClass('text-light');
@@ -186,6 +186,7 @@
          inp.ProjectName = p.options[p.selectedIndex].text;
          if (inp.ProjectName == "--ALL--") {
             populateWorkItemTypes();
+            document.getElementById("Count").hidden = true;
             document.getElementById("filters").hidden = true;
             document.getElementById("AssignedTo").disabled = true;
             document.getElementById("Sprint").disabled = true;
@@ -246,7 +247,7 @@
         document.getElementById("State").disabled = true;
         document.getElementById("CreatedDate").disabled = true;
         document.getElementById("CreatedDate").value = "";
-         document.getElementById("WorkItemType").innerHTML = "<option value='0' >--ALL--</option>";
+         document.getElementById("WorkItemType").innerHTML = "<option value='0' >Empty List</option>";
          document.getElementById("AssignedTo").innerHTML = "<option value='0' >--ALL--</option>";
          document.getElementById("State").innerHTML = "<option value='0' >--ALL--</option>";
          document.getElementById("Sprint").innerHTML = "<option value='0' >--ALL--</option>";
@@ -254,11 +255,12 @@
         var inp = new Object();
         var o = document.getElementById("org");
         inp.OrganizationName = o.options[o.selectedIndex].text;
-        document.getElementById("ProjectName").innerHTML = "<option value='0'>--ALL--</option>";
+        document.getElementById("ProjectName").innerHTML = "<option value='0'>Empty List</option>";
 
 
         if (inp.OrganizationName == "--Choose Organisation--") {
-         document.getElementById('filters').hidden = true;
+            document.getElementById('filters').hidden = true;
+             document.getElementById("exc").disabled = true;
 
             document.getElementById('load').hidden = true;
             return;
@@ -296,7 +298,14 @@
 
     }
 </script>
-
+<div class="breadcrumb-holder">
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Reports   </li>
+        </ul>
+    </div>
+</div>
 
 <div class="form-horizontal" style="font-size:16px;margin-left:1.5%">
 
@@ -344,7 +353,7 @@
                     @Html.Label("Assigned To ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal ", style = "" })
 
                     @Html.DropDownListFor(model => model.AssignedTo, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius fwidth", id = "AssignedTo", onchange = "filter()", style = "opacity:0.8" })
-                
+
                 </div>
                 <div class="pl-5">
 
@@ -358,14 +367,14 @@
                     @Html.Label("Created Date ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal ", style = "" })
 
                     @Html.EditorFor(model => model.CreatedDate, new { htmlAttributes = new { @class = "form-control borderRadius fwidth", id = "CreatedDate", type = "date", onchange = "filter()" } })
-                
+
                 </div>
                 <div class="pl-5">
 
                     @Html.Label("State ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal ", style = "" })
 
                     @Html.DropDownListFor(model => model.State, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius fwidth", id = "State", onchange = "filter()", style = "opacity:0.8" })
-                
+
                 </div>
             </div>
         </div>
@@ -373,11 +382,12 @@
     </form>
     <img id="load" style="margin-left:45%" height="100" width="100" src="~/Content/Images/loadinggif.gif" hidden />
     <div><p id="Count" class="display-4" style="font-size:15px"></p></div>
+
+</div>
     <div id="table">
 
 
     </div>
-</div>
 <script>
 
     $(document).ready(function () {
@@ -488,4 +498,6 @@
         height: 25px;
         overflow: scroll;
     }
+
+
 </style>

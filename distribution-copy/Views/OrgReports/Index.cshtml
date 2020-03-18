@@ -1,4 +1,4 @@
-﻿@model distribution_copy.Models.InputModel
+﻿@model distribution_copy.Models.InputModel.InputModel
 @{
     Layout = "~/Views/Shared/_DashBoard.cshtml";
 }
@@ -11,134 +11,75 @@
         <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
         <select class="form-control" id="org" name="departmentsDropdown"></select>
     </div>*@
-<div class="row">
-    <div class="col-md-12">
-        <div class="col-md-4">
-            <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
-            <select class="form-control" id="org" name="departmentsDropdown"></select>
-        </div>
-        <div id="OrgChange">
-            <div id="OrgCount">
 
-                <div class="row">
-                    <ul class="list-group" style="width:45%; margin-left:20px; padding:10px;">
-                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
-                            Project Count
-                            <span class="badge badge-primary badge-pill" id="Project"></span>
-                        </li>
+<div class="col-md-5" style="margin-left:60px">
+    <label for="orgsDropdown" style="margin-top:30px;"><b>Organisations</b></label>
+    <select class="form-control" id="org" name="departmentsDropdown"></select>
+    <label id="NoOrg" class="text-danger" hidden>!!!!Please Select Organisation</label>
+</div>
+<div align="center" style="margin-top:10px">
+    <img src="~/Content/Images/loadinggif.gif" id="Load" width="150" height="150" hidden />
+</div>
+<div id="OrgChange" style="margin-left:30px" hidden>
+    <div class="row" style="font-size:medium;margin-left:50px">
+        <div class="col-4"><p id="Project"></p> </div>
+        <div class=" col-4"><p id="BuildDef"></p></div>
+        <div class="col-4"><p id="ReleaseDef"></p></div>
+    </div>
+    <div class="row" style="font-size:medium;margin-left:50px">
+        <div class="col-4"><p id="Process"></p> </div>
+        <div class="col-4"><p id="Repos"></p> </div>
+        <div class="col-4"><p id="Users"></p> </div>
+    </div>
+    <div class="row" style="font-size:medium;margin-left:50px">
+        <div class="col-4"><p id="WIcount" class="Wi"></p> </div>
+    </div>
+  
+    <div class="row ">
+        <div class="col-4" style="margin-left:50px" id="WItypeDrop">
+            @*@Html.Label("WorkItem Type", htmlAttributes: new { @class = "", style = "padding-right:21px" })*@
 
-                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
-                            BuildDefinition Count
-                            <span class="badge badge-primary badge-pill" id="BuildDef"></span>
-                        </li>
-
-                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
-                            Release Definition Count
-                            <span class="badge badge-primary badge-pill" id="ReleaseDef"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
-                            Process Template Count
-                            <span class="badge badge-primary badge-pill" id="Process"></span>
-                        </li>
-                    </ul>
-
-                    <ul class="list-group" style="width:45%; margin-left:20px; padding:10px;">
-                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
-                            Repos Count
-                            <span class="badge badge-primary badge-pill" id="Repos"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
-                            Org Level Users Count
-                            <span class="badge badge-primary badge-pill" id="Users"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
-                            Work Item Count
-                            <span class="badge badge-primary badge-pill" id="WIcount"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-family:Calibri">
-                            Work Item Count By Type
-                            <span class="badge badge-primary badge-pill" id="WIcountByType"></span>
-                        </li>
-                        @*<div class=" col-4"><p id="BuildDef"></p></div>
-                            <div class="col-4"><p id="ReleaseDef"></p></div>
-                            <div class="col-4"><p id="Process"></p> </div>
-                            <div class="col-4"><p id="Repos"></p> </div>
-                            <div class="col-4"><p id="Users"></p> </div>
-                            <div class="col-4"><p id="WIcount"></p> </div>
-                            <div class="col-4"><p id="WIcountByType"></p></div>*@
-                    </ul>
-
-                </div>
-            </div>
-
-
-            @*<div id="OrgCount">
-
-                    <div class="row" style="margin-left:auto;">
-                        <div class="col-4"><p id="Project"></p> </div>
-                        <div class=" col-4"><p id="BuildDef"></p></div>
-                        <div class="col-4"><p id="ReleaseDef"></p></div>
-                        <div class="col-4"><p id="Process"></p> </div>
-                        <div class="col-4"><p id="Repos"></p> </div>
-                        <div class="col-4"><p id="Users"></p> </div>
-                        <div class="col-4"><p id="WIcount"></p> </div>
-                        <div class="col-4"><p id="WIcountByType"></p></div>
-                    </div>
-                </div>*@
-            <div align="center">
-
-            </div>
-            <div style="margin-top:50px;">
-                <div align="center">
-                    <p id="noProj" class="navbar-brand"></p>
-                </div>
-                <div class="row" id="ProjCounts" style="margin-left:auto;">
-                    <div class="col-4"><p id="PBuildDef"></p></div>
-                    <div class="col-4"><p id="PReleaseDef"></p></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            @Html.Label("WorkItem Type", htmlAttributes: new { @class = "control-label", style = "padding-right:21px" })
-
-            @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "WorkItemType", style = "opacity:0.8" })
+            <label style="margin-top:20px;" class="WorkItemType"><b>WorkItem Type</b></label>
+            @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "--Workitem Types--" }), htmlAttributes: new { @class = "form-control WorkItemType", id = "WorkItemType", style = "opacity:0.8" })
 
             @Html.ValidationMessageFor(model => model.WorkItemType, "", new { @class = "text-danger" })
+            <label id="WItypeErr" hidden="hidden" class="text-danger ">!!!!please select any workitem type </label>
         </div>
-        <div class="col-md-4">
-            <div id="projDrop">
-                <label style="margin-top:50px;"><b>Projects</b></label>
-                <select class="form-control" id="projectDrop" name="departmentsDropdown"></select>
+        <div class="col-4" style="font-size:large;margin-top:50px"><p id="WIcountByType" hidden="hidden"></p></div>
+    </div>
+    <div style="margin-top:10px;">
+        <div class="col-md-5" style="margin-left:36px">
+            <div id="projDrop " class="WorkItemType">
+                <label style="margin-top:20px;" class=""><b>Projects</b></label>
+                <select class="form-control " id="projectDrop" name="departmentsDropdown"></select>
+                <p id="noProj" hidden="hidden" class="text-danger ">!!!!please select the project</p>
             </div>
         </div>
-
+        <div id="ProjCounts" hidden="hidden" style="margin-top:20px;margin-left:35px; font-size:large;">
+            <div class="row" style="margin-left:30px">
+                <div class="col-4"><p id="PBuildDef"></p></div>
+                <div class="col-4"><p id="PReleaseDef"></p></div>
+                <div class="col-4"><p id="PUser"></p></div>
+            </div>
+            <div class="row" style="margin-left:30px">
+                <div class="col-4"><p id="PRepo"></p></div>
+                <div class="col-4"><p id="PWorkItem" hidden></p></div>
+            </div>
+        </div>
     </div>
 </div>
-<div align="center" style="vertical-align:middle;">
-    <br />
-    <br />
-    <img src="~/Content/Images/loadinggif.gif" id="Load" width="150" height="150" />
-</div>
-
-
-
-
-@*<p id="ReleaseDef"></p>
-    <p id="Process"></p>*@
-
-
-<div style="margin-left:440px">
-
-
-</div>
-
 <script>
     //Ajax Call to fetch Organization
-    $(document).ready(function () {
-        $('#projDrop').hide();
-        $('#Load').hide();
-           var Org = $('#org').val();
-
+    $(document).ready(function () {       
+        var load = document.getElementById('Load');
+        var orgchange= document.getElementById('OrgChange');
+        var ProjCounts= document.getElementById('ProjCounts');       
+        var wicounts = document.getElementsByClassName('WorkItemType');
+        wicounts.hidden = true;
+        var Org = $('#org').val();
+        var ProjWICount;
+        var selestedProj;
+        var WIType
 
         $.ajax({
             type: 'get',
@@ -156,115 +97,71 @@
         });
 
         function GetReport(data) {
-
-                        $("#OrgChange").show();
-                        $('#Load').hide();
-                        $("#BuildDef").html("" + data.counts.buildDefCount);//Build def Cou
-                        $("#ReleaseDef").html("" + data.counts.releaseDefCount);//Release
-                        $("#Process").html("" + data.counts.processCount);//Process
-                        $("#Project").html("" + data.Count);//Project Count
-                        $("#Users").html("" + data.counts.UserCount);//Org User
-                        $("#Repos").html("" + data.counts.repoCount);//Repo
-                        $("#WIcount").html("" + data.counts.WIcountOrg);//WIInOrg
-                        $("#WIcountByType").html("" + data.counts.WIcountType);//WICountty
-
-
-                        $("#projDrop").show();
+                        orgchange.hidden = false;      
+                        load.hidden = true;
+                        $("#BuildDef").html("Build Definitions  : " + data.counts.buildDefCount);
+                        $("#ReleaseDef").html("Release Definitions  : " + data.counts.releaseDefCount);
+                        $("#Process").html("Process Templates : " + data.counts.processCount);
+                        $("#Project").html("Projects : " + data.Count);
+                        $("#Users").html("Users : " + data.counts.UserCount);
+                        $("#Repos").html("Repositories : " + data.counts.repoCount);
+                        $("#WIcount").html("WorkItems : " + data.counts.WIcountOrg);    
+                        wicounts.hidden = false;
                         var s = '<option value="0">--Choose Project--</option>';
                         $("#projectDrop").empty();
                         for (var i = 0; i < data.Value.length; i++) {
                             s += '<option value="' + data.Value[i].Name + '">' + data.Value[i].Name + '</option>';
                         }
                         $("#projectDrop").append(s);
-                        //$('#ReleaseDef').append(data.counts.releaseDefCount);
+                        WIType = $('#WorkItemType').val()
+                    
                         $('#projectDrop').change(function () {
-                            var selestedProj = $('#projectDrop').val();
+                            selestedProj = $('#projectDrop').val();
                             for (var i = 0; i < data.Value.length; i++) {
                                 if (data.Value[i].Name == selestedProj) {
-                                    $("#noProj").hide();
-                                    $("#ProjCounts").show();
-                                    $("#PBuildDef").html("Build Definition Count : " + data.Value[i].counts.buildDefCount);
-                                    $("#PReleaseDef").html("Release Definition Count : " + data.Value[i].counts.releaseDefCount);
+                                    /*$("#noProj").hide(); */                                   
+                                    ProjCounts.hidden = false;
+                                    $("#PBuildDef").html("Build Definitions : " + data.Value[i].counts.buildDefCount);
+                                    $("#PReleaseDef").html("Release Definitions : " + data.Value[i].counts.releaseDefCount);
+                                    $("#PUser").html("Users : " + data.Value[i].counts.UserCount);
+                                    $("#PRepo").html("Repositories : " + data.Value[i].counts.repoCount);
+                                    if ($('#WorkItemType') != "0") {
+                                        document.getElementById('PWorkItem').hidden=false;
+                                        $("#PWorkItem").html(WIType + "s : " + ProjWICount);
+                                    }
+                                    else
+                                         document.getElementById('PWorkItem').hidden=true;
                                 }
                                 else if (selestedProj == "0") {
-                                    $("#ProjCounts").hide();
-                                    /*$("#PBuildDef").hide();*/
-                                    $("#noProj").show();
-                                    $("#noProj").html("Project Not Selected");
+                                    ProjCounts.hidden = true;                                 
+                                    document.getElementById('noProj').hidden = false;
                                 }
                             }
-                });
-
+                        });
         }
-
-
-        //$('#org').change(function () {
-
-
             $('#org').change(function () {
-
-                $('#Load').show();
-                $('#OrgChange').hide();
-                $("#ProjCounts").hide();
-                var Org = $('#org').val();
+                load.hidden = false;
+                orgchange.hidden = true;
+                ProjCounts.hidden = true;
+                document.getElementById('WIcountByType').hidden = true;
+                document.getElementById('NoOrg').hidden = true;
+                Org = $('#org').val();
                 if (Org == "0") {
-                    alert("Please Select Organisation");
-                    $('#Load').hide();
+                    document.getElementById('NoOrg').hidden = false;
+                    $("#noProj").hide();
+                    document.getElementById('WItypeErr').hidden=true;
+                    load.hidden = true;
                 }
-
-
                 $.ajax({
-
                     type: 'get',
                     dataType: 'json',
                     data: { 'organisation': Org },
                     url: '@Url.Action("report","OrgReports")',
                     success: function (data) {
-
                         GetReport(data);
-                        //For Displaying The Project DropDown
-                        //$("#OrgChange").show();
-                        //$('#Load').hide();
-                        //$("#BuildDef").html("Build Definition Count : " + data.counts.buildDefCount);
-                        //$("#ReleaseDef").html("Release Definition Count : " + data.counts.releaseDefCount);
-                        //$("#Process").html("Process Template Count : " + data.counts.processCount);
-                        //$("#Project").html("Project Count : " + data.Count);
-                        //$("#Users").html("Org Level Uesrs Count : " + data.counts.UserCount);
-                        //$("#Repos").html("Repos Count : " + data.counts.repoCount);
-                        //$("#WIcount").html("WorkItemsInOrg Count : " + data.counts.WIcountOrg);
-                        //$("#WIcountByType").html("WorkItemsInType Count : " + data.counts.WIcountType);
-
-
-                        //$("#projDrop").show();
-                        //var s = '<option value="0">--Choose Project--</option>';
-                        //$("#projectDrop").empty();
-                        //for (var i = 0; i < data.Value.length; i++) {
-                        //    s += '<option value="' + data.Value[i].Name + '">' + data.Value[i].Name + '</option>';
-                        //}
-                        //$("#projectDrop").append(s);
-                        ////$('#ReleaseDef').append(data.counts.releaseDefCount);
-                        //$('#projectDrop').change(function () {
-                        //    var selestedProj = $('#projectDrop').val();
-                        //    for (var i = 0; i < data.Value.length; i++) {
-                        //        if (data.Value[i].Name == selestedProj) {
-                        //            $("#noProj").hide();
-                        //            $("#ProjCounts").show();
-                        //            $("#PBuildDef").html("Build Definition Count : " + data.Value[i].counts.buildDefCount);
-                        //            $("#PReleaseDef").html("Release Definition Count : " + data.Value[i].counts.releaseDefCount);
-                        //        }
-                        //        else if (selestedProj == "0") {
-                        //            $("#ProjCounts").hide();
-                        //            /*$("#PBuildDef").hide();*/
-                        //            $("#noProj").show();
-                        //            $("#noProj").html("Project Not Selected");
-                        //        }
-                        //    }
-
-                        //});
                     },
                     failure: function (data) {
                         if (data == null) {
-
                             alert("Please Select Any Organnisation");
                         }
                     }
@@ -282,15 +179,13 @@
                         success:
                             function (data) {
                                 console.log(data);
-                                document.getElementById("WorkItemType").innerHTML = "<option value='0' >--ALL--</option>";
+                                document.getElementById("WorkItemType").innerHTML = "<option value='0' >--Select Workitem Type--</option>";
                                 for (let i = 0; i < data.length; i++) {
                                     document.getElementById("WorkItemType").innerHTML += "<option value='" + data[i] + "'>" + data[i] + "</option>";
                                 }
-
                             },
                         failure:
                             function () { alert("Something went wrong"); }
-
                     });
                 }
                 else {
@@ -299,29 +194,41 @@
 
             })
             //Sending type value to controller
-            $('#WorkItemType').change(function () {
-                var Org = $('#org').val();
-                var WIType = $('#WorkItemType').val();
+            $('.WorkItemType').change(function () {
+             Org = $('#org').val();
+             WIType = $('#WorkItemType').val();
 
-                console.log(WIType);
-                console.log(Org);
-
+                 if (WIType == "0") {
+                    document.getElementById('WItypeErr').hidden = false;
+                    document.getElementById('WIcountByType').hidden = true;
+                    document.getElementById('PWorkItem').hidden=true;
+                    return;
+                        }
                 $.ajax({
                     type: 'Post',
                     dataType: 'json',
-                    data: { 'organisation': Org, 'workitemtype': WIType },
+                    data: { 'organisation': Org, 'workitemtype': WIType, 'projectName': selestedProj },
                     url: '@Url.Action("report","OrgReports")',
                     success: function (data) {
-                                                $("#WIcountByType").html("WorkItemsInType Count : " + data.counts.WIcountType);
+                        if (WIType == "0") {
+                             $("#WIcountByType").hide();
+                            document.getElementById('WItypeErr').hidden=false;                        
+                            document.getElementById('PWorkItem').hidden=true;
+                        }
+                        else {
+                            document.getElementById('WIcountByType').hidden = false;
+                            document.getElementById('WItypeErr').hidden=true;
+                            ProjWICount = data.counts.ProjWIcountByType;
+                            $("#WIcountByType").html(WIType + "s : " + data.counts.WIcountType);
+                            if (selestedProj != "0") {
+                                document.getElementById('PWorkItem').hidden=false;
+                                $("#PWorkItem").html(WIType + "s : " + data.counts.ProjWIcountByType);
+                            }
+                        }
                     }
                 });
             })
-
-
         })
-
-
-
 </script>
 
 

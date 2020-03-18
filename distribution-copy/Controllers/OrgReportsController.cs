@@ -6,7 +6,8 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using distribution_copy.Class;
-using distribution_copy.Models;
+using distribution_copy.Models.OrgModel;
+using distribution_copy.Models.ProjectModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -27,13 +28,11 @@ namespace distribution_copy.Controllers
         string BaseURLvsrm = ConfigurationManager.AppSettings["BaseURLvsrm"];
         string version = ConfigurationManager.AppSettings["ApiVersion"];
         string version1 = "5.1-preview";
-        public JsonResult report(string organisation, string workitemtype = null)
+        public JsonResult report(string organisation, string workitemtype="0", string projectName="0")
         {
-            if (organisation == "0")
-                return Json(null);
-            if (!string.IsNullOrEmpty(workitemtype))
+            if (workitemtype!="0")
             {
-                c.WIcountType = GetWorkitemCount(organisation, workitemtype);
+                c.WIcountType = GetWorkitemCountByType(organisation, workitemtype,projectName);
                 org.counts = c;
                 return Json(org, JsonRequestBehavior.AllowGet);
             }
@@ -44,7 +43,7 @@ namespace distribution_copy.Controllers
             org = JsonConvert.DeserializeObject<OrgModel>(response);
             countGen count = new countGen();
             org.counts = new orgCounts();
-            url = BaseURL + "/" + organisation + "/_apis/projects?api-version=" + version;
+            url = BaseURL + "/" + organisation + "/_apis/process/processes?api-version=" + version;
             response = req.ApiRequest(url);
             count = JsonConvert.DeserializeObject<countGen>(response);
             c.processCount = count.Count;
@@ -61,6 +60,12 @@ namespace distribution_copy.Controllers
                 count = JsonConvert.DeserializeObject<countGen>(response);
                 project.counts.releaseDefCount = count.Count;
                 c.releaseDefCount += count.Count;
+                url = BaseURL + organisation + "/" + project.Name + "/_apis/git/repositories?api-version=" + version;
+                response = req.ApiRequest(url);
+                count = JsonConvert.DeserializeObject<countGen>(response);
+                project.counts.repoCount = count.Count;
+                //c.repoCount += count.Count;
+                
             }
 
             // Calling Repos Count
@@ -106,9 +111,10 @@ namespace distribution_copy.Controllers
             ProjectModel projModel = new ProjectModel();
             req = new APIRequest(Session["PAT"].ToString());
             string url;
-            url = BaseURL + "/" + organisation + "/_apis/projects?api-version=" + version1;
+            string response;
+         /*   url = BaseURL + "/" + organisation + "/_apis/projects?api-version=" + version1;
             string response = req.ApiRequest(url);
-            org = JsonConvert.DeserializeObject<OrgModel>(response);
+            org = JsonConvert.DeserializeObject<OrgModel>(response);*/
             //org.Value = projModel.Value;
             //org.counts = new orgCounts();
             List<string> MemberCount;
@@ -122,7 +128,7 @@ namespace distribution_copy.Controllers
                 url = "https://vssps.dev.azure.com/" + organisation + "/_apis/graph/groups?scopeDescriptor=" + jobj["value"] + "&api-version=" + version1;
                 response = req.ApiRequest(url);
                 ProjectModel Grp = JsonConvert.DeserializeObject<ProjectModel>(response);
-                projeId.counts = new orgCounts();
+                //projeId.counts = new orgCounts();
 
                 MemberCount = new List<string>();
                 foreach (var group in Grp.Value)
@@ -176,12 +182,7 @@ namespace distribution_copy.Controllers
                 req = new APIRequest(Session["PAT"].ToString());
                 string response = req.ApiRequest(url, "POST", JsonConvert.SerializeObject(Wiql));
                 model = JsonConvert.DeserializeObject<ProjectModel>(response);
-                List<string> identity = new List<string>();
-                foreach (var id in model.WorkItems)
-                {
-                    identity.Add(id.Id);
-                }
-                c.WIcountOrg = identity.Count;
+                c.WIcountOrg = model.WorkItems.Count;
             }
             catch (Exception ex)
             {
@@ -192,32 +193,38 @@ namespace distribution_copy.Controllers
         }
 
         //Author:Ravivarma (12/03/2020) -To get the count of all Workitems by types in the organisation
-
-        public int GetWorkitemCount(string organisation, string workitemtype)
+      
+        public int GetWorkitemCountByType(string organisation, string workitemtype,string projectName)
         {
-            int result = 0;
-            APIRequest req;
-            OrgModel org = new OrgModel();
+           
+            APIRequest req;            
             string url;
             try
             {
-                object Wiql = new { query = "Select  [Id] From WorkItems Where [System.WorkItemType] = '" + workitemtype + "' " };
+                string queryString = "Select  [Id] From WorkItems Where [System.WorkItemType] = '" + workitemtype + "' ";
+                object Wiql = new { query = queryString };
                 ProjectModel model = new ProjectModel();
                 url = "https://dev.azure.com/" + organisation + "/_apis/wit/wiql?api-version=5.1";
                 req = new APIRequest(Session["PAT"].ToString());
                 string response = req.ApiRequest(url, "POST", JsonConvert.SerializeObject(Wiql));
                 model = JsonConvert.DeserializeObject<ProjectModel>(response);
-                List<string> identity = new List<string>();
-                foreach (var id in model.WorkItems)
+                c.WIcountType = model.WorkItems.Count;
+                if (projectName != "0")
                 {
-                    identity.Add(id.Id);
+                    queryString = "Select  [Id] From WorkItems Where [System.WorkItemType] = '" + workitemtype + "' AND   [System.TeamProject] ='" + projectName + "'";
+                    Wiql = new { query = queryString };
+                    url = "https://dev.azure.com/" + organisation + "/_apis/wit/wiql?api-version=5.1";
+                    response = req.ApiRequest(url, "POST", JsonConvert.SerializeObject(Wiql));
+                    model = JsonConvert.DeserializeObject<ProjectModel>(response);
+                    c.ProjWIcountByType = model.WorkItems.Count;
                 }
-                c.WIcountType = identity.Count;
+                
+               
 
             }
             catch (Exception ex)
             {
-
+                throw ex;
             }
             return c.WIcountType;
         }
