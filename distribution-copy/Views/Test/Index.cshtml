@@ -89,6 +89,11 @@
                         data: { 'orgName': orgName },
                         dataType: 'json',
                         success: function (data) {
+                            $("#ddlProjectvalue").empty();
+                             $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
                  document.getElementById("load").hidden = true;
                            //  $("#freeze").fadeIn();
                             var count = Object.keys(data).length;
@@ -106,6 +111,10 @@
                         },
 
                         error: function (request, error) {
+                             $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
                  document.getElementById("load").hidden = true;
                             alert('Invalid Details');
                         }
@@ -124,6 +133,11 @@
                     data: { 'selectedProject': selectedText },
                     dataType: 'json',
                     success: function (data) {
+                        $("#TestPlanDrop").empty();
+                         $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
                          document.getElementById("load").hidden = true;
                         document.getElementById('load').hidden = true;
                         if (data.count<1)
@@ -147,6 +161,10 @@
                     },
 
                     error: function (request, error) {
+                         $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
                         document.getElementById('load').hidden = true;
                         alert('Request Failed');
                     }
@@ -165,7 +183,12 @@
                     data: { 'planid': selectedValue },
                     dataType: 'json',
                     success: function (data) {
-             document.getElementById("load").hidden = true;
+                        document.getElementById("load").hidden = true;
+                       // $(".dataTable").clear();
+                        $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
                          $('#dataTable').show();
                         if (data.count<1)
                         {
@@ -175,7 +198,7 @@
                            
 
                         if (data.length > 0) {
-                            tabledata = "<table class='dataTable'><thead> <tr><th>Suite</th><th>Planned</th><th>Pass</th><th>Fail</th><th>Executed</th><th>Pass Based On Execution</th><th>Pass Based On Planing %</th><th>Executed Percentage</th><th>NotYetExecution</th></thead><tbody>";
+                            tabledata = "<table id='dataTable'><thead> <tr><th>Suite</th><th>Planned</th><th>Pass</th><th>Fail</th><th>Executed</th><th>Pass Based On Execution</th><th>Pass Based On Planing %</th><th>Executed Percentage</th><th>NotYetExecution</th></thead><tbody>";
 
                          //   for (let i = 0; i < data.length; i++) {
                             $.each(data, function (i) {
@@ -185,7 +208,7 @@
                             tabledata += "</tbody></table>";
                             console.log(tabledata);
                             $("#DataTableDiv").append(tabledata);
-                             $('.dataTable').DataTable();
+                             $('#dataTable').DataTable();
                         }
                             //      alert('Request Successful');
 
@@ -246,7 +269,7 @@
                             totalexecPercentage = parseInt(executed / planned * 100);
                         }
 
-                         var tabledata1 = "<table class='dataTable'><thead> <tr><th>Planned</th><th>Pass</th><th>Fail</th><th>Executed</th><th>Pass Based On Execution</th><th>Pass Based On Planing %</th><th>Executed Percentage</th><th>NotYetExecution</th></thead><tbody>";
+                         var tabledata1 = "<table id='dataTable1'><thead> <tr><th>Planned</th><th>Pass</th><th>Fail</th><th>Executed</th><th>Pass Based On Execution</th><th>Pass Based On Planing %</th><th>Executed Percentage</th><th>NotYetExecution</th></thead><tbody>";
 
                          //   for (let i = 0; i < data.length; i++) {
                         
@@ -255,13 +278,16 @@
                         console.log("total Table");
                         console.log(tabledata1);
                             $("#DataTableDiv1").append(tabledata1);
-                        
+                          $('#dataTable1').DataTable();
 
                     },
 
                     error: function (request, error) {
-            
-                         $('#DataTable').hide();
+             $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                        
                         alert('Request Failed');
                     }
                 });
