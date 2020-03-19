@@ -96,14 +96,13 @@ namespace distribution_copy.Controllers
 
                             foreach (var run1 in run.value)
                             {
-                                if (run1.testCase.id == null)
-                                {
+                                
                                     if (run1.testCase.id.ToString() == test.workItem.id.ToString())
                                     {
                                         int runid = Convert.ToInt32(run1.testRun.id);
                                         maxStore.Add(runid);
                                     }
-                                }
+                                
                             }
                         }
 
