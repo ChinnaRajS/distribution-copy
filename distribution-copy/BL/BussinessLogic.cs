@@ -230,5 +230,52 @@ namespace distribution_copy.BL
             }
             return testData;
         }
+
+
+        //Get Test Run By Project
+
+        public TestRunProject GetRunByProject()
+        {
+            TestRunProject testData = new TestRunProject();
+            string api = string.Format("https://dev.azure.com/{0}/{1}//_apis/test/runs?api-version=5.0", Org.OrganizationName, Org.ProjectName);//TempCredintials.OrganizationName,TempCredintials.ProjectName,testPlanId, suitId);
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Org.pat);//TempCredintials.pat ); //Org.pat
+
+                HttpResponseMessage response = client.GetAsync(api).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var obj = response.Content.ReadAsStringAsync().Result;
+                    testData = JsonConvert.DeserializeObject<TestRunProject>(obj);
+                }
+            }
+            return testData;
+        }
+
+        public TestRunById GetRunByRunId(string runId)
+        {
+
+            TestRunById testData = new TestRunById();
+            string api = string.Format("https://dev.azure.com/{0}/{1}//_apis/test/Runs/{2}/results?api-version=5.0", Org.OrganizationName, Org.ProjectName, runId);//TempCredintials.OrganizationName,TempCredintials.ProjectName,testPlanId, suitId);
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Org.pat);//TempCredintials.pat ); //Org.pat
+
+                HttpResponseMessage response = client.GetAsync(api).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var obj = response.Content.ReadAsStringAsync().Result;
+                    testData = JsonConvert.DeserializeObject<TestRunById>(obj);
+                }
+            }
+            return testData;
+        }
+
     }
 }

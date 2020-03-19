@@ -190,6 +190,8 @@
     <Compile Include="Models\Model_AK\RespData.cs" />
     <Compile Include="Models\Model_AK\TestCasesFromSuits.cs" />
     <Compile Include="Models\Model_AK\TestPlan.cs" />
+    <Compile Include="Models\Model_AK\TestRunById.cs" />
+    <Compile Include="Models\Model_AK\TestRunProject.cs" />
     <Compile Include="Models\Model_AK\TestSuit.cs" />
     <Compile Include="Models\ProfileDetails.cs" />
     <Compile Include="Models\ProjectModel.cs" />
