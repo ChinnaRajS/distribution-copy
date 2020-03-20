@@ -195,6 +195,7 @@
     }
 
     function GetCapacityReport() {
+        $('divReports').css("display", "none");
         $('.dvTableData').html('');
          document.getElementById('load').hidden = false;
         var org = $('#org').children("option:selected").val();
@@ -271,8 +272,7 @@
 
 <div class="breadcrumb-holder">
     <div class="container-fluid">
-        <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <ul class="breadcrumb">            
             <li class="breadcrumb-item active">Team Capacity</li>
         </ul>
     </div>

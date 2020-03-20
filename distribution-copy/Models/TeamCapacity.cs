@@ -60,10 +60,15 @@ namespace distribution_copy.Models
     {
         public TeamMember teamMember { get; set; }
         public List<Activities> activities { get; set; }
-        public List<string> daysOff { get; set; }
+        public List<Leaves> daysOff { get; set; }
         public string url { get; set; }
     }
 
+    public class Leaves
+    {
+        public string start { get; set; }
+        public string end { get; set; }
+    }
     public class TeamMember
     {
         public string displayName { get; set; }
