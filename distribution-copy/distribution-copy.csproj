@@ -164,8 +164,11 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="BL\BussinessLogic.cs" />
+    <Compile Include="BL\BussinessLogicCopy.cs" />
     <Compile Include="BL\ClientRequest.cs" />
+    <Compile Include="BL\CreateTest.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CopyTestController.cs" />
     <Compile Include="Controllers\distributionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TeamsController.cs" />
@@ -188,11 +191,14 @@
     <Compile Include="Models\Model_AK\Organization.cs" />
     <Compile Include="Models\Model_AK\Profile.cs" />
     <Compile Include="Models\Model_AK\RespData.cs" />
+    <Compile Include="Models\Model_AK\TestCaseResponseModel.cs" />
     <Compile Include="Models\Model_AK\TestCasesFromSuits.cs" />
     <Compile Include="Models\Model_AK\TestPlan.cs" />
     <Compile Include="Models\Model_AK\TestRunById.cs" />
     <Compile Include="Models\Model_AK\TestRunProject.cs" />
     <Compile Include="Models\Model_AK\TestSuit.cs" />
+    <Compile Include="Models\Model_AK\Validate.cs" />
+    <Compile Include="Models\Model_AK\WorkItemsClass.cs" />
     <Compile Include="Models\ProfileDetails.cs" />
     <Compile Include="Models\ProjectModel.cs" />
     <Compile Include="Models\ResponseWI.cs" />
@@ -899,6 +905,7 @@
     <Content Include="Views\Teams\Capacity.cshtml" />
     <Content Include="Views\Trace\Index.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\CopyTest\CopyTestCase.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

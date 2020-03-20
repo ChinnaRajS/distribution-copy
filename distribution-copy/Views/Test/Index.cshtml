@@ -77,6 +77,8 @@
            });
 
         $('#OrganizationDrop').change(function () {
+            $('#TestPlanDrop').empty();
+            $('#ddlProjectvalue').empty();
              document.getElementById("load").hidden = false;
             $("#load").show();
            //  $("#freeze").fadeOut();
@@ -123,6 +125,7 @@
 
 
         $('#ddlProjectvalue').change(function () {
+            $('#TestPlanDrop').empty();
                  document.getElementById("load").hidden = false;
                 var selectedText = $("#ddlProjectvalue").find("option:selected").text();
                 var selectedValue = $("#ddlProjectvalue").val();
@@ -174,6 +177,7 @@
 
 
         $('#TestPlanDrop').change(function () {
+            
              document.getElementById("load").hidden = false;
                 var selectedValue = $("#TestPlanDrop").val();
                 $('#testPlanDrop').show();
