@@ -114,6 +114,7 @@
     }
 
     function FillProjects() {
+        $('#divReports').css("display", "none");
         document.getElementById('load').hidden = false;
        document.getElementById("IterationPaths").innerHTML = "<option value='0'>Empty List</option>";
         var o = document.getElementById("org");
@@ -145,6 +146,7 @@
     }
 
     function FillIterationPaths() {
+        $('#divReports').css("display", "none");
          document.getElementById('load').hidden = false;
          var o = document.getElementById("org");
         var ORG = o.options[o.selectedIndex].text;
@@ -195,6 +197,7 @@
     }
 
     function GetCapacityReport() {
+        $('#divReports').css("display", "none");
         $('.dvTableData').html('');
          document.getElementById('load').hidden = false;
         var org = $('#org').children("option:selected").val();
@@ -271,8 +274,7 @@
 
 <div class="breadcrumb-holder">
     <div class="container-fluid">
-        <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <ul class="breadcrumb">            
             <li class="breadcrumb-item active">Team Capacity</li>
         </ul>
     </div>
