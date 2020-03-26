@@ -54,6 +54,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.7\lib\net45\System.Web.Cors.dll</HintPath>
@@ -167,6 +168,7 @@
     <Compile Include="BL\ClientRequest.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\distributionController.cs" />
+    <Compile Include="Controllers\ExportWIAttachmentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TeamsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
@@ -179,6 +181,7 @@
     </Compile>
     <Compile Include="Helper\Exetnsion.cs" />
     <Compile Include="Models\AccessDetails.cs" />
+    <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountsResponse.cs" />
     <Compile Include="Models\ExpandWI.cs" />
     <Compile Include="Models\InputModel.cs" />
@@ -198,6 +201,7 @@
     <Compile Include="Models\TraceExportModel.cs" />
     <Compile Include="Models\TraceInputModel.cs" />
     <Compile Include="Models\TeamDetails.cs" />
+    <Compile Include="Models\UpdatesModel.cs" />
     <Compile Include="Models\WorkItemType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AccountService.cs" />
@@ -574,6 +578,17 @@
     <Content Include="icons-reference\fonts\dashboard.eot" />
     <Content Include="icons-reference\fonts\dashboard.ttf" />
     <Content Include="icons-reference\fonts\dashboard.woff" />
+    <Content Include="Scripts\AppScripts\ADOScript.js" />
+    <Content Include="Scripts\AppScripts\ADOWIImport.js" />
+    <Content Include="Scripts\AppScripts\app.js" />
+    <Content Include="Scripts\AppScripts\azure-demo-builder1.js" />
+    <Content Include="Scripts\AppScripts\CreateTemplate.js" />
+    <Content Include="Scripts\AppScripts\JiraWIImport.js" />
+    <Content Include="Scripts\AppScripts\Landing.js" />
+    <Content Include="Scripts\AppScripts\LandingPage.js" />
+    <Content Include="Scripts\AppScripts\LandingPage001.js" />
+    <Content Include="Scripts\AppScripts\Subscriptions.js" />
+    <Content Include="Scripts\AppScripts\Wizard.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -894,6 +909,9 @@
     <Content Include="Views\Teams\Capacity.cshtml" />
     <Content Include="Views\Trace\Index.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\ExportWIAttachments\_GetProjects.cshtml" />
+    <Content Include="Views\ExportWIAttachments\_GetWorkItems.cshtml" />
+    <Content Include="Views\ExportWIAttachments\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -910,6 +928,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ExportWorkItemAttachments\AzureDevOpsService\ExportWIAttachmentsService.csproj">
+      <Project>{89b270d7-921c-431c-a1ba-dc89afddeb8e}</Project>
+      <Name>ExportWIAttachmentsService</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

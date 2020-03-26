@@ -1,0 +1,141 @@
+﻿@model ExportWIAttachmentsWeb.Models.AccountDetail
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    body {
+        counter-reset: Serial; /* Set the Serial counter to 0 */
+    }
+
+    table {
+        border-collapse: separate;
+    }
+
+    tr td:first-child:before {
+        counter-increment: Serial; /* Increment the Serial counter */
+        content: counter(Serial); /* Display the counter */
+    }
+</style>
+
+<script type="text/javascript">
+
+    var selectedAttachmentCount;
+    $(function () {
+
+        $("#chkAll").click(function () {
+            var checkAll = this;
+            var chkRows = $("#tblWorkItems").find(".chkRow");
+            chkRows.each(function () {
+                $(this)[0].checked = checkAll.checked;
+            });
+        });
+
+        $(".chkRow").click(function () {
+            $("#chkAll").attr("checked", "checked");
+            var checkRows = $("#tblWorkItems").find(".chkRow");
+            checkRows.each(function () {
+                if (!$(this).is(":checked")) {
+                    $("#chkAll").removeAttr("checked", "checked");
+                    return;
+                }
+            });
+        });
+    });
+</script>
+@if (Model.WorkItemDetails.Count > 0)
+{
+    <div id="dvTable" class="pt-3 pb-5">
+        <table style="width:100%" id="tblWorkItems" class="mt-3 invisible visible">
+            <tr>
+                <th>SI. No</th>
+                <th>Work Item ID</th>
+                <th>Work Item Name</th>
+                <th>Work Itme Type</th>
+                <th>Attachment <input type="checkbox" id="chkAll" /></th>
+            </tr>
+            <tbody>
+                @foreach (var wi in Model.WorkItemDetails)
+                {
+                    if (wi.AttachmentPath.Count > 0)
+                    {
+                        <script>
+                            $("#tblWorkItems,#btnSection").removeClass("invisible");
+                            $("#noAttachments").addClass("invisible");
+                        </script>
+
+                        <tr>
+                            <td></td>
+                            <td><a href="https://dev.azure.com/@Model.SelectedAccountName/@Model.SelectedProjectName/_workitems/edit/@wi.Id" target="_blank">@wi.Id</a></td>
+                            <td><a href="https://dev.azure.com/@Model.SelectedAccountName/@Model.SelectedProjectName/_workitems/edit/@wi.Id" target="_blank">@wi.Name</a></td>
+                            <td>@wi.Type</td>
+                            <td style="width: 40%;">
+                                @foreach (var att in wi.AttachmentPath)
+                                {
+                                    if (att.Name.Contains("jpg") || att.Name.Contains("jpeg") || att.Name.Contains("png") || att.Name.Contains("JPG") || att.Name.Contains("JPEG") || att.Name.Contains("PNG") || att.Name.Contains("bmp") || att.Name.Contains("BMP") || att.Name.Contains("gif") || att.Name.Contains("GIF"))
+                                    {
+                                        <span id="@att.AttachmentId"><label for="@att.AttachmentId" value="@att.AttachmentId">@att.Name</label></span>
+                                        <input type="checkbox" class="chkRow" id="@att.AttachmentId" value="@att.AttachmentId" nameAtt="@att.Name" workItemId="@wi.Id" name="attachment" />
+                                    }
+                                    else
+                                    {
+                                        <span id="@att.AttachmentId"><label for="@att.AttachmentId" value="@att.AttachmentId">@att.Name</label></span>
+                                        <input type="checkbox" class="chkRow" id="@att.AttachmentId" value="@att.AttachmentId" nameAtt="@att.Name" workItemId="@wi.Id" name="attachment" />
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <b style="text-align:center" id="noAttachments">No WorkItems with Attachments Found</b>
+            <div class="col-md-2 pt-3 invisible" style="float:right" id="btnSection">
+                <button class="btn btn-primary btn-success dropdown-toggle form-control mb-3" style="font-weight:bold;margin-left: 406px;" type="button" data-toggle="dropdown">
+                    Export to
+                    <span class="caret"></span> <span class="glyphicon glyphicon-save"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-left" id="ulExport">
+                    <li><input type="button" id="btnExportToFile" class="btn btn-success form-control" value="File" /></li>
+                    <li><input type="button" id="btnExportToFolder" class="btn btn-success form-control mt-1" value="Folder" /></li>
+                </ul>
+            </div>
+        </table>
+    </div>
+}
+else
+{
+    <b style="text-align:center;display:inline" id="noWorkItems">No WorkItems Found</b>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tblNodes > tbody  > tr td:empty').parent().hide();
+    });
+    $('#btnExportToFile,#btnExportToFolder').on('click', function () {
+        var documentDetails = {};
+        documentDetails["ExportType"] = $(this).val();
+        documentDetails["AccountName"] = $('#ddlADOAccount option:selected').attr('account-id');
+        documentDetails["ProjectName"] = $('#ddlADOProjects option:selected').attr('project-id');
+        documentDetails["DocumentIds"] = [];
+        $.each($("input[name='attachment']:checked"), function () {
+            var docIds = {};
+            docIds["WorkItemId"] = $(this).attr("workItemId");
+            docIds["DocId"] = $(this).val();
+            docIds["DocName"] = $(this).attr("nameAtt");
+            documentDetails["DocumentIds"].push(docIds);
+        });
+        if (documentDetails.DocumentIds.length > 0) {
+            var url = "/ExportWIAttachments/DownloadAttachments?data=" + JSON.stringify(documentDetails);
+            window.location = url;
+        }
+        else {
+            alert("Atleast select one Attachment");
+        }
+    });
+</script>

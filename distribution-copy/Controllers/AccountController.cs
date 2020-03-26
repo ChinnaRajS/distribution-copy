@@ -17,12 +17,14 @@ using Newtonsoft.Json;
 using Newtonsoft;
 using System.IO;
 using System.Web.Script.Serialization;
+using distribution_copy.Models;
 
 namespace distribution_copy.Controllers
 {
     public class AccountController : Controller
     {
         public string url = "";
+        public Services.AccountService service = new Services.AccountService();
         // GET: Account
         public ActionResult Verify(LoginModel model)
         {
@@ -62,43 +64,16 @@ namespace distribution_copy.Controllers
         [HttpPost]
         public JsonResult ProjectList(string ORG)
         {
-            string responseBody = "";
-            ProjectModel pm = new ProjectModel();
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Accept.Add(
-                        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
-                            System.Text.ASCIIEncoding.ASCII.GetBytes(
-                                string.Format("{0}:{1}", "", Session["PAT"] == null ? Request.QueryString["code"] : Session["PAT"].ToString()))));
-
-                    using (HttpResponseMessage response = client.GetAsync("https://dev.azure.com/" + ORG + "/_apis/projects?api-version=5.1").Result)
-                    {
-                        response.EnsureSuccessStatusCode();
-                        responseBody = response.Content.ReadAsStringAsync().Result;
-                    }
-
-                }
-                pm = JsonConvert.DeserializeObject<ProjectModel>(responseBody);
-            }
-            catch (Exception ex)
-            {
-                return Json("");
-            }
-
+        
+            var pm = service.GetApi<ProjectModel>("https://dev.azure.com/" + ORG + "/_apis/projects?api-version=5.1");
             return Json(pm.Value, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         public JsonResult WITypes(InputModel inp)
-        {
-            ResponseWI wiqlResponse = new ResponseWI();
+        {           
 
             ResponseWI urlResponse = new ResponseWI();
-            string responseBody = "";
             string queryString = @"Select [Work Item Type],[State], [Title],[Created By] From WorkItems ";
 
             queryString += "Order By [Stack Rank] Desc, [Backlog Priority] Desc";
@@ -106,24 +81,10 @@ namespace distribution_copy.Controllers
             {
                 query = queryString
             };
-            using (var client = new HttpClient())
-            {
-                var content = new StringContent(JsonConvert.SerializeObject(wiql), Encoding.UTF8, "application/json");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                    "Basic",
-                    Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", "", Session["PAT"] == null ? Request.QueryString["code"] : Session["PAT"].ToString()))));
-                var request = new HttpRequestMessage(
-                    new HttpMethod("POST"),
-                    "https://dev.azure.com/" + inp.OrganizationName + "/_apis/wit/wiql?api-version=5.1"
-                    )
-                { Content = content };
-                var response = client.SendAsync(request).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    responseBody = response.Content.ReadAsStringAsync().Result;
-                }
-                wiqlResponse = JsonConvert.DeserializeObject<ResponseWI>(responseBody);
-            }
+            var content = JsonConvert.SerializeObject(wiql);
+            var Uri = "https://dev.azure.com/" + inp.OrganizationName + "/_apis/wit/wiql?api-version=5.1";
+            ResponseWI wiqlResponse = service.GetApi<ResponseWI>(Uri, "POST", content);
+        
             if (wiqlResponse == null)
                 return null;
 
@@ -174,28 +135,11 @@ namespace distribution_copy.Controllers
         }
         public ResponseWI getWorkItems(InputModel inp)
         {
-            ResponseWI batch;
-            string responseBody2 = "";
+            ResponseWI batch=new ResponseWI();
 
             try
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Accept.Add(
-                        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
-                            System.Text.ASCIIEncoding.ASCII.GetBytes(
-                                string.Format("{0}:{1}", "", Session["PAT"] == null ? Request.QueryString["code"] : Session["PAT"].ToString()))));
-
-                    using (HttpResponseMessage response = client.GetAsync(url).Result)
-                    {
-                        response.EnsureSuccessStatusCode();
-                        responseBody2 += response.Content.ReadAsStringAsync().Result;
-                        batch = JsonConvert.DeserializeObject<ResponseWI>(responseBody2);
-
-                    }
-                }
+                batch= service.GetApi<ResponseWI>(url);
             }
             catch (Exception ex)
             {
@@ -449,6 +393,14 @@ namespace distribution_copy.Controllers
                 Response.End();
             }
         }
-      
+        public JsonResult CommitList(InputModel inp,int Id)
+        {
+            string url="https://dev.azure.com/" + inp.OrganizationName + "/"+inp.ProjectName+ "/_apis/wit/workItems/"+ Id + "/updates?api-version=5.1";
+            Models.UpdatesModel.RootObject updates = service.GetApi<Models.UpdatesModel.RootObject>(url);
+            return Json(updates.value, JsonRequestBehavior.AllowGet);
+
+        } 
+
+
     }
 }

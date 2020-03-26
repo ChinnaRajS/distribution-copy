@@ -256,7 +256,8 @@
                            document.getElementById("table").innerHTML = "";
                     }
                     var tabledata;
-                    var icon="";
+                    var icon = "";
+       
                     if (data.length > 0) {
                         tabledata = "<table id='dataTable' class='table' ><thead> <tr><th><img src='../Content/Icons/structure.png' /></th><th>Id</th><th>Title</th><th>Sprint</th><th>State</th><th>Type</th><th></th></tr></thead><tbody class='text-dark'>";
                         for (let i = 0; i < data.length; i++) {
@@ -267,7 +268,8 @@
                 icon = "<img src='../Content/Icons/task.png' />";
             }
             else if (data[i]["fields"]["System.WorkItemType"] == 'Bug') {
-                icon = "<img src='../Content/Icons/bug.png' />";
+                                  icon = "<img src='../Content/Icons/bug.png' />";
+                                
             }
             else if (data[i]["fields"]["System.WorkItemType"] == 'Epic') {
                 icon = "<img src='../Content/Icons/epic.png'/>";
@@ -316,12 +318,13 @@
 
                                 }
                                 row.child(format(row.data(), 5) + '</table></div>').show();
+                      
                                 tr.addClass('shown');
                                 $('div.slider', row.child()).slideDown('1000');
 
                               }
 
-                              s =  '<div class="slider"><table  style="width:100" class="dataTable table bg-dark table-dark">';
+                              s =  '<div class="slider"><table id="childTable" style="width:100" class="dataTable table bg-dark table-dark">';
 
                               j = 0;
     });
@@ -381,6 +384,7 @@
             @Html.ValidationMessageFor(model => model.OrgName, "", new { @class = "text-danger" })
 
         </div>
+        
         <div class="col-xs-4 ml-5">
 
             @Html.Label("Project Name ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:35px" })
@@ -476,7 +480,7 @@
 </style>
 <script>
 
-        var s = '<div class="slider"><table  style="width:100" class="dataTable table bg-dark table-dark" >';
+        var s = '<div class="slider"><table id="childTable"  style="width:100" class="dataTable table bg-dark table-dark" >';
    var j = 0;
     function format(d,margin) {
 
@@ -513,6 +517,7 @@
         var o = document.getElementById("org");
         OrganizationName = o.options[o.selectedIndex].text;
         var col = "";
+        var bugBtn = "";
         var ico = "";
         for (let i = 0; i < data.Forward.length; i++) {
             if (data.Forward[i].fields.WorkItemType == 'Feature') {
@@ -522,6 +527,8 @@
                 ico = "<img src='../Content/Icons/task.png' style='padding-left:" + margin + "px'/>";
             }
             else if (data.Forward[i].fields.WorkItemType == 'Bug') {
+
+                bugBtn="<td onclick='showCommits(this)'>Show Commits</td>"
                 ico = "<img src='../Content/Icons/bug.png' style='padding-left:" + margin + "px'/>";
             }
             else if (data.Forward[i].fields.WorkItemType == 'Epic') {
@@ -536,7 +543,7 @@
             else {
                 ico = '#';
             }
-            s += "<tr class='bg-dark' ><td style='width:4%'>" + ico + "</td><td style='width:5%;padding-left:40px'>" + data.Forward[i].id + "</td><td style=''  ><a href='https://dev.azure.com/" + OrganizationName + "/" + data.Forward[i].fields.TeamProject + "/_workitems/edit/" + data.Forward[i].id + "' target='_blank' class='text-light'>" + data.Forward[i].fields.Title + "</a></td><td style=''>" + data.Forward[i].fields.IterationPath + "</td><td style=''>" + data.Forward[i].fields.State + "</td><td style=';vertical-align:top'>" + data.Forward[i].fields.WorkItemType + "</td></tr>";
+            s += "<tr class='bg-dark'><td style='width:4%'>" + ico + "</td><td style='width:5%;padding-left:40px' class='Id'>" + data.Forward[i].id + "</td><td style=''  ><a href='https://dev.azure.com/" + OrganizationName + "/" + data.Forward[i].fields.TeamProject + "/_workitems/edit/" + data.Forward[i].id + "' target='_blank' class='text-light'>" + data.Forward[i].fields.Title + "</a></td><td style=''>" + data.Forward[i].fields.IterationPath + "</td><td style=''>" + data.Forward[i].fields.State + "</td><td style=';vertical-align:top'>" + data.Forward[i].fields.WorkItemType + "</td>" + bugBtn + "</tr>";
             if (data.Forward[i].relations != null) {
                 var p = [0,data.Forward[i].id];
 
@@ -562,8 +569,40 @@
             //return data;
             //// `d` is the original data object for the row
 
-        }
+    }
 
+
+    function showCommits(a) {
+                
+             var Id = $(a).closest('tr').find('.Id').text();
+        var row = $(a).closest('tr');
+        var inp = getInp();
+       $.ajax({
+            type: "POST",
+           url: '@Url.Action("CommitList", "Account")',
+           data: { 'inp':  inp , 'Id': Id },
+
+            success:
+                function (data) {
+                    console.log(data);
+                    a.insertBefore(data, a.childNodes[0])
+                }
+            ,
+            failure:
+                function() { alert("Something went wrong, Please try Again"); }
+
+        });
+      
+                          
+    }
+
+    function getInp() {
+        var inp = new Object();
+        inp.OrganizationName = $('#org').val();
+        inp.ProjectName = $('#ProjectName').val();
+        inp.WorkItemType = $('#WorkItemType').val();
+        return inp;
+    }
 </script>
 <style>
     div.slider {
