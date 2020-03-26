@@ -114,6 +114,7 @@
     }
 
     function FillProjects() {
+        $('#divReports').css("display", "none");
         document.getElementById('load').hidden = false;
        document.getElementById("IterationPaths").innerHTML = "<option value='0'>Empty List</option>";
         var o = document.getElementById("org");
@@ -145,6 +146,7 @@
     }
 
     function FillIterationPaths() {
+        $('#divReports').css("display", "none");
          document.getElementById('load').hidden = false;
          var o = document.getElementById("org");
         var ORG = o.options[o.selectedIndex].text;
@@ -195,6 +197,7 @@
     }
 
     function GetCapacityReport() {
+        $('#divReports').css("display", "none");
         $('.dvTableData').html('');
          document.getElementById('load').hidden = false;
         var org = $('#org').children("option:selected").val();
@@ -212,53 +215,57 @@
                     var tabledata;
                      
                     if (data.currentTeamCapacities.length > 0) {
-                         tabledata = "<table class='dataTable'><thead> <tr><th>Iteration Path</th><th>Team Name</th><th>CurrentCapacity</th><th>CurrentWorking Days</th></tr></thead><tbody>";
+                        tabledata = "<table class='dataTable'><thead> <tr><th>Iteration Path</th><th>Team Name</th><th>CurrentCapacity</th><th>CurrentWorking Days</th></tr></thead><tbody>";
                         for (let i = 0; i < data.currentTeamCapacities.length; i++) {
-                              let row = data.currentTeamCapacities[i];
+                            let row = data.currentTeamCapacities[i];
                             tabledata += "<tr><td>" + row.iterationPath + "</td><td>" + row.teamName + "</td><td>" + row.currentCapacity + "</td><td>" + row.currentWorkingDays + "</td></tr > ";
                         }
                         tabledata += "</tbody></table>";
                         console.log(tabledata);
                         $('#tblCurrentTeamCapacity').append(tabledata);
-                    }
+                        $('#dvhead1').css("display", "");
+                    } 
                     tabledata = '';
-                     if (data.totalTeamCapacities.length > 0) {
-                         tabledata = "<table class='dataTable'><thead> <tr><th>Iteration Path</th><th>Team Name</th><th>totalCapacity</th><th>Iteration Start</th><th>Iteration End</th><th>Total Working Days </th></tr></thead><tbody>";
-                         for (let i = 0; i < data.totalTeamCapacities.length; i++) {
+                    if (data.totalTeamCapacities.length > 0) {
+                        tabledata = "<table class='dataTable'><thead> <tr><th>Iteration Path</th><th>Team Name</th><th>totalCapacity</th><th>Iteration Start</th><th>Iteration End</th><th>Total Working Days </th></tr></thead><tbody>";
+                        for (let i = 0; i < data.totalTeamCapacities.length; i++) {
                             let row = data.totalTeamCapacities[i];
                             tabledata += "<tr><td>" + row.iterationPath + "</td><td>" + row.teamName + "</td><td>" + row.totalCapacity + "</td><td>" + row.iterationStart + "</td><td>" + row.iterationEnd + "</td><td>" + row.totalWorkingDays + "</td></tr > ";
                         }
-                         tabledata += "</tbody></table>";
-                         console.log(tabledata);
+                        tabledata += "</tbody></table>";
+                        console.log(tabledata);
                         $('#tblTotalTeamCapacity').append(tabledata);
-                    }
+                        $('#dvhead2').css("display", "");
+                    } 
                     tabledata = '';
-                     if (data.capacitybyTeamMembers.length > 0) {
-                         tabledata = "<table class='dataTable'><thead> <tr><th>Team Member</th><th>Capacity Per Day</th><th>Iteration Path</th><th>Team Name</th><th>Iteration Start</th><th>Iteration End</th></tr></thead><tbody>";
-                         for (let i = 0; i < data.capacitybyTeamMembers.length; i++) {
-                             let row = data.capacitybyTeamMembers[i];
+                    if (data.capacitybyTeamMembers.length > 0) {
+                        tabledata = "<table class='dataTable'><thead> <tr><th>Team Member</th><th>Capacity Per Day</th><th>Iteration Path</th><th>Team Name</th><th>Iteration Start</th><th>Iteration End</th></tr></thead><tbody>";
+                        for (let i = 0; i < data.capacitybyTeamMembers.length; i++) {
+                            let row = data.capacitybyTeamMembers[i];
                             tabledata += "<tr><td>" + row.teamMember + "</td><td>" + row.capacityPerDay + "</td><td>" + row.iterationPath + "</td><td>" + row.teamName + "</td><td>" + row.iterationStart + "</td><td>" + row.iterationEnd + "</td></tr > ";
                         }
-                         tabledata += "</tbody></table>";
-                         console.log(tabledata);
+                        tabledata += "</tbody></table>";
+                        console.log(tabledata);
                         $('#tblCapacitybyTeamMember').append(tabledata);
-                    }
+                        $('#dvhead3').css("display", "");
+                    } 
                     tabledata = '';
                     if (data.leavesbyTeamMembers.length > 0) {
-                       
-                         tabledata = "<table class='dataTable'><thead> <tr><th>Team Member</th><th>No of Days Leave</th><th>IterationPath</th><th>Team Name</th><th>Leave From</th><th>Leave To</th></tr></thead><tbody>";
+
+                        tabledata = "<table class='dataTable'><thead> <tr><th>Team Member</th><th>No of Days Leave</th><th>IterationPath</th><th>Team Name</th><th>Leave From</th><th>Leave To</th></tr></thead><tbody>";
                         for (let i = 0; i < data.currentTeamCapacities.length; i++) {
-                             let row = data.leavesbyTeamMembers[i];
+                            let row = data.leavesbyTeamMembers[i];
                             tabledata += "<tr><td>" + row.teamMember + "</td><td>" + row.NoOfdaysLeave + "</td><td>" + row.iterationPath + "</td><td>" + row.teamName + "</td><td>" + row.LeaveFrom + "</td><td>" + row.LeaveTo + "</td></tr > ";
                         }
                         tabledata += "</tbody></table>";
                         console.log(tabledata);
                         $('#tblLeavesbyTeamMember').append(tabledata);
-                    }
+                        $('#dvhead4').css("display", "");
+                    } 
                     tabledata = '';
                     $('.dataTable').DataTable();
                     document.getElementById('load').hidden = true;
-                    $('#divReports').css("display", "");
+                     $('#divReports').css("display", "");
                 }
             ,
             failure:
@@ -271,8 +278,7 @@
 
 <div class="breadcrumb-holder">
     <div class="container-fluid">
-        <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <ul class="breadcrumb">            
             <li class="breadcrumb-item active">Team Capacity</li>
         </ul>
     </div>
@@ -311,25 +317,25 @@
     </div>
     <img id="load" style="margin-left:45%" height="100" width="100" src="~/Content/Images/loadinggif.gif" hidden />
     <div id="divReports" style="display:none">
-        <div class="row">
+        <div id="dvhead1" class="row" style="display:none">
             <h5>Current Team Capacity</h5>
         </div>
         <div id="tblCurrentTeamCapacity" class="dvTableData">
 
         </div>
-        <div class="row">
+        <div id="dvhead2" class="row" style="display:none">
             <h5>Total Team Capacity</h5>
         </div>
         <div id="tblTotalTeamCapacity" class="dvTableData">
 
         </div>
-        <div class="row">
+        <div id="dvhead3" class="row" style="display:none">
             <h5>Capacity/day of Team member across Team</h5>
         </div>
         <div id="tblCapacitybyTeamMember" class="dvTableData">
 
         </div>
-        <div class="row">
+        <div id="dvhead4" class="row" style="display:none">
             <h5>No of days off/Leaves of Team member across Team</h5>
         </div>
         <div id="tblLeavesbyTeamMember" class="dvTableData">

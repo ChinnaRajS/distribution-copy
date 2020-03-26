@@ -148,8 +148,6 @@ namespace distribution_copy.Controllers
                     var teamiteration = iterations.FirstOrDefault(x => x.path == item.IterationPath && x.team == item.teamName);
                     CurrentTeamCapacity currentTeamCapacity = new CurrentTeamCapacity();
                     TotalTeamCapacity totalTeamCapacity = new TotalTeamCapacity();
-                    CapacitybyTeamMember capacitybyTeamMember = new CapacitybyTeamMember();
-                    LeavesbyTeamMember leavesbyTeamMember = new LeavesbyTeamMember();
                     double currentCapacity = 0;
                     double TotalCapacity = 0;
                     if (teamiteration != null)
@@ -164,18 +162,20 @@ namespace distribution_copy.Controllers
                         currentTeamCapacity.currentWorkingDays= currDays < 0 ? "0" :Convert.ToInt32(currDays).ToString();
                         totalTeamCapacity.iterationPath = teamiteration.path;
                         totalTeamCapacity.teamName = teamiteration.team;
-                        totalTeamCapacity.iterationStart = teamiteration.attributes.startDate;
-                        totalTeamCapacity.iterationEnd = teamiteration.attributes.finishDate;
+                        totalTeamCapacity.iterationStart =Convert.ToDateTime(teamiteration.attributes.startDate).ToString("MM/dd/yyyy");
+                        totalTeamCapacity.iterationEnd = Convert.ToDateTime(teamiteration.attributes.finishDate).ToString("MM/dd/yyyy");
                         totalTeamCapacity.totalWorkingDays= teamiteration.attributes.startDate.GetBusinessDays(teamiteration.attributes.finishDate);
 
                         foreach (var member in item.value)
                         {
+                            CapacitybyTeamMember capacitybyTeamMember = new CapacitybyTeamMember();
+                            LeavesbyTeamMember leavesbyTeamMember = new LeavesbyTeamMember();
                             currentCapacity += (Convert.ToDouble(member.activities[0].capacityPerDay));
 
                             capacitybyTeamMember.teamMember = member.teamMember.displayName;
                             capacitybyTeamMember.iterationPath = teamiteration.path;
-                            capacitybyTeamMember.iterationStart = teamiteration.attributes.startDate;
-                            capacitybyTeamMember.iterationEnd = teamiteration.attributes.finishDate;
+                            capacitybyTeamMember.iterationStart = Convert.ToDateTime(teamiteration.attributes.startDate).ToString("MM/dd/yyyy");
+                            capacitybyTeamMember.iterationEnd = Convert.ToDateTime(teamiteration.attributes.finishDate).ToString("MM/dd/yyyy");
                             capacitybyTeamMember.capacityPerDay = member.activities[0].capacityPerDay;
                             capacitybyTeamMember.teamName = teamiteration.team;
                             capacity.capacitybyTeamMembers.Add(capacitybyTeamMember);
@@ -184,7 +184,26 @@ namespace distribution_copy.Controllers
                             leavesbyTeamMember.teamName = teamiteration.team;
                             leavesbyTeamMember.LeaveFrom = "";
                             leavesbyTeamMember.LeaveTo ="";
-                            leavesbyTeamMember.NoOfdaysLeave = member.daysOff.Count>0?member.daysOff[0]:"0";
+                            if (member.daysOff.Count > 0)
+                            {
+                                string fromleave = string.Empty;
+                                string toleave = string.Empty;
+                                foreach(var val in member.daysOff)
+                                {
+                                    fromleave = val.start;
+                                    toleave = val.end;
+                                    leavesbyTeamMember.LeaveFrom =Convert.ToDateTime(fromleave).ToString("MM/dd/yyyy");
+                                    leavesbyTeamMember.LeaveTo = Convert.ToDateTime(toleave).ToString("MM/dd/yyyy");
+                                }
+                                string diff = fromleave.DateDifference(toleave);
+                                leavesbyTeamMember.NoOfdaysLeave = diff=="0" ? "1" : diff ;
+                            }
+                            else
+                            {
+                                leavesbyTeamMember.LeaveFrom = "";
+                                leavesbyTeamMember.LeaveTo = "";
+                                leavesbyTeamMember.NoOfdaysLeave = "";
+                            }
                             leavesbyTeamMember.iterationPath = teamiteration.path;
                             capacity.leavesbyTeamMembers.Add(leavesbyTeamMember);
                         }
