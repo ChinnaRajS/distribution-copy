@@ -78,10 +78,10 @@
             document.getElementById("Count").hidden = true;
          document.getElementById("WorkItemType").innerHTML = "<option value='0' >--Empty--</option>";
         document.getElementById("ProjectName").innerHTML = "<option value='0' >Loading Projects...</option>";
-
+        document.getElementById('exc').disabled = true;
         if (ORG == "--Choose Organisation--") {
-
-            return;
+            
+            return;s
         }
         document.getElementById('load').hidden = false;
 
@@ -153,6 +153,7 @@
         inp.OrganizationName = o.options[o.selectedIndex].text;
 
         if (inp.OrganizationName == "--Choose Organisation--") {
+            document.getElementById('exc').disabled = true;
             return;
         }
         var p = document.getElementById("ProjectName");
@@ -255,7 +256,8 @@
                            document.getElementById("table").innerHTML = "";
                     }
                     var tabledata;
-                    var icon="";
+                    var icon = "";
+       
                     if (data.length > 0) {
                         tabledata = "<table id='dataTable' class='table' ><thead> <tr><th><img src='../Content/Icons/structure.png' /></th><th>Id</th><th>Title</th><th>Sprint</th><th>State</th><th>Type</th><th></th></tr></thead><tbody class='text-dark'>";
                         for (let i = 0; i < data.length; i++) {
@@ -266,7 +268,8 @@
                 icon = "<img src='../Content/Icons/task.png' />";
             }
             else if (data[i]["fields"]["System.WorkItemType"] == 'Bug') {
-                icon = "<img src='../Content/Icons/bug.png' />";
+                                  icon = "<img src='../Content/Icons/bug.png' />";
+                                
             }
             else if (data[i]["fields"]["System.WorkItemType"] == 'Epic') {
                 icon = "<img src='../Content/Icons/epic.png'/>";
@@ -315,12 +318,13 @@
 
                                 }
                                 row.child(format(row.data(), 5) + '</table></div>').show();
+                      
                                 tr.addClass('shown');
                                 $('div.slider', row.child()).slideDown('1000');
 
                               }
 
-                              s =  '<div class="slider"><table  style="width:100" class="dataTable table bg-dark table-dark">';
+                              s =  '<div class="slider"><table id="childTable" style="width:100" class="dataTable table bg-dark table-dark">';
 
                               j = 0;
     });
@@ -345,7 +349,8 @@
                     document.getElementById("Count").hidden = false;
 
         document.getElementById('load').hidden = true;
-          document.getElementById("overlay").style.display = "none";
+                    document.getElementById("overlay").style.display = "none";
+                    document.getElementById("exc").disabled = false;
 
                 }
             ,
@@ -366,44 +371,47 @@
         </ul>
     </div>
 </div>
-<div id="overlay"></div>
-<div  class="form-row ml-2" >
-    <div class="col-xs-4">
+<form action="~/Trace/TraceExport">
+    <div id="overlay"></div>
+    <div class="form-row ml-2">
+        <div class="col-xs-4">
 
-        @Html.Label("Organization", htmlAttributes: new { @class = "control-label display-4  sizeNormal", style = "padding-right:40px" })
+            @Html.Label("Organization", htmlAttributes: new { @class = "control-label display-4  sizeNormal", style = "padding-right:40px" })
 
-        @Html.DropDownListFor(model => model.OrgName, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "org", onchange = "populateProjects()", style = "opacity:0.8;" })
+            @Html.DropDownListFor(model => model.OrgName, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "org", onchange = "populateProjects()", style = "opacity:0.8;" })
 
-        @Html.ValidationMessageFor(model => model.OrgName, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.OrgName, "", new { @class = "text-danger" })
+
+        </div>
+        
+        <div class="col-xs-4 ml-5">
+
+            @Html.Label("Project Name ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:35px" })
+
+            @Html.DropDownListFor(model => model.ProjectName, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "ProjectName", onchange = "populateAll()", style = "opacity:0.8" })
+
+            @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+
+        </div>
+
+        <div class="ml-5">
+
+            @Html.Label("Work Item Type", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:21px" })
+
+            @Html.DropDownListFor(model => model.WIType, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "WorkItemType", onchange = "filter()", style = "opacity:0.8" })
+
+            @Html.ValidationMessageFor(model => model.WIType, "", new { @class = "text-danger" })
+
+        </div>
+
+        <div class="mt-30px">
+            <button id="exc" type="submit" class="btn btn-success ml-5" disabled>Export</button>
+        </div>
+
+
 
     </div>
-    <div class="col-xs-4 ml-5">
-
-        @Html.Label("Project Name ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:35px" })
-
-        @Html.DropDownListFor(model => model.ProjectName, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "ProjectName", onchange = "populateAll()", style = "opacity:0.8" })
-
-        @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
-
-    </div>
-
-    <div class="ml-5">
-
-        @Html.Label("Work Item Type", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:21px" })
-
-        @Html.DropDownListFor(model => model.WIType, new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "WorkItemType", onchange = "filter()", style = "opacity:0.8" })
-
-        @Html.ValidationMessageFor(model => model.WIType, "", new { @class = "text-danger" })
-
-    </div>
-
-    <div class="mt-30px">
-        @*<button id="exc" type="submit" class="btn btn-success ml-5" disabled>Download Excel</button>*@
-    </div>
-
-
-
-</div>
+</form>
 <img id="load" style="margin-left: 42%; margin-top: 5%;" height="100" width="100" src="../content/images/loadinggif.gif" hidden />
 
 
@@ -471,7 +479,7 @@
 </style>
 <script>
 
-        var s = '<div class="slider"><table  style="width:100" class="dataTable table bg-dark table-dark" >';
+        var s = '<div class="slider"><table id="childTable"  style="width:100" class="dataTable table bg-dark table-dark" >';
    var j = 0;
     function format(d,margin) {
 
@@ -508,6 +516,7 @@
         var o = document.getElementById("org");
         OrganizationName = o.options[o.selectedIndex].text;
         var col = "";
+        var bugBtn = "";
         var ico = "";
         for (let i = 0; i < data.Forward.length; i++) {
             if (data.Forward[i].fields.WorkItemType == 'Feature') {
@@ -517,6 +526,8 @@
                 ico = "<img src='../Content/Icons/task.png' style='padding-left:" + margin + "px'/>";
             }
             else if (data.Forward[i].fields.WorkItemType == 'Bug') {
+
+                bugBtn="<td onclick='showCommits(this)'>Show Commits</td>"
                 ico = "<img src='../Content/Icons/bug.png' style='padding-left:" + margin + "px'/>";
             }
             else if (data.Forward[i].fields.WorkItemType == 'Epic') {
@@ -531,7 +542,7 @@
             else {
                 ico = '#';
             }
-            s += "<tr class='bg-dark' ><td style='width:4%'>" + ico + "</td><td style='width:5%;padding-left:40px'>" + data.Forward[i].id + "</td><td style=''  ><a href='https://dev.azure.com/" + OrganizationName + "/" + data.Forward[i].fields.TeamProject + "/_workitems/edit/" + data.Forward[i].id + "' target='_blank' class='text-light'>" + data.Forward[i].fields.Title + "</a></td><td style=''>" + data.Forward[i].fields.IterationPath + "</td><td style=''>" + data.Forward[i].fields.State + "</td><td style=';vertical-align:top'>" + data.Forward[i].fields.WorkItemType + "</td></tr>";
+            s += "<tr class='bg-dark'><td style='width:4%'>" + ico + "</td><td style='width:5%;padding-left:40px' class='Id'>" + data.Forward[i].id + "</td><td style=''  ><a href='https://dev.azure.com/" + OrganizationName + "/" + data.Forward[i].fields.TeamProject + "/_workitems/edit/" + data.Forward[i].id + "' target='_blank' class='text-light'>" + data.Forward[i].fields.Title + "</a></td><td style=''>" + data.Forward[i].fields.IterationPath + "</td><td style=''>" + data.Forward[i].fields.State + "</td><td style=';vertical-align:top'>" + data.Forward[i].fields.WorkItemType + "</td>" + bugBtn + "</tr>";
             if (data.Forward[i].relations != null) {
                 var p = [0,data.Forward[i].id];
 
@@ -557,8 +568,48 @@
             //return data;
             //// `d` is the original data object for the row
 
-        }
+    }
 
+
+    function showCommits(a) {
+                
+             var Id = $(a).closest('tr').find('.Id').text();
+        var row = $(a).closest('tr');
+        var inp = getInp();
+       $.ajax({
+            type: "POST",
+           url: '@Url.Action("CommitList", "Account")',
+           data: { 'inp':  inp , 'Id': Id },
+
+            success:
+                function (data) {
+                    console.log(data);
+                    var tabData="<table>"
+                    for (let i = 0; i < data.length; i++) {
+                        tabData += "<tr><td>" + data[i]["revisedBy"]["displayName"]+"</td></tr>";
+                    }
+                    tabData += "</table>";
+
+                    //a.insertBefore(tabData, a.childNodes[0]);
+                    a.childNodes[0].innerHTML = tabData;
+
+                }
+            ,
+            failure:
+                function() { alert("Something went wrong, Please try Again"); }
+
+        });
+      
+                          
+    }
+
+    function getInp() {
+        var inp = new Object();
+        inp.OrganizationName = $('#org').val();
+        inp.ProjectName = $('#ProjectName').val();
+        inp.WorkItemType = $('#WorkItemType').val();
+        return inp;
+    }
 </script>
 <style>
     div.slider {

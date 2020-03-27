@@ -1,0 +1,18 @@
+﻿@model ExportWIAttachmentsWeb.Models.ProjectDetail
+@if (Model.ProjectDetails.Count > 0)
+{
+    <label class="w-25 text-right mr-4"><h6>Project :</h6> </label>
+    <select class="form-control inline w-50" id="ddlADOProjects">
+        @foreach (var project in Model.ProjectDetails)
+        {
+            <option project-id="@project.name">@project.name</option>
+        }
+    </select>
+}
+else
+{
+    <script>
+        $("#btnGetWorkItems").hide();
+    </script>
+    <div class="alert alert-danger col-sm-12">Selected Account does not have any Projects or You are not been authorised to access the Projects</div>
+}

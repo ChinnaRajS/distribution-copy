@@ -15,6 +15,11 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 using distribution_copy.Models.ResponseWI;
+using distribution_copy.Models.TraceExportModel;
+using distribution_copy.Models;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.IO;
 
 namespace distribution_copy.Controllers
 {
@@ -23,6 +28,11 @@ namespace distribution_copy.Controllers
         public string url = "";
 
         AccountService Account = new AccountService();
+        ExcelPackage excel = new ExcelPackage();
+        ExcelWorksheet workSheet;
+        int recordIndex ;
+        int columnNo;
+        int i = 0;
 
         // GET: Trace
         public ActionResult Index()
@@ -258,7 +268,7 @@ namespace distribution_copy.Controllers
             all.Add(WorkItemList);
             return Json(all, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult Relation(int id)
+        public object Relation(int id, bool Export = false)
         {
 
             distribution_copy.Models.ExpandWI.Value v = new Models.ExpandWI.Value();
@@ -309,9 +319,126 @@ namespace distribution_copy.Controllers
             {
                 rel.Add("Forward", ForwardList);
                 rel.Add("Reverse", RevereseList);
-                return Json(rel, JsonRequestBehavior.AllowGet);
-            } 
+            }
+            if (Export)
+            {
+                return rel;
+            }
             return Json(rel, JsonRequestBehavior.AllowGet); 
         }
+
+        public void TraceExport(TraceInputModel inp)
+        {
+            InputModel inputModel = new InputModel();
+            inputModel.OrganizationName = inp.OrgName;
+            inputModel.ProjectName = inp.ProjectName;
+            inputModel.WorkItemType = inp.WIType;
+            var List = (RootObject)Filter(inputModel, 1);
+            workSheet =  excel.Workbook.Worksheets.Add("WorkItems");
+            workSheet.TabColor = System.Drawing.Color.White;
+            workSheet.DefaultRowHeight = 12;
+            workSheet.Row(1).Height = 20;
+            workSheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            workSheet.Row(1).Style.Font.Bold = true;
+            workSheet.Cells[1, 1].Value = "ID";
+            workSheet.Cells[1, 2].Value = "Work Item Type";
+           int j= AddColumns(List);
+            workSheet.Cells[1,j++].Value = "Team Project";
+            workSheet.Cells[1,j++].Value = "State";
+            workSheet.Cells[1,j++].Value = "Area Path";
+            workSheet.Cells[1,j++].Value = "Iteration";
+            //workSheet.Cells[1,++j].Value = "Url";
+            //workSheet.Cells[1,++j].Value = "PlannedHours";
+            //workSheet.Cells[1,++j].Value = "ActualHours";
+            //workSheet.Cells[1,++j].Value = "Sprint";
+            //workSheet.Cells[1,++j].Value = "OriginalEstimate";
+            //workSheet.Cells[1,++j].Value = "CompletedWork";
+            //workSheet.Cells[1,++j].Value = "RemainingWork";
+            //workSheet.Cells[1,++j].Value = "CreatedDate";
+            //workSheet.Cells[1,++j].Value = "Description";
+            //workSheet.Cells[1,++j].Value = "CreatedBy";
+            //workSheet.Cells[1,++j].Value = "AssignedTo";
+            //workSheet.Cells[1,++j].Value = "ChangedBy";
+            recordIndex = 2;
+            foreach (var i in List.value)
+            {
+                FindRelations(i,3);
+            }
+            for (var i = 1; i <= columnNo; i++)
+                workSheet.Column(i).AutoFit();
+            string excelName = inp.OrgName + "-" + (inp.ProjectName != null ? inp.ProjectName : "") + "-" + (inp.WIType != null ? inp.WIType : "") + DateTime.Now.ToString();
+            using (var memoryStream = new MemoryStream())
+            {
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment; filename=" + excelName + ".xlsx");
+                excel.SaveAs(memoryStream);
+                memoryStream.WriteTo(Response.OutputStream);
+                Response.Flush();
+                Response.End();
+            }
+        }
+        public void FindRelations(Models.ExpandWI.Value WI,int tInd)
+        {
+            int max = columnNo;
+            int col = 0;
+            workSheet.Cells[recordIndex, ++col].Value = WI.id;
+            workSheet.Cells[recordIndex, ++col].Value = WI.fields.WorkItemType;
+            workSheet.Cells[recordIndex,tInd].Value = WI.fields.Title;
+            workSheet.Cells[recordIndex, columnNo++].Value = WI.fields.TeamProject;
+            workSheet.Cells[recordIndex, columnNo++].Value = WI.fields.State;
+                                     
+            workSheet.Cells[recordIndex, columnNo++].Value = WI.fields.AreaPath;
+            workSheet.Cells[recordIndex, columnNo++].Value = WI.fields.IterationPath;
+
+            recordIndex++;
+            columnNo = max;
+            var Relations=  (Dictionary<string, List<distribution_copy.Models.ExpandWI.Value>>)Relation(WI.id,true);               
+                    foreach(var j in Relations["Forward"]) {
+                int n = tInd + 1;
+                        FindRelations(j,n);
+                    }           
+           
+        }
+        public int AddColumns(RootObject root)
+        {
+            List<int> counts = new List<int>();
+
+            foreach(var wi in root.value)
+            {
+              var count=  title(wi);
+                i = 0;
+                counts.Add(count);
+            }
+          int maxtitles=counts.Max();
+            if (maxtitles == 1)
+            {
+                workSheet.Cells[1, 3].Value = "Title";
+                this.columnNo = maxtitles + 3;
+                return 4;
+            }
+            for(int k = 0; k <= maxtitles; k++)
+            {
+                workSheet.Cells[1, k+3].Value = "Title "+(k+1);
+            }
+            this.columnNo = maxtitles + 4;
+            return maxtitles+4;
+        }
+        int v = 0;
+        public int title(Models.ExpandWI.Value WI,int w=1)
+        {
+            var Relations = (Dictionary<string, List<distribution_copy.Models.ExpandWI.Value>>)Relation(WI.id, true);
+           
+            foreach (var j in Relations["Forward"])
+            {
+                title(j,w+1);
+                if (i < w)
+                {
+                    i = w;
+                }
+            }
+            return i;
+        }
     }
+
+
 }
