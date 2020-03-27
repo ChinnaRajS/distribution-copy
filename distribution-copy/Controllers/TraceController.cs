@@ -327,7 +327,7 @@ namespace distribution_copy.Controllers
             return Json(rel, JsonRequestBehavior.AllowGet); 
         }
 
-        public void TraceExport(TraceInputModel inp)
+        public ExcelPackage TraceExport(TraceInputModel inp,bool flush=true)
         {
             InputModel inputModel = new InputModel();
             inputModel.OrganizationName = inp.OrgName;
@@ -367,14 +367,22 @@ namespace distribution_copy.Controllers
             for (var i = 1; i <= columnNo; i++)
                 workSheet.Column(i).AutoFit();
             string excelName = inp.OrgName + "-" + (inp.ProjectName != null ? inp.ProjectName : "") + "-" + (inp.WIType != null ? inp.WIType : "") + DateTime.Now.ToString();
-            using (var memoryStream = new MemoryStream())
+
+            if (flush)
             {
-                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                Response.AddHeader("content-disposition", "attachment; filename=" + excelName + ".xlsx");
-                excel.SaveAs(memoryStream);
-                memoryStream.WriteTo(Response.OutputStream);
-                Response.Flush();
-                Response.End();
+                using (var memoryStream = new MemoryStream())
+                {
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.AddHeader("content-disposition", "attachment; filename=" + excelName + ".xlsx");
+                    excel.SaveAs(memoryStream);
+                    memoryStream.WriteTo(Response.OutputStream);
+                    Response.Flush();
+                    Response.End();
+                    return excel;
+                }
+            }
+            else {
+                return excel;
             }
         }
         public void FindRelations(Models.ExpandWI.Value WI,int tInd)

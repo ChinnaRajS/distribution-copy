@@ -16,12 +16,15 @@ using System.Web.UI.WebControls;
 using distribution_copy.Controllers;
 using distribution_copy.Services;
 using distribution_copy.Models.AccountsResponse;
+using distribution_copy.Models.InputModel;
+using distribution_copy.Models;
 
 namespace ExportWIAttachmentsWeb.Controllers
 {
     public class ExportWIAttachmentsController : Controller
     {
         StringBuilder logger = new StringBuilder();
+        public string url = "";
         // GET: ExportWIAttachments
         public ActionResult Index()
         {
@@ -395,6 +398,75 @@ namespace ExportWIAttachmentsWeb.Controllers
 
                 return RedirectToAction("../Account/Verify");
             }
+     
         }
+    //    public ActionResult DownloadExcel(string data)
+    //    {
+    //        Download model = new Download();
+    //        model = JsonConvert.DeserializeObject<Download>(data);
+    //        TraceInputModel input = new TraceInputModel();
+    //        input.OrgName = model.AccountName;
+    //        input.ProjectName = model.ProjectName;
+    //        input.WIType = "Epic";
+    //        TraceController trace = new TraceController();
+    //       ExcelPackage excel= trace.TraceExport(input, false);
+    //        string wiql = @"Select [Work Item Type] From WorkItems where [Related Link Count] = '0' and [System.TeamProject]='"+input.ProjectName+"'";
+    //        var content = JsonConvert.SerializeObject(wiql);
+    //        var Uri = "https://dev.azure.com/" + input.OrgName + "/_apis/wit/wiql?api-version=5.1";
+    //        distribution_copy.Services.AccountService service = new distribution_copy.Services.AccountService();
+
+    //        distribution_copy.Models.ResponseWI.ResponseWI wiqlResponse = service.GetApi<distribution_copy.Models.ResponseWI.ResponseWI>(Uri, "POST", content);
+    //        if (wiqlResponse == null)
+    //            return null;
+
+    //        if (wiqlResponse.workItems == null || wiqlResponse.workItems.Count == 0)
+    //            return null;
+    //        string defaultUrl = "https://dev.azure.com/" + inp.OrganizationName + "/_apis/wit/workitems?ids=";
+    //        url = defaultUrl;
+    //        urlResponse.value = new List<Value>();
+    //        string b = "&api-version=5.1";
+    //        for (int j = 0; j < wiqlResponse.workItems.Count; j++)
+    //        {
+    //            if (j % 200 == 0 && j != 0)
+    //            {
+
+    //                var batchResponse = getWorkItems(inp);
+    //                urlResponse.count += batchResponse.count;
+    //                foreach (var item in batchResponse.value)
+    //                {
+    //                    urlResponse.value.Add(item);
+    //                }
+    //                url = defaultUrl;
+    //            }
+    //            if (j % 200 == 0)
+    //            {
+    //                url += wiqlResponse.workItems[j].id;
+    //            }
+    //            else
+    //            {
+    //                url += "," + wiqlResponse.workItems[j].id;
+    //            }
+    //        }
+    //        url += b;
+
+    //        var lastBatchResponse = getWorkItems(inp);
+    //        urlResponse.count += lastBatchResponse.count;
+    //        foreach (var item in lastBatchResponse.value)
+    //        {
+    //            urlResponse.value.Add(item);
+    //        }
+    //        Session["WorkItems"] = urlResponse;
+    //        List<string> Types = new List<string>();
+    //        foreach (var i in urlResponse.value)
+    //        {
+    //            if (!Types.Contains(i.fields.WorkItemType))
+    //                Types.Add(i.fields.WorkItemType);
+    //        }
+    //        return Json(Types, JsonRequestBehavior.AllowGet);
+    //    }
+    //}
+
+
     }
+
 }

@@ -195,7 +195,7 @@ namespace distribution_copy.Controllers
         {
             //Console.Write("Enter The Ecel File Path:");
             /*string ExcelPath=Console.ReadLine();*/
-           var WorkSheet= Excel.Workbook.Worksheets[0];
+           var WorkSheet= Excel.Workbook.Worksheets[1];
 
             int rowCount = WorkSheet.Dimension.End.Row;
             int colCount = WorkSheet.Dimension.End.Column;
@@ -210,7 +210,7 @@ namespace distribution_copy.Controllers
                 {
                     if (i == 1)
                     {
-                        ColName = WorkSheet.Cells[j,i].Value.ToString();
+                        ColName = WorkSheet.Cells[i,j].Value.ToString();
                         if (ColName.StartsWith("Title"))
                         {
                             TitleColumns.Add(ColName);
@@ -220,9 +220,9 @@ namespace distribution_copy.Controllers
                     }
                     else
                     {
-                        ColName = WorkSheet.Cells[j,1].Value.ToString();
-                        if (WorkSheet.Cells[j,i].Value != null)
-                            row[ColName] = WorkSheet.Cells[j,i].Value.ToString();
+                        ColName = WorkSheet.Cells[1,j].Value.ToString();
+                        if (WorkSheet.Cells[i,j].Value != null)
+                            row[ColName] = WorkSheet.Cells[i,j].Value.ToString();
                     }
                 }
                 if (i != 1)

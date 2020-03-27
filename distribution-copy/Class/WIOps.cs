@@ -5,6 +5,7 @@ using Microsoft.TeamFoundation.TestManagement.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
+using Microsoft.VisualStudio.Services.OAuth;
 using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
@@ -73,7 +74,7 @@ namespace WorkItemPublish.Class
         }
         public static void ConnectWithPAT(string ServiceURL, string PAT)
         {
-            VssConnection connection = new VssConnection(new Uri(ServiceURL), new VssBasicCredential("",PAT));
+            VssConnection connection = new VssConnection(new Uri(ServiceURL), new VssOAuthAccessTokenCredential(PAT));
             InitClients(connection);
         }
         static void InitClients(VssConnection Connection)

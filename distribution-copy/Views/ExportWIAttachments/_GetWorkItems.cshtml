@@ -101,6 +101,8 @@
                     <span class="caret"></span> <span class="glyphicon glyphicon-save"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-left" id="ulExport">
+                    <li class="mb-1"><input type="button" id="btnExportToExcel" class="btn btn-success form-control" value="Excel for Migration" /></li>
+
                     <li><input type="button" id="btnExportToFile" class="btn btn-success form-control" value="File" /></li>
                     <li><input type="button" id="btnExportToFolder" class="btn btn-success form-control mt-1" value="Folder" /></li>
                 </ul>
@@ -137,5 +139,15 @@ else
         else {
             alert("Atleast select one Attachment");
         }
+    });
+
+    $('#btnExportToExcel').on('click', function () {
+                var documentDetails = {};
+        documentDetails["AccountName"] = $('#ddlADOAccount option:selected').attr('account-id');
+        documentDetails["ProjectName"] = $('#ddlADOProjects option:selected').attr('project-id');
+        var url = "/ExportWIAttachments/DownloadExcel?data=" + JSON.stringify(documentDetails);
+            window.location = url;
+
+
     });
 </script>
