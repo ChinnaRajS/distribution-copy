@@ -382,7 +382,7 @@
                                 icon = "<img src='../Content/Icons/testcase.png' />";
                                 $("#WIcountByType").html(icon + WIType + "s  :" + data.counts.WIcountType);
                             } else {
-                                $("#WIcountByType").html(icon + WIType + "s  :" + data.counts.WIcountType);
+                                $("#WIcountByType").html( WIType + "s  :" + data.counts.WIcountType);
                             }
 
                             if (selestedProj != "0") {
@@ -412,8 +412,9 @@
                                 } else if (WIType == 'Test Case') {
                                     icon = "<img src='../Content/Icons/testcase.png' />";
                                     $("#PWorkItem").html(icon + WIType + "s  :" + ProjWICount);
-                                } else {
-                                    $("#PWorkItem").html(icon + WIType + "s  :" + ProjWICount);
+                                } 
+                                else {
+                                    $("#PWorkItem").html(WIType + "s  :" + ProjWICount);
                                 }
 
                             }
