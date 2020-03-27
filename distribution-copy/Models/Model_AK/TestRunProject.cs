@@ -26,5 +26,5 @@ namespace distribution_copy.Models.Model_AK
         public int count { get; set; }
         public List<ValueTest> value { get; set; }
     }
-    
+
 }
