@@ -234,7 +234,7 @@
                         $("#Repos").html("" + data.counts.repoCount);//Repositories
                         $("#WIcount").html("" + data.counts.WIcountOrg);//WorkItems
                         wicounts.hidden = false;
-                        
+
                         WIType = $('#WorkItemType').val()
 
                         $('#projectDrop').change(function () {
@@ -381,10 +381,9 @@
                             } else if (WIType == 'Test Case') {
                                 icon = "<img src='../Content/Icons/testcase.png' />";
                                 $("#WIcountByType").html(icon + WIType + "s  :" + data.counts.WIcountType);
+                            } else {
+                                $("#WIcountByType").html( WIType + "s  :" + data.counts.WIcountType);
                             }
-
-                        
-
 
                             if (selestedProj != "0") {
                                 document.getElementById('PWorkItem').hidden = false;
@@ -401,7 +400,7 @@
                                 } else if (WIType == 'Bug') {
                                     icon = "<img src='../Content/Icons/bug.png' />";
                                     $("#PWorkItem").html(icon + WIType + "s  :" + ProjWICount);
-                                }else if (WIType == 'Feature') {
+                                } else if (WIType == 'Feature') {
                                     icon = "<img src='../Content/Icons/feature.png' />";
                                     $("#PWorkItem").html(icon + WIType + "s  :" + ProjWICount);
                                 } else if (WIType == 'User Story') {
@@ -413,6 +412,9 @@
                                 } else if (WIType == 'Test Case') {
                                     icon = "<img src='../Content/Icons/testcase.png' />";
                                     $("#PWorkItem").html(icon + WIType + "s  :" + ProjWICount);
+                                } 
+                                else {
+                                    $("#PWorkItem").html(WIType + "s  :" + ProjWICount);
                                 }
 
                             }

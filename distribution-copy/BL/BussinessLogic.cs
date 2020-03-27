@@ -277,5 +277,24 @@ namespace distribution_copy.BL
             return testData;
         }
 
+        public WorkItemsClass testCaseMethod(string testcaseid)
+        {
+            WorkItemsClass workitemTestCase = new WorkItemsClass();
+            string api = string.Format("https://dev.azure.com/{0}{1}/_apis/wit/workitems/151?api-version=5.1", Org.OrganizationName, Org.ProjectName, testcaseid);
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Org.pat);//);accessToken1
+
+                HttpResponseMessage response = client.GetAsync(api).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var obj = response.Content.ReadAsStringAsync().Result;
+                    workitemTestCase = JsonConvert.DeserializeObject<WorkItemsClass>(obj);
+                }
+                return workitemTestCase;
+            }
+        }
     }
 }
