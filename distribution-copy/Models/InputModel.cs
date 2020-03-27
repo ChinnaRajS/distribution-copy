@@ -10,7 +10,6 @@ namespace distribution_copy.Models.InputModel
         public string OrganizationName { get; set; }
         public string ProjectName { get; set; }
         public string WorkItemType { get; set; }
-
         public string IterationPaths { get; set; }
         public string AssignedTo { get; set; }
         public string Sprint { get; set; }

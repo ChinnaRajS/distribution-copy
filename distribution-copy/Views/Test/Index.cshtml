@@ -25,9 +25,9 @@
 
 <script>
     $(document).ready(function () {
-        $('#DataTable').DataTable();
-        //  $("#freeze").fadeOut();
-        document.getElementById('load').hidden = false;
+        $('#dataTable').DataTable();
+        document.getElementById("load").hidden = false;
+    
         //GetOrganization
             $.ajax({
                 url: '@Url.Action("GetOrganization", "Test")',
@@ -35,7 +35,7 @@
                 data: {},
                 dataType: 'json',
                 success: function (data) {
-                    document.getElementById('load').hidden = true;
+                   document.getElementById("load").hidden = true;
                 //    $("#freeze").fadeIn();
                     var count = Object.keys(data).length;
                     if (count >= 1) {
@@ -53,7 +53,8 @@
 
                 error: function (request, error) {
                 //    $("#freeze").fadeIn();
-                    document.getElementById('load').hidden = true;
+                     document.getElementById("load").hidden = true;
+                   
                     alert('Invalid Details');
                 }
             });
@@ -76,7 +77,9 @@
            });
 
         $('#OrganizationDrop').change(function () {
-            document.getElementById('load').hidden = false;
+            $('#TestPlanDrop').empty();
+            $('#ddlProjectvalue').empty();
+             document.getElementById("load").hidden = false;
             $("#load").show();
            //  $("#freeze").fadeOut();
                var orgName=$("#OrganizationDrop option:selected").text();
@@ -88,7 +91,12 @@
                         data: { 'orgName': orgName },
                         dataType: 'json',
                         success: function (data) {
-                            document.getElementById('load').hidden = true;
+                            $("#ddlProjectvalue").empty();
+                             $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                 document.getElementById("load").hidden = true;
                            //  $("#freeze").fadeIn();
                             var count = Object.keys(data).length;
                             if (count >= 1) {
@@ -105,7 +113,11 @@
                         },
 
                         error: function (request, error) {
-                            document.getElementById('load').hidden = true;
+                             $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                 document.getElementById("load").hidden = true;
                             alert('Invalid Details');
                         }
                     });
@@ -113,7 +125,8 @@
 
 
         $('#ddlProjectvalue').change(function () {
-                document.getElementById('load').hidden = false;
+            $('#TestPlanDrop').empty();
+                 document.getElementById("load").hidden = false;
                 var selectedText = $("#ddlProjectvalue").find("option:selected").text();
                 var selectedValue = $("#ddlProjectvalue").val();
                 $('#testPlanDrop').show();
@@ -123,6 +136,12 @@
                     data: { 'selectedProject': selectedText },
                     dataType: 'json',
                     success: function (data) {
+                        $("#TestPlanDrop").empty();
+                         $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                         document.getElementById("load").hidden = true;
                         document.getElementById('load').hidden = true;
                         if (data.count<1)
                         {
@@ -145,6 +164,10 @@
                     },
 
                     error: function (request, error) {
+                         $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
                         document.getElementById('load').hidden = true;
                         alert('Request Failed');
                     }
@@ -154,7 +177,8 @@
 
 
         $('#TestPlanDrop').change(function () {
-            document.getElementById('load').hidden = false;
+            
+             document.getElementById("load").hidden = false;
                 var selectedValue = $("#TestPlanDrop").val();
                 $('#testPlanDrop').show();
                 $.ajax({
@@ -163,25 +187,111 @@
                     data: { 'planid': selectedValue },
                     dataType: 'json',
                     success: function (data) {
-                        document.getElementById('load').hidden = true;
-                         $('#DataTable').show();
+                        document.getElementById("load").hidden = true;
+                       // $(".dataTable").clear();
+                        $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                         $('#dataTable').show();
                         if (data.count<1)
                         {
                             alert('No Test Suites Found')
                         }
                         var count = Object.keys(data).length;
+                           
 
-                            $.each(data.value, function (i) {
-                               var tableData = "<tr class='tableData'><td>" + data.value[i].workItem.id + "</td><td>" + data.value[i].workItem.name + "</td><td><input type='checkbox' name='ID' value=" + data.value[i].workItem.id + "  class='custom-checkbox chkCheckBoxId' /></td></tr>"
-                                $("#DataTable").append(tableData);
-                            });
+                        if (data.length > 0) {
+                            tabledata = "<table id='dataTable'><thead> <tr><th>Suite</th><th>Planned</th><th>Pass</th><th>Fail</th><th>Executed</th><th>Pass Based On Execution</th><th>Pass Based On Planing %</th><th>Executed Percentage</th><th>NotYetExecution</th></thead><tbody>";
+
+                         //   for (let i = 0; i < data.length; i++) {
+                            $.each(data, function (i) {
+                                let row = data[i];
+                                tabledata += "<tr class='tableData'><td>" + data[i].Suite + "</td><td>" + data[i].Planned + "</td><td>" + data[i].Pass + "</td><td>" + data[i].Fail + "</td><td>" + data[i].Executed + "</td><td> " + data[i].PassBasedOnExecution +" %</td><td>" + data[i].PassPercentage + " %</td><td>" + data[i].ExecutedPercentage + " %</td><td>" + data[i].NotYetExecution + "</td></tr>";
+                            })
+                            tabledata += "</tbody></table>";
+                            console.log(tabledata);
+                            $("#DataTableDiv").append(tabledata);
+                             $('#dataTable').DataTable();
+                        }
                             //      alert('Request Successful');
+
+                        var suite;
+                        var planned=0;
+                        var pass=0;
+                        var fail=0;
+                        var executed=0;
+                        var passBasedExec=0;
+                        var passBasedPlanning=0;
+                        var execPercentage=0;
+                        var notExecuted=0;
+                        var totalpassBasedExec=0;
+                        var totalpassBasedPlanning=0;
+                        var totalexecPercentage=0;
+                        $.each(data, function (j) {
+                            console.log(data[j].Pass);
+                             //   var tableData = "<tr class='tableData'><td>" + data[i].Suite + "</td><td>" + data[i].Planned + "</td>" + data[i].Executed + "</td><td>" + data[i].ExecutedPercentage +"</td><td>"+data[i].Pass+"</td></td>"+data[i].Fail+"</td><td>"+data[i].PassPercentage+"</td><td>"+data[i].PassBasedOnExecution+"</td><td>"+data[i].NotYetExecution+"</td></tr>"
+                            
+                            //$("#DataTable").append(tableData);
+                            var PlanConvert = parseInt(data[j].Planned);
+                            var PassConvert = parseInt(data[j].Pass);
+                            var FailConvert = parseInt(data[j].Fail);
+                            var ExecuteConvert =parseInt(data[j].Executed);
+                            var PassBasedExecConvert =parseInt(data[j].PassBasedOnExecution);
+                            var PassBasedPlanConvert =parseInt(data[j].PassPercentage);
+                            var execPercentageConvert =parseInt(data[j].ExecutedPercentage);
+                            var notExecutedConvert = parseInt(data[j].NotYetExecution);
+                          
+                            suite = data[j].Suite;
+                            planned = planned + PlanConvert;
+                            pass = pass + PassConvert;
+                            fail = fail + FailConvert;
+                            executed = executed + ExecuteConvert;
+                            passBasedExec = passBasedExec + PassBasedExecConvert;
+                            passBasedPlanning= passBasedPlanning + PassBasedPlanConvert;
+                            execPercentage = execPercentage + execPercentageConvert;
+                            notExecuted = notExecuted + notExecutedConvert;                              
+                        });
+                        console.log("plan: " + planned + " Not Executed:" + notExecuted + "PassBasedPlan: " + passBasedPlanning + "Fail: " + fail);
+                        if (pass == 0 && executed == 0) {
+                            totalpassBasedExec = 0;
+                        }
+                        else {
+                            totalpassBasedExec = parseInt(pass / executed * 100);
+                        }
+                        console.log(totalpassBasedExec);
+                        if (pass == 0 && planned == 0) {
+                            totalpassBasedPlanning = 0;
+                        }
+                        else {
+                            totalpassBasedPlanning = parseInt(pass / planned * 100);
+                        }
+                        if (executed == 0 && planned == 0) {
+                            totalexecPercentage = 0;
+                        }
+                        else {
+                            totalexecPercentage = parseInt(executed / planned * 100);
+                        }
+
+                         var tabledata1 = "<table id='dataTable1'><thead> <tr><th>Planned</th><th>Pass</th><th>Fail</th><th>Executed</th><th>Pass Based On Execution</th><th>Pass Based On Planing %</th><th>Executed Percentage</th><th>NotYetExecution</th></thead><tbody>";
+
+                         //   for (let i = 0; i < data.length; i++) {
+                        
+                        tabledata1 += "<tr class='tableData'><td>" + planned + "</td><td>" + pass + "</td><td>" + fail + "</td><td>" + executed + "</td><td> " + totalpassBasedExec + " %</td><td>" + totalpassBasedPlanning + " %</td><td>" + totalexecPercentage + " %</td><td>" + notExecuted + "</td></tr>";
+                        tabledata1 += "</tbody></table>";
+                        console.log("total Table");
+                        console.log(tabledata1);
+                            $("#DataTableDiv1").append(tabledata1);
+                          $('#dataTable1').DataTable();
 
                     },
 
                     error: function (request, error) {
-                        document.getElementById('load').hidden = true;
-                         $('#DataTable').hide();
+             $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                        
                         alert('Request Failed');
                     }
                 });
@@ -197,7 +307,6 @@
     <div class="breadcrumb-holder">
         <div class="container-fluid">
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                 <li class="breadcrumb-item active">Reports   </li>
             </ul>
         </div>
@@ -224,62 +333,17 @@
             </div>
         </div>
     </div>
-    <img id="load" style="margin-left:45%" height="100" width="100" src="~/Content/Images/loadinggif.gif"/>
+    <img id="load" style="margin-left:45%" height="100" width="100" src="~/Content/Images/loadinggif.gif" hidden />
     <br />
-    <div>
-        <table id="DataTable" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Suite</th>
-                    <th>Planned</th>
-                    <th>Executed</th>
-                    <th>Executed %</th>
-                    <th>Pass</th>
-                    <th>Fail</th>
-                    <th>Pass Based on Executed %</th>
-                    <th>Pass Based on Planing %</th>
-                    <th>Not Executed</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Suite 1</td>
-                    <td>4</td>
-                    <td>1</td>
-                    <td>61 %</td>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>25 %</td>
-                    <td>31 %</td>
-                    <td>3</td>
-                </tr>
-                <tr>
-                    <td>Suite 2</td>
-                    <td>5</td>
-                    <td>4</td>
-                    <td>90 %</td>
-                    <td>3</td>
-                    <td>2</td>
-                    <td>55 %</td>
-                    <td>13 %</td>
-                    <td>1</td>
-                </tr>
-            <tfoot>
-                <tr>
-                    <th>Suite</th>
-                    <th>Planned</th>
-                    <th>Executed</th>
-                    <th>Executed %</th>
-                    <th>Pass</th>
-                    <th>Fail</th>
-                    <th>Pass Based on Executed %</th>
-                    <th>Pass Based on Planing %</th>
-                    <th>Not Executed</th>
-                </tr>
-            </tfoot>
-        </table>
+
+    <div id="DataTableDiv1" class="dvTableData">
+        </div>
+    <br />
+    <br />
+        <div id="DataTableDiv" class="dvTableData">
+            
+        </div>
     </div>
-</div>
 
 
 
