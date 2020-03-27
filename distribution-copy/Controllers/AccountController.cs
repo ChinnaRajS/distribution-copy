@@ -100,7 +100,7 @@ namespace distribution_copy.Controllers
                 if (j % 200 == 0 && j != 0)
                 {
 
-                    var batchResponse = getWorkItems(inp);
+                    var batchResponse = getWorkItems<ResponseWI>(url);
                     urlResponse.count += batchResponse.count;
                     foreach (var item in batchResponse.value)
                     {
@@ -119,7 +119,7 @@ namespace distribution_copy.Controllers
             }
             url += b;
 
-            var lastBatchResponse = getWorkItems(inp);
+            var lastBatchResponse = getWorkItems<ResponseWI>(url);
             urlResponse.count += lastBatchResponse.count;
             foreach (var item in lastBatchResponse.value)
             {
@@ -134,13 +134,13 @@ namespace distribution_copy.Controllers
             }
             return Json(Types, JsonRequestBehavior.AllowGet);
         }
-        public ResponseWI getWorkItems(InputModel inp)
+        public T getWorkItems<T>(string getUrl) where T:new()
         {
-            ResponseWI batch=new ResponseWI();
+            T batch=new T();
 
             try
             {
-                batch= service.GetApi<ResponseWI>(url);
+                batch= service.GetApi<T>(getUrl);
             }
             catch (Exception ex)
             {

@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using distribution_copy.Models.AccessDetails;
+using distribution_copy.Models.AccountsResponse;
+using distribution_copy.Models.InputModel;
+using distribution_copy.Models.ProfileDetails;
+using distribution_copy.Services;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using OfficeOpenXml;
 using SharpCompress.Readers.Rar;
@@ -26,11 +32,51 @@ namespace distribution_copy.Controllers
         static public string rarpath = "";
 
         public Services.MigrateService MigrateService = new Services.MigrateService();
+        AccountService Account = new AccountService();
+
         // GET: Migration
         [HttpGet]
         public ActionResult Index()
         {
-            return View();
+            if (Session["visited"] == null)
+            {
+                return RedirectToAction("../Account/Verify");
+            }
+            if (Session["PAT"] == null)
+            {
+                InputModel input = new InputModel();
+                try
+                {
+
+                    AccessDetails _accessDetails = new AccessDetails();
+
+                    AccountsResponse.AccountList accountList = null;
+                    string code = Session["PAT"] == null ? Request.QueryString["code"] : Session["PAT"].ToString();
+                    string redirectUrl = ConfigurationManager.AppSettings["RedirectUri"];
+                    string clientId = ConfigurationManager.AppSettings["ClientSecret"];
+                    string accessRequestBody = string.Empty;
+                    accessRequestBody = Account.GenerateRequestPostData(clientId, code, redirectUrl);
+                    _accessDetails = Account.GetAccessToken(accessRequestBody);
+                    ProfileDetails profile = Account.GetProfile(_accessDetails);
+
+                    if (!string.IsNullOrEmpty(_accessDetails.access_token))
+                    {
+                        Session["PAT"] = _accessDetails.access_token;
+
+                        if (profile.displayName != null || profile.emailAddress != null)
+                        {
+                            Session["User"] = profile.displayName ?? string.Empty;
+                            Session["Email"] = profile.emailAddress ?? profile.displayName.ToLower();
+                        }
+                    }
+                }
+                catch
+                {
+
+                }
+
+        } 
+                    return View();
         }
 
         [HttpPost]
@@ -42,30 +88,12 @@ namespace distribution_copy.Controllers
             var excelStream = Excel.InputStream;           
             var zipStream = Zip.InputStream;
             System.IO.Compression.ZipArchive zipArchive = new System.IO.Compression.ZipArchive(zipStream, System.IO.Compression.ZipArchiveMode.Read);
-
-
             ExcelPackage excel = new ExcelPackage(excelStream);
             WIOps.ConnectWithPAT(Url, UserPAT);
             DT = ReadExcel(excel);
             List<WorkitemFromExcel> WiList = GetWorkItems(zipArchive);
             CreateLinks(WiList);
-            // Get temp file name
-            //var temp = Path.GetTempPath(); // Get %TEMP% path
-            //var file = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()); // Get random file name without extension
-            //var zippath = Path.Combine(temp, file + ".zip"); // Get random file path
-
-            //using (var fs = new FileStream(zippath, FileMode.Create, FileAccess.Write))
-            //{
-            //    // Write content of your memory stream into file stream
-            //    ms.WriteTo(fs);
-            //}
-
-            // Create Excel app
-
-    
-      
-
-            return null;
+            return View();
         }
         static List<WorkitemFromExcel> GetWorkItems(System.IO.Compression.ZipArchive zipArchive)
         {

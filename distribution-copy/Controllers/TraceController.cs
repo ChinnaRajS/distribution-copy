@@ -98,7 +98,10 @@ namespace distribution_copy.Controllers
             RootObject urlResponse = new RootObject();
             string responseBody = "";
             string queryString = @"Select [Work Item Type],[State], [Title],[Created By] From WorkItems ";
-
+            if (inp.ProjectName != null)
+            {
+                queryString += "where [System.TeamProject]='" + inp.ProjectName + "' "; 
+            }
             queryString += "Order By [Stack Rank] Desc, [Backlog Priority] Desc";
             var wiql = new
             {
@@ -109,7 +112,7 @@ namespace distribution_copy.Controllers
                 var content = new StringContent(JsonConvert.SerializeObject(wiql), Encoding.UTF8, "application/json");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                     "Basic",
-                    Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", "", Session["PAT"] == null ? Request.QueryString["code"] : Session["PAT"].ToString()))));
+                    Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", "",System.Web.HttpContext.Current.Session["PAT"] == null ? Request.QueryString["code"] : System.Web.HttpContext.Current.Session["PAT"].ToString()))));
                 var request = new HttpRequestMessage(
                     new HttpMethod("POST"),
                     "https://dev.azure.com/" + inp.OrganizationName + "/_apis/wit/wiql?api-version=5.1"
@@ -159,7 +162,7 @@ namespace distribution_copy.Controllers
             {
                 urlResponse.value.Add(item);
             }
-            Session["EWorkItems"] = urlResponse;
+            System.Web.HttpContext.Current.Session["EWorkItems"] = urlResponse;
             List<string> Types = new List<string>();
             foreach (var i in urlResponse.value)
             {
@@ -168,42 +171,22 @@ namespace distribution_copy.Controllers
             }
             return Json(Types, JsonRequestBehavior.AllowGet);
         }
+
+
         public RootObject getWorkItems(InputModel inp)
         {
             RootObject batch;
-            string responseBody2 = "";
             url += "&$expand=all&api-version=5.1";
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Accept.Add(
-                        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
-                            System.Text.ASCIIEncoding.ASCII.GetBytes(
-                                string.Format("{0}:{1}", "", Session["PAT"] == null ? Request.QueryString["code"] : Session["PAT"].ToString()))));
-
-                    using (HttpResponseMessage response = client.GetAsync(url).Result)
-                    {
-                        response.EnsureSuccessStatusCode();
-                        responseBody2 += response.Content.ReadAsStringAsync().Result;
-                        batch = JsonConvert.DeserializeObject<RootObject>(responseBody2);
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            AccountService service = new AccountService();
+            batch = service.GetApi<RootObject>(url);            
+     
             return batch;
 
         }
         public object Filter(InputModel inp, int loc)
         {
 
-            RootObject wI = (RootObject)Session["EWorkItems"];
+            RootObject wI = (RootObject)System.Web.HttpContext.Current.Session["EWorkItems"];
             RootObject returnWI = new RootObject();
             if (inp.ProjectName != null && inp.ProjectName != "Empty List" && inp.ProjectName != "0")
             {
@@ -272,7 +255,7 @@ namespace distribution_copy.Controllers
         {
 
             distribution_copy.Models.ExpandWI.Value v = new Models.ExpandWI.Value();
-            v = ((RootObject)Session["EWorkItems"]).value.Find(x=>x.id==id);
+            v = ((RootObject)System.Web.HttpContext.Current.Session["EWorkItems"]).value.Find(x=>x.id==id);
             Dictionary<string, List<distribution_copy.Models.ExpandWI.Value>> rel = new Dictionary<string, List<distribution_copy.Models.ExpandWI.Value>>();
 
             var ForwardList = new List<Models.ExpandWI.Value>();
@@ -291,7 +274,7 @@ namespace distribution_copy.Controllers
                         }
                         if (int.TryParse(valueArray[8], out Fid))
                         {
-                            var item = ((RootObject)Session["EWorkItems"]).value.Find(x => x.id == Fid);
+                            var item = ((RootObject)System.Web.HttpContext.Current.Session["EWorkItems"]).value.Find(x => x.id == Fid);
                             ForwardList.Add(item);
                         }
 
@@ -307,7 +290,7 @@ namespace distribution_copy.Controllers
                         }
                         if (int.TryParse(valueArray[8], out Fid))
                         {
-                            var item = ((RootObject)Session["EWorkItems"]).value.Find(x => x.id == Fid);
+                            var item = ((RootObject)System.Web.HttpContext.Current.Session["EWorkItems"]).value.Find(x => x.id == Fid);
                             RevereseList.Add(item);
                         }
                     }
@@ -333,7 +316,17 @@ namespace distribution_copy.Controllers
             inputModel.OrganizationName = inp.OrgName;
             inputModel.ProjectName = inp.ProjectName;
             inputModel.WorkItemType = inp.WIType;
-            var List = (RootObject)Filter(inputModel, 1);
+            RootObject List;
+            try
+            {
+                 List = (RootObject)Filter(inputModel, 1);
+            }
+            catch
+            {
+                WITypes(inputModel);
+                List = (RootObject)Filter(inputModel, 1);
+                
+            }
             workSheet =  excel.Workbook.Worksheets.Add("WorkItems");
             workSheet.TabColor = System.Drawing.Color.White;
             workSheet.DefaultRowHeight = 12;
@@ -346,7 +339,7 @@ namespace distribution_copy.Controllers
             workSheet.Cells[1,j++].Value = "Team Project";
             workSheet.Cells[1,j++].Value = "State";
             workSheet.Cells[1,j++].Value = "Area Path";
-            workSheet.Cells[1,j++].Value = "Iteration";
+            workSheet.Cells[1,j++].Value = "Iteration Path";
             //workSheet.Cells[1,++j].Value = "Url";
             //workSheet.Cells[1,++j].Value = "PlannedHours";
             //workSheet.Cells[1,++j].Value = "ActualHours";
@@ -385,8 +378,10 @@ namespace distribution_copy.Controllers
                 return excel;
             }
         }
+        public List<Models.ExpandWI.Value> added = new List<Models.ExpandWI.Value>();
         public void FindRelations(Models.ExpandWI.Value WI,int tInd)
         {
+            added.Add(WI);
             int max = columnNo;
             int col = 0;
             workSheet.Cells[recordIndex, ++col].Value = WI.id;

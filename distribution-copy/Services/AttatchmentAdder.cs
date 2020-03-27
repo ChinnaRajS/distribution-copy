@@ -44,7 +44,7 @@ namespace WorkItemPublish
             AttachmentReference att;
             //string[] filePathSplit = FilePath.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-            using (FileStream attStream=FilePath.Open() as FileStream)
+            using (var attStream=FilePath.Open())
             {
                 att = WitClient.CreateAttachmentAsync(attStream, FilePath.Name).Result; // upload the file
             }

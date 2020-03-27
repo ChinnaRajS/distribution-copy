@@ -182,7 +182,7 @@ namespace ExportWIAttachmentsWeb.Controllers
         }
 
         //[HttpPost]
-        public ActionResult DownloadExcel(string accountName, string projectName)
+        public ActionResult DownloadExcell(string accountName, string projectName)
         {
             CLTestCaseReport sample = new CLTestCaseReport();
             string token = Convert.ToString(Session["PAT"]);
@@ -366,7 +366,7 @@ namespace ExportWIAttachmentsWeb.Controllers
                                         foreach (var file in fldr.FolderItems)
                                         {
                                             // add the item name to the zip
-                                            System.IO.Compression.ZipArchiveEntry zipItem = zip.CreateEntry(fldr.FolderName+"/"+ file.Name + "." + file.Extension);
+                                            System.IO.Compression.ZipArchiveEntry zipItem = zip.CreateEntry(fldr.FolderName + "/" + file.Name + "." + file.Extension);
                                             // add the item bytes to the zip entry by opening the original file and copying the bytes 
                                             using (System.IO.MemoryStream originalFileMemoryStream = new System.IO.MemoryStream(file.FileBytes))
                                             {
@@ -398,75 +398,58 @@ namespace ExportWIAttachmentsWeb.Controllers
 
                 return RedirectToAction("../Account/Verify");
             }
-     
+
         }
-    //    public ActionResult DownloadExcel(string data)
-    //    {
-    //        Download model = new Download();
-    //        model = JsonConvert.DeserializeObject<Download>(data);
-    //        TraceInputModel input = new TraceInputModel();
-    //        input.OrgName = model.AccountName;
-    //        input.ProjectName = model.ProjectName;
-    //        input.WIType = "Epic";
-    //        TraceController trace = new TraceController();
-    //       ExcelPackage excel= trace.TraceExport(input, false);
-    //        string wiql = @"Select [Work Item Type] From WorkItems where [Related Link Count] = '0' and [System.TeamProject]='"+input.ProjectName+"'";
-    //        var content = JsonConvert.SerializeObject(wiql);
-    //        var Uri = "https://dev.azure.com/" + input.OrgName + "/_apis/wit/wiql?api-version=5.1";
-    //        distribution_copy.Services.AccountService service = new distribution_copy.Services.AccountService();
+        public ActionResult DownloadExcel(string data)
+        {
+            distribution_copy.Models.ExpandWI.RootObject urlResponse = new distribution_copy.Models.ExpandWI.RootObject();
+            Download model = new Download();
+            model = JsonConvert.DeserializeObject<Download>(data);
+            TraceInputModel input = new TraceInputModel();
+            input.OrgName = model.AccountName;
+            input.ProjectName = model.ProjectName;
+            input.WIType = "Epic";
+            AccountService accountService = new AccountService();
+            TraceController trace = new TraceController();
+            ExcelPackage excel = trace.TraceExport(input,false);
+            var added = trace.added;
+            urlResponse.value = ((distribution_copy.Models.ExpandWI.RootObject)System.Web.HttpContext.Current.Session["EWorkItems"]).value.Where(x=>(!added.Contains(x))&&x.fields.TeamProject==input.ProjectName).ToList();
+            var workSheet = excel.Workbook.Worksheets[1];
+            var colcount = workSheet.Dimension.End.Column;
+            var rowCount = workSheet.Dimension.End.Row+1;
+            List<string> colNames = new List<string>();
+            for(int i = 1; i <= colcount; i++)
+            {
+             colNames.Add(workSheet.Cells[1, i].Value.ToString());
+            }
+            int titlecount = colNames.Where(x => x.ToLower().StartsWith("title")).Count();
+            foreach (var WI in urlResponse.value)
+            {
+                int columnNo = 0;
+                workSheet.Cells[rowCount, ++columnNo].Value = WI.id;
+                workSheet.Cells[rowCount, ++columnNo].Value = WI.fields.WorkItemType;
+                workSheet.Cells[rowCount, ++columnNo].Value = WI.fields.Title;
+                columnNo += titlecount;
+                workSheet.Cells[rowCount, columnNo++].Value = WI.fields.TeamProject;
+                workSheet.Cells[rowCount, columnNo++].Value = WI.fields.State;
+                workSheet.Cells[rowCount, columnNo++].Value = WI.fields.AreaPath;
+                workSheet.Cells[rowCount, columnNo++].Value = WI.fields.IterationPath;
+                rowCount++;
+            }
+            string excelName = input.OrgName + "-" + input.ProjectName + DateTime.Now.ToString();
 
-    //        distribution_copy.Models.ResponseWI.ResponseWI wiqlResponse = service.GetApi<distribution_copy.Models.ResponseWI.ResponseWI>(Uri, "POST", content);
-    //        if (wiqlResponse == null)
-    //            return null;
-
-    //        if (wiqlResponse.workItems == null || wiqlResponse.workItems.Count == 0)
-    //            return null;
-    //        string defaultUrl = "https://dev.azure.com/" + inp.OrganizationName + "/_apis/wit/workitems?ids=";
-    //        url = defaultUrl;
-    //        urlResponse.value = new List<Value>();
-    //        string b = "&api-version=5.1";
-    //        for (int j = 0; j < wiqlResponse.workItems.Count; j++)
-    //        {
-    //            if (j % 200 == 0 && j != 0)
-    //            {
-
-    //                var batchResponse = getWorkItems(inp);
-    //                urlResponse.count += batchResponse.count;
-    //                foreach (var item in batchResponse.value)
-    //                {
-    //                    urlResponse.value.Add(item);
-    //                }
-    //                url = defaultUrl;
-    //            }
-    //            if (j % 200 == 0)
-    //            {
-    //                url += wiqlResponse.workItems[j].id;
-    //            }
-    //            else
-    //            {
-    //                url += "," + wiqlResponse.workItems[j].id;
-    //            }
-    //        }
-    //        url += b;
-
-    //        var lastBatchResponse = getWorkItems(inp);
-    //        urlResponse.count += lastBatchResponse.count;
-    //        foreach (var item in lastBatchResponse.value)
-    //        {
-    //            urlResponse.value.Add(item);
-    //        }
-    //        Session["WorkItems"] = urlResponse;
-    //        List<string> Types = new List<string>();
-    //        foreach (var i in urlResponse.value)
-    //        {
-    //            if (!Types.Contains(i.fields.WorkItemType))
-    //                Types.Add(i.fields.WorkItemType);
-    //        }
-    //        return Json(Types, JsonRequestBehavior.AllowGet);
-    //    }
-    //}
+            using (var memoryStream = new MemoryStream())
+            {
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment; filename=" + excelName + ".xlsx");
+                excel.SaveAs(memoryStream);
+                memoryStream.WriteTo(Response.OutputStream);
+                Response.Flush();
+                Response.End();
+            }
+            return null;
+        }
 
 
     }
-
 }
