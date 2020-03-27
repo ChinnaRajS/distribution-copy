@@ -585,7 +585,15 @@
             success:
                 function (data) {
                     console.log(data);
-                    a.insertBefore(data, a.childNodes[0])
+                    var tabData="<table>"
+                    for (let i = 0; i < data.length; i++) {
+                        tabData += "<tr><td>" + data[i]["revisedBy"]["displayName"]+"</td></tr>";
+                    }
+                    tabData += "</table>";
+
+                    //a.insertBefore(tabData, a.childNodes[0]);
+                    a.childNodes[0].innerHTML = tabData;
+
                 }
             ,
             failure:

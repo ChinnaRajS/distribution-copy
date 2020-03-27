@@ -19,6 +19,7 @@ using System.IO;
 using System.Web.Script.Serialization;
 using distribution_copy.Models;
 
+
 namespace distribution_copy.Controllers
 {
     public class AccountController : Controller
@@ -401,6 +402,12 @@ namespace distribution_copy.Controllers
 
         } 
 
-
+        public JsonResult GetProjects(string orgName)
+        {
+            string BaseAddress = "https://dev.azure.com/";
+            string api = string.Format("{0}{1}/_apis/projects?api-version=5.0-preview.3", BaseAddress, orgName);
+            distribution_copy.Models.Model_AK.RespData updates = service.GetApi<distribution_copy.Models.Model_AK.RespData>(api);
+            return Json(updates.value, JsonRequestBehavior.AllowGet);
+        }
     }
 }
