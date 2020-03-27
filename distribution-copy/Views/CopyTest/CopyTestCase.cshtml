@@ -1,2 +1,1324 @@
-﻿<h1>Copy Test Cases</h1>
+﻿
+@{
+    Layout = "~/Views/Shared/_DashBoard.cshtml";
+    ViewBag.Title = "Index";
+}
 
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script scr="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script scr="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<style>
+     .sizeNormal {
+        font-size: 16px;
+    }
+
+    .borderRadius {
+        border-radius: 10px;
+    }
+
+    .width {
+        width: 250px;
+    }
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script scr="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script scr="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+
+<script>
+    var SuiteDataStore = [];
+    var DestDataStore = [];
+    $(document).ready(function () {
+        //$('#dataTable').DataTable();
+
+
+        $('.dropdown-submenu a.test').on("click", function (e) {
+            $(this).next('ul').toggle();
+            e.stopPropagation();
+            e.preventDefault();
+        });
+
+
+        //GetOrganization
+         var optionhtml1 = '<option value="' +
+                            0 + '">' + "--Select Organization--" + '</option>';
+                        $("#OrganizationDrop").append(optionhtml1);
+        $('#CopyTestSuit').hide();
+        $('#childSourceTestSuit1').hide();
+        $('#childSourceTestSuit2').hide();
+        $('#childSourceTestSuit').hide();
+        $('#ddlProjectvalue').hide();
+        $('#sourceTestPlan').hide();
+        $('#sourceTestSuit').hide();
+        $('#DestTestPlan').hide();
+        $('#DestTestSuit').hide();
+        $('#childDestTestSuit').hide();
+        $('#childDestTestSuit1').hide();
+        $('#childDestTestSuit2').hide();
+        $('.labelHide').hide();
+
+            $.ajax({
+                url: '@Url.Action("GetOrganization", "CopyTest")',
+                type: 'Get',
+                data: {},
+                dataType: 'json',
+                success: function (data) {
+
+                    $('#checkCredintial').hide();
+                    $('.formlabel').hide();
+                    $('#OrganizationDrop').show();
+                    $('#organizationName').hide();
+
+                    $('#PAT').hide();
+                    var count = Object.keys(data).length;
+                    if (count >= 1) {
+
+                        $.each(data.value, function (i) {
+
+                            var optionhtml = '<option value="' +
+                                data.value[i].accountId + '">' + data.value[i].accountName + '</option>';
+                            $("#OrganizationDrop").append(optionhtml);
+                        });
+                    };
+                },
+
+                error: function (request, error) {
+                            alert('Something went wrong');
+                    
+                }
+            });
+
+//Select All Checkbox
+           $("#selectAll").on("click", function () {
+               $("#dataTable tr").each(function () {
+                   //var isChecked = $("#chkPassport").is(":checked");
+                   if ($(this).find("input").is(":checked")) {
+                       $(this).find("input").attr('checked', false);
+                   }
+                   else {
+                       $(this).find("input").attr('checked', true);
+                   }
+               });
+           });
+
+        
+
+ //project Dropdown
+           $('#OrganizationDrop').change(function () {
+               var orgName=$("#OrganizationDrop option:selected").text();
+                        $('#dataTable').DataTable().destroy();
+                 
+                        $('#dataTable').remove();
+                     
+                var pat = $('#PAT').val();
+                if (orgName != null || orgName != "" && pat != null || pat != "")
+                    $.ajax({
+                        url:'@Url.Action("GetProjects","CopyTest")',
+                        type: 'Get',
+                        data: { 'orgName': orgName },//, 'pat': pat },
+                        dataType: 'json',
+                        success: function (data) {
+                            $("#ddlProjectvalue").empty();
+                            $('#checkCredintial').hide();
+                            $('.formlabel').hide();
+                            $('#ddlProjectvalue').show();
+                            $('#organizationName').hide();
+
+                            $('#PAT').hide();
+                            var count = Object.keys(data).length;
+                            if (count >= 1) {
+                                var optionhtml1 = '<option value="' +
+                                    0 + '">' + "--Select Project--" + '</option>';
+                                $("#ddlProjectvalue").append(optionhtml1);
+                                $.each(data.value, function (i) {
+                                    var optionhtml = '<option value="' +
+                                        data.value[i].id + '">' + data.value[i].name + '</option>';
+                                    $("#ddlProjectvalue").append(optionhtml);
+                                });
+                                //   alert('Request Successful');
+                            };
+                        },
+
+                        error: function (request, error) {
+
+                            clearDrpdowns();
+                            $('#ddlProjectvalue').hide();
+                           $('#sourceTestPlan').hide();
+                            $('#sourceTestSuit').hide();
+                            $('#DestTestPlan').hide();
+                            $('#DestTestSuit').hide();
+                            $('.labelHide').hide();
+                            $('.tableData').hide();
+                            $('#CopyTestSuit').hide();
+                     
+                            alert('Something went wrong');
+                        }
+                    });
+            })
+
+//test plan drop
+        $('#ddlProjectvalue').change(function () {
+                 $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                var selectedText = $("#ddlProjectvalue").find("option:selected").text();
+                var selectedValue = $("#ddlProjectvalue").val();
+                $('#testPlanDrop').show();
+                $.ajax({
+                    url:'@Url.Action("GetJsonPlans", "CopyTest")',
+                    type: 'Get',
+                    data: { 'selectedProject': selectedText },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.count < 1) {
+                            alert('No Test Plans Found')
+
+                              $('.labelHide').hide();
+                        $('#sourceTestPlan').hide();
+                            $('#sourceTestSuit').hide();
+                            $('#DestTestPlan').hide();
+                            $('#DestTestSuit').hide();
+
+                            $('#CopyTestSuit').hide();
+
+
+                            $('#childSourceTestSuit').hide();
+                            $('#childSourceTestSuit1').hide();
+                            $('#childSourceTestSuit2').hide();
+                            $('.tableData').hide();
+                            $('#CopyTestSuit').hide();
+
+
+                        }
+                        else {
+                        $('.labelHide').show();
+                        $('#sourceTestPlan').show();
+                        $('#sourceTestSuit').show();
+                        $('#DestTestPlan').show();
+                        $('#DestTestSuit').show();
+
+                        $('#CopyTestSuit').hide();
+                        $('#ddlProjectvalue').show();
+                        $('#organizationName').hide();
+                        $('#sourceTestPlan').empty();
+                        $('#DestTestPlan').empty();
+
+                            $('#childSourceTestSuit').empty();
+                            $('#childSourceTestSuit1').empty();
+                            $('#childSourceTestSuit2').empty();
+                            $('.tableData').hide();
+                            //$('#CopyTestSuit').hide();
+                        var count = Object.keys(data).length;
+                            if (count >= 1) {
+                                var optionhtml1 = '<option value="' +
+                                    0 + '">' + "--Select Test Plan--" + '</option>';
+                                $("#sourceTestPlan").append(optionhtml1);
+                                $("#DestTestPlan").append(optionhtml1);
+                                $.each(data.value, function (i) {
+                                    var optionhtml = '<option value="' +
+                                        data.value[i].id + '">' + data.value[i].name + '</option>';
+                                    $("#sourceTestPlan").append(optionhtml);
+                                    $("#DestTestPlan").append(optionhtml);
+                                });
+                            };
+                            //      alert('Request Successful');
+                        };
+                    },
+
+                    error: function (request, error) {
+                        alert('Request Failed');
+                    }
+                });
+            });
+
+            $('#sourceTestPlan').change(function () {
+               //GetTestSuits
+                 $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                var testplanId = $('#sourceTestPlan').val();
+                var myData;
+                $.ajax({
+                    url:'@Url.Action("GetTestSuits", "CopyTest")',
+                    type: 'Get',
+                    data: { 'planid': testplanId },
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data);
+                         $('.tableData').empty();
+                        $('.labelHide').show();
+                        $('#sourceTestSuit').empty();
+                        $('#checkCredintial').hide();
+                        $('.formlabel').hide();
+                        $('#ddlProjectvalue').show();
+                        $('#organizationName').hide();
+                        $('#CopyTestSuit').show();
+                        $('#childSourceTestSuit').hide();
+                        $('#childSourceTestSuit1').hide();
+                        $('#childSourceTestSuit2').hide();
+                        $('#PAT').hide();
+                                      var count = Object.keys(data).length;
+                                if (count >= 1) {
+                                    var optionhtml1 = '<option value="' +
+                                        0 + '">' + "--Select Test Suite--" + '</option>';
+                                    $("#sourceTestSuit").append(optionhtml1);
+
+                                    var pl = [];
+                                    SuiteDataStore = data;
+                                    console.log(SuiteDataStore);
+                                    $.each(data.value, function (i) {
+
+                                        if (data.value[i].parentSuite == null)
+                                        {
+                                            var optionhtml1 = '<option value="' +
+                                                data.value[i].id + '">' + data.value[i].name + '</option>';
+                                            $("#sourceTestSuit").append(optionhtml1);
+
+                                        }
+                                    });
+
+                        };
+                    },
+                    error: function (request, error) {
+                         $('.tableData').empty();
+                        alert('Invalid Details');
+                    }
+                });
+            });
+            function appendchildItems(data, parentid){
+                //
+              //  debugger;
+            $.each(data.value, function (i) {
+                if (data.value[i].parentSuite != null) {
+                    let parent = data.value[i].parentSuite.id;
+                    if (parent == parentid)
+                    {
+                        if (data.value[i].hasChildren) {
+                            let htmltxt = ' <li class="dropdown-submenu"> <a class="test" tabindex="-1" href="#">' + data.value[i].name + ' <span class="caret"></span></a><ul class="dropdown-menu">';
+                            appendchildItems(data, data.value[i].id);
+                            let endtxt = '</ul></li >';
+                            $("#" + data.value[i].parentSuite.id).append(htmltxt + endtxt);
+                            console.log(htmltxt + endtxt);
+                        }
+                        else {
+                            $("#"+ data.value[i].parentSuite.id ).append('<li id=' + data.value[i].id + '><a tabindex="-1" href="#">' + data.value[i].name + '</a></li>');
+                        }
+                    }
+                }
+            });
+            }
+
+            $('#DestTestPlan').change(function () {
+                var testplanId = $('#DestTestPlan').val();
+
+                $('.labelHide').show();
+                $.ajax({
+
+                    url:'@Url.Action("GetTestSuits", "CopyTest")',
+                    type: 'Get',
+                    data: { 'planid': testplanId },
+                    dataType: 'json',
+                    success: function (data) {
+
+                        $('#DestTestSuit').empty();
+                        $('#checkCredintial').hide();
+                        $('.formlabel').hide();
+                        $('#ddlProjectvalue').show();
+                        $('#organizationName').hide();
+                        $('#CopyTestSuit').show();
+                         $('#childDestTestSuit').hide();
+                        $('#childDestTestSuit1').hide();
+                        $('#childDestTestSuit2').hide();
+
+                        $('#PAT').hide();
+
+                        var count = Object.keys(data).length;
+                        if (count >= 1) {
+                            var optionhtml1 = '<option value="' +
+                                0 + '">' + "--Select Test Suite--" + '</option>';
+                            $("#DestTestSuit").append(optionhtml1);
+
+                            //
+                            DestDataStore = data;
+                                    console.log("dest "+DestDataStore);
+                            $.each(data.value, function (i) {
+
+                                if (data.value[i].parentSuite == null) {
+                                    var optionhtml1 = '<option value="' +
+                                        data.value[i].id + '">' + data.value[i].name + '</option>';
+                                    $("#DestTestSuit").append(optionhtml1);
+
+                                }
+                            });
+                        };
+
+                    },
+
+                    error: function (request, error) {
+                        alert('Something went wrong');
+                    }
+                });
+
+
+            });
+
+
+            //source Test Suit .(onchange Event)
+        $('#sourceTestSuit').change(function () {
+                 $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                $('.labelHide').show();
+                  $('.tableData').hide();
+                var planId = $('#sourceTestPlan').val();
+                var suitid = $('#sourceTestSuit').val();
+                $("#childSourceTestSuit").empty();
+
+                    $.ajax({
+                    url:'@Url.Action("GetTestCasesFromSuits", "CopyTest")',
+                    type: 'Get',
+                    data: { 'planId': planId, 'suitid': suitid },
+                    dataType: 'json',
+                        success: function (data) {
+
+                            $('#checkCredintial').hide();
+                            $('.formlabel').hide();
+                            $('#ddlProjectvalue').show();
+                            $('#organizationName').hide();
+                            $('#CopyTestSuit').show();
+                            $('.tableData').empty();
+                            $('#childSourceTestSuit').hide();
+                            $('#childSourceTestSuit1').hide();
+                            $('#childSourceTestSuit2').hide();
+                            $('.labelHide').show();
+
+                            var count = Object.keys(data).length;
+                            if (count < 1) {
+                                console.log('no data 1')
+                                //$('.tableData').empty();
+                            }
+                            if (count >= 1) {
+                                    tabledata = "<table id='dataTable'><thead> <tr><th>Test Case ID</th><th>Test Case Name</th><th><INPUT type='checkbox' onchange='selectAll(this)' name='chk[]' /></th></thead><tbody>";
+                                    $.each(data.value, function (i) {
+                                        let row = data[i];
+                                        tabledata += "<tr class='tableData'><td>" +data.value[i].workItem.id + "</td><td>" + data.value[i].workItem.name + "</td><td><input type='checkbox' name='ID' value="+"  " + data.value[i].workItem.id + "  class='custom-checkbox chkCheckBoxId' /></td></tr>";
+                                    })
+                                    tabledata += "</tbody></table>";
+                                    console.log(tabledata);
+                                    $("#DataTableDiv").append(tabledata);
+                                    $('#dataTable').DataTable();
+                                }
+                        else {
+                            console.log('no data');
+                        }
+                         $.each(SuiteDataStore.value, function (m) {
+                        console.log("for loop running for suit");
+                        if (SuiteDataStore.value[m].id == suitid)
+                        {
+                            console.log("if statement for checking suitid :" + SuiteDataStore.value[m].id + ":    Suit ID:    " + suitid);
+                            if (SuiteDataStore.value[m].hasChildren == true) {
+                                $("#childSourceTestSuit").show();
+                                var optionhtml1 = '<option value="' +
+                                    0 + '">' + "--Select Child Test Suite--" + '</option>';
+                                $("#childSourceTestSuit").append(optionhtml1);
+                                console.log(optionhtml1);
+
+                                $.each(SuiteDataStore.value, function (j) {
+
+                                    if (SuiteDataStore.value[j].parentSuite != null) {
+                                        if (SuiteDataStore.value[j].parentSuite.id == suitid) {
+
+                                            console.log("appended");
+                                            var optionhtml = '<option value="' +
+                                                SuiteDataStore.value[j].id + '">' + SuiteDataStore.value[j].name + '</option>';
+                                            $("#childSourceTestSuit").append(optionhtml);
+
+                                        }
+                                        else {
+                                            console.log("not appended");
+                                        }
+
+                                    }
+                                });
+                            }
+                            else {
+                            $('#childSourceTestSuit').hide();
+                            $('#childSourceTestSuit').hide();
+                            $('#childSourceTestSuit').hide();
+                            }
+                        }
+                        else {
+                          //  $("#childSourceTestSuit").hide();
+                        }
+
+                    });
+                    },
+
+                    error: function (request, error) {
+                        //$('.tableData').empty();
+                        alert('Invalid Details');
+                    }
+
+                    });
+
+
+
+            });
+
+    $('#DestTestSuit').change(function () {
+                $('.labelHide').show();
+                var planId = $('#DestTestPlan').val();
+                var suitid = $('#DestTestSuit').val();
+                $("#childDestTestSuit").empty();
+
+                    $.ajax({
+                    url:'@Url.Action("GetTestCasesFromSuits", "CopyTest")',
+                    type: 'Get',
+                    data: { 'planId': planId, 'suitid': suitid },
+                    dataType: 'json',
+                    success: function (data) {
+
+                        $('#checkCredintial').hide();
+                        $('.formlabel').hide();
+                        $('#ddlProjectvalue').show();
+                        $('#organizationName').hide();
+                        $('#CopyTestSuit').show();
+                        $('#childDestTestSuit').hide();
+                        $('#childDestTestSuit1').hide();
+                        $('#childDestTestSuit2').hide();
+                        $('.labelHide').show();
+
+                        $('#PAT').hide();
+
+                         $.each(DestDataStore.value, function (m) {
+                        console.log("for loop running for suit");
+                        if (DestDataStore.value[m].id == suitid)
+                        {
+                            console.log("if statement for checking suitid :" + DestDataStore.value[m].id + ":    Suit ID:    " + suitid);
+                            if (DestDataStore.value[m].hasChildren == true) {
+                                $("#childDestTestSuit").show();
+                                var optionhtml1 = '<option value="' +
+                                    0 + '">' + "--Select Child Test Suite--" + '</option>';
+                                $("#childDestTestSuit").append(optionhtml1);
+                                console.log(optionhtml1);
+
+                                $.each(DestDataStore.value, function (j) {
+
+                                    if (DestDataStore.value[j].parentSuite != null) {
+                                        if (DestDataStore.value[j].parentSuite.id == suitid) {
+
+                                            console.log("appended");
+                                            var optionhtml = '<option value="' +
+                                                DestDataStore.value[j].id + '">' + DestDataStore.value[j].name + '</option>';
+                                            $("#childDestTestSuit").append(optionhtml);
+
+                                        }
+                                        else {
+                                            //$("#childDestTestSuit").hide();
+                                            console.log("not appended");
+                                        }
+
+                                    }
+                                });
+                            }
+                            else {
+                            $('#childDestTestSuit').hide();
+                            $('#childDestTestSuit1').hide();
+                            $('#childDestTestSuit2').hide();
+                            }
+                       }
+                        else {
+
+                        } //if value
+
+                    }); //each
+                    }, //success
+
+                    error: function (request, error) {
+                        //$('.tableData').empty();
+                        alert('Invalid Details');
+                    }
+
+                });
+
+
+            });
+
+
+        function LastsourceId() {
+                var SourceSuitId = $("#sourceTestSuit").val();
+                var SourceChildSuitId = $("#childSourceTestSuit").val();
+                var SourceChildSuitId1 = $("#childSourceTestSuit1").val();
+                var SourceSuitIdSuit2 = $("#childSourceTestSuit2").val();
+                var SourceSuitPass;
+
+            if (SourceSuitIdSuit2 != null && SourceSuitIdSuit2 != "" && SourceSuitIdSuit2 != "0" ) {
+
+                    SourceSuitPass = SourceSuitIdSuit2;
+                }
+                else if (SourceChildSuitId1 != null && SourceChildSuitId1 != "" && SourceChildSuitId1 != "0") {
+
+                    SourceSuitPass = SourceChildSuitId1;
+                }
+                else if (SourceChildSuitId != null && SourceChildSuitId != "" && SourceChildSuitId != "0") {
+
+                    SourceSuitPass = SourceChildSuitId;
+                }
+                else if (SourceSuitId != null && SourceSuitId != "" && SourceSuitId != "0") {
+
+                    SourceSuitPass = SourceSuitId;
+                }
+                else {
+                    SourceSuitPass = $("#sourceTestSuit").val();
+            }
+            return SourceSuitPass;
+        }
+        function LastDestId() {
+             var DestSuitId = $("#DestTestSuit").val();
+            var DestChildSuit = $("#childDestTestSuit").val();
+            var DestChildSuit1 = $("#childDestTestSuit1").val();
+            var DestChildSuit2 = $("#childDestTestSuit2").val();
+            var DestSuitPass;
+
+            var selectedText = $("#ddlProjectvalue").find("option:selected").text();
+            if (DestChildSuit2 != null && DestChildSuit2 != "" && DestChildSuit2 != "0") {
+
+                DestSuitPass = DestChildSuit2;
+            }
+            else if (DestChildSuit1 != null && DestChildSuit1 != "" && DestChildSuit1 != "0") {
+
+                DestSuitPass = DestChildSuit1;
+            }
+            else if (DestChildSuit != null && DestChildSuit != "" && DestChildSuit != "0") {
+
+                DestSuitPass = DestChildSuit;
+            }
+            else if (DestSuitId != null && DestSuitId != "" && DestSuitId != "0") {
+
+                DestSuitPass = DestSuitId;
+            }
+            else {
+                DestSuitPass = $("#DestTestSuit").val();
+            }
+            return DestSuitPass;
+        }
+
+
+            $('#CopyTestSuit').click(function () {
+                var DestPlanId = $("#DestTestPlan").val();
+                var DestSuitId = $("#DestTestSuit").val();
+                $('.labelHide').show();
+                 if (DestPlanId == null || DestPlanId == "" || DestSuitId == null || DestSuitId == "") {
+                    alert('please select a Destination Plan and Destination Suite')
+                }
+                else {
+                var sourceMethod = LastsourceId();
+                var destMethod = LastDestId();
+
+                if (sourceMethod == destMethod) {
+                    alert('please change the Destination Test Plan and Destination Test Suite');
+
+                }
+                else {
+                var DestPlanId = $("#DestTestPlan").val();
+                var DestSuitId = $("#DestTestSuit").val();
+                var SourcePlanId = $("#sourceTestPlan").val();
+                var SourceSuitId = $("#sourceTestSuit").val();
+                var SourceChildSuitId = $("#childSourceTestSuit").val();
+                var SourceChildSuitId1 = $("#childSourceTestSuit1").val();
+                var SourceSuitIdSuit2 = $("#childSourceTestSuit2").val();
+                var DestChildSuit = $("#childDestTestSuit").val();
+                var DestChildSuit1 = $("#childDestTestSuit1").val();
+                var DestChildSuit2 = $("#childDestTestSuit2").val();
+                var DestSuitPass;
+
+                var selectedText = $("#ddlProjectvalue").find("option:selected").text();
+                if (DestChildSuit2 != null && DestChildSuit2 != "" && DestChildSuit2 != "0" ) {
+
+                    DestSuitPass = DestChildSuit2;
+                }
+                else if (DestChildSuit1 != null && DestChildSuit1 != "" && DestChildSuit1 != "0") {
+
+                    DestSuitPass = DestChildSuit1;
+                }
+                else if (DestChildSuit != null && DestChildSuit != "" && DestChildSuit != "0") {
+
+                    DestSuitPass = DestChildSuit;
+                }
+                else if (DestSuitId != null && DestSuitId != "" && DestSuitId != "0") {
+
+                    DestSuitPass = DestSuitId;
+                }
+                else {
+                    DestSuitPass = $("#DestTestSuit").val();
+                }
+
+                 var checkedrow = 0;
+                        $("#dataTable tr").each(function () {
+                            $(this).find('td input:checked').each(function () {
+                                checkedrow = checkedrow + 1;
+                            });
+                        });
+                    if (checkedrow == 0) {
+                        var boolCheck = false;
+                        alert('Please Check the Test Cases to Copy');
+                    }
+                    else {
+                        var boolCheck = true;
+                        var checkedtestcase = [];
+                        //chk[]
+                        $('input[name="ID"]:checked').each(function () {
+                            console.log(this.value);
+                            var testcase = { id: this.value }
+                            checkedtestcase.push(testcase);
+                        });
+                        if (checkedtestcase != null || checkedtestcase!="") {
+                            alert("Do you want to copy from source to destination")
+                        }
+
+                        var things = JSON.stringify({
+                            'testcase': checkedtestcase, 'testPlan': DestPlanId, 'testSuit': DestSuitPass //DestSuitId
+                        });
+
+                        var selectedText = $("#testPlanDrop").find("option:selected").text();
+                        var selectedPlanValue = $("#testPlanDrop").val();
+                        $.ajax({
+
+                            url: '@Url.Action("DestCopyTest","CopyTest")',
+                            type: 'Post',
+                            data: things,
+                            dataType: 'json',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (data) {
+                                $('.labelHide').show();
+                                $('.tableData').empty();
+                                if (data == false) {
+                                    console.log("'Some features are not created'");
+                                    alert('Some features are not created');
+                                    // things = null;
+                                }
+                                else {
+                                    console.log("TestPlan Copied Successfully");
+                                    alert('TestPlan Copied Successfully');
+                                    // things = null;
+                                    //Emptying Dropdown after copying
+
+                                    clearDrpdowns();
+
+                                }
+                            },
+
+                            error: function (request, error) {
+                                clearDrpdowns();
+                                alert('Some features are not created');
+                            }
+                        });
+                    }
+                     }
+                     }
+            });
+        $('#childSourceTestSuit').change(function () {
+                    $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                $('.labelHide').show();
+                  $('.tableData').hide();
+                var planId = $('#sourceTestPlan').val();
+                var suitid = $('#sourceTestSuit').val();
+                var childsuit = $('#childSourceTestSuit').val();
+                 $('#childSourceTestSuit1').hide();
+                 $('#childSourceTestSuit2').hide();
+
+                var pat = $('#PAT').val();
+
+                $.ajax({
+                    url: '@Url.Action("GetTestCasesFromSuits", "CopyTest")',
+                    type: 'Get',
+                    data: { 'planId': planId, 'suitid': childsuit },
+                    dataType: 'json',
+                    success: function (data) {
+
+                        $('#checkCredintial').hide();
+                        $('.formlabel').hide();
+                        $('#ddlProjectvalue').show();
+                        $('#organizationName').hide();
+                        $('#CopyTestSuit').show();
+                        $('.tableData').empty();
+                        $('.labelHide').show();
+
+
+                        $('#PAT').hide();
+
+                        var count = Object.keys(data).length;
+                        if (count < 1) {
+                            console.log('no data 1')
+                            //$('.tableData').empty();
+                        }
+
+
+                        if (count >= 1) {
+                              tabledata = "<table id='dataTable'><thead> <tr><th>Test Case ID</th><th>Test Case Name</th><th><INPUT type='checkbox' onchange='selectAll(this)' name='chk[]' /></th></thead><tbody>";
+                                    $.each(data.value, function (i) {
+                                        let row = data[i];
+                                        tabledata += "<tr class='tableData'><td>" +data.value[i].workItem.id + "</td><td>" + data.value[i].workItem.name + "</td><td><input type='checkbox' name='ID' value=" + data.value[i].workItem.id + "  class='custom-checkbox chkCheckBoxId' /></td></tr>";
+                                    })
+                                    tabledata += "</tbody></table>";
+                                    console.log(tabledata);
+                                    $("#DataTableDiv").append(tabledata);
+                                    $('#dataTable').DataTable();
+                         
+                        }
+                        else {
+                            console.log('no data')
+
+                        }
+                    },
+
+                    error: function (request, error) {
+
+                        alert('Something went wrong');
+                    }
+
+                });
+
+                $("#childSourceTestSuit1").empty();
+
+                var optionhtml1 = '<option value="' +
+                    0 + '">' + "--Select sub Child Test Suite--" + '</option>';
+                $("#childSourceTestSuit1").append(optionhtml1);
+
+                $.each(SuiteDataStore.value, function (K) {
+
+                    if (SuiteDataStore.value[K].parentSuite != null) {
+                        if (SuiteDataStore.value[K].parentSuite.id == childsuit) {
+                            if (SuiteDataStore.value[K].hasChildren == true) {
+                                $("#childSourceTestSuit1").show();
+                                // console.log("appended");
+                                var optionhtml = '<option value="' +
+                                    SuiteDataStore.value[K].id + '">' + SuiteDataStore.value[K].name + '</option>';
+                                $("#childSourceTestSuit1").append(optionhtml);
+
+                            }
+                            else {
+
+                            }
+                        }
+                        else {
+                            console.log("not appended");
+                        }
+                    }
+                });
+
+
+
+
+            });
+
+
+
+        $('#childSourceTestSuit1').change(function () {
+            $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+               $('.tableData').hide();
+                $('.labelHide').show();
+                var planId = $('#sourceTestPlan').val();
+                var suitid = $('#sourceTestSuit').val();
+                var childsuit = $('#childSourceTestSuit1').val();
+
+
+                var pat = $('#PAT').val();
+
+                $.ajax({
+                    url: '@Url.Action("GetTestCasesFromSuits", "CopyTest")',
+                    type: 'Get',
+                    data: { 'planId': planId, 'suitid': childsuit },
+                    dataType: 'json',
+                    success: function (data) {
+
+                        $('#checkCredintial').hide();
+                        $('.formlabel').hide();
+                        $('#ddlProjectvalue').show();
+                        $('#organizationName').hide();
+                        $('#CopyTestSuit').show();
+                        $('.tableData').empty();
+                        $('.labelHide').show();
+
+
+                        $('#PAT').hide();
+
+                        var count = Object.keys(data).length;
+                        if (count < 1) {
+                            console.log('no data 1')
+                            //$('.tableData').empty();
+                        }
+
+
+                        if (count >= 1) {
+                              tabledata = "<table id='dataTable'><thead> <tr><th>Test Case ID</th><th>Test Case Name</th><th><INPUT type='checkbox' onchange='selectAll(this)' name='chk[]' /></th></thead><tbody>";
+                                    $.each(data.value, function (i) {
+                                        let row = data[i];
+                                        tabledata += "<tr class='tableData'><td>" +data.value[i].workItem.id + "</td><td>" + data.value[i].workItem.name + "</td><td><input type='checkbox' name='ID' value=" + data.value[i].workItem.id + "  class='custom-checkbox chkCheckBoxId' /></td></tr>";
+                                    })
+                                    tabledata += "</tbody></table>";
+                                    console.log(tabledata);
+                                    $("#DataTableDiv").append(tabledata);
+                                    $('#dataTable').DataTable();
+                         
+                        }
+                        else {
+                            console.log('no data')
+                            //$('.tableData').empty();
+                        }
+                    },
+
+                    error: function (request, error) {
+                        //$('.tableData').empty();
+                        alert('Invalid Details');
+                    }
+
+                });
+
+                $.each(SuiteDataStore.value, function (K) {
+
+                    if (SuiteDataStore.value[K].parentSuite != null) {
+                        if (SuiteDataStore.value[K].parentSuite.id == childsuit) {
+                            if (SuiteDataStore.value[K].hasChildren == true) {
+                                $("#childSourceTestSuit2").show();
+                                // console.log("appended");
+                                $("#childSourceTestSuit1").empty();
+
+                                var optionhtml1 = '<option value="' +
+                                    0 + '">' + "--Select sub Child Test Suite--" + '</option>';
+                                var optionhtml = '<option value="' +
+                                    SuiteDataStore.value[K].id + '">' + SuiteDataStore.value[K].name + '</option>';
+                                $("#childSourceTestSuit2").append(optionhtml1);
+
+                                $("#childSourceTestSuit2").append(optionhtml);
+
+                            }
+                            else {
+                                  $('#childSourceTestSuit2').hide();
+                            }
+                        }
+                        else {
+                            console.log("not appended");
+                        }
+
+                    }
+                });
+            });
+
+
+
+        $('#childSourceTestSuit2').change(function () {
+            $('#dataTable').DataTable().destroy();
+                        $('#dataTable1').DataTable().destroy();
+                        $('#dataTable').remove();
+                        $('#dataTable1').remove();
+                       $('.tableData').hide();
+                $('.labelHide').show();
+                var planId = $('#sourceTestPlan').val();
+                var suitid = $('#sourceTestSuit').val();
+                var childid1 = $('#childSourceTestSuit2').val();
+
+
+                var pat = $('#PAT').val();
+
+                $.ajax({
+                    url: '@Url.Action("GetTestCasesFromSuits", "CopyTest")',
+                    type: 'Get',
+                    data: { 'planId': planId, 'suitid': childid1 },
+                    dataType: 'json',
+                    success: function (data) {
+
+                        $('#checkCredintial').hide();
+                        $('.formlabel').hide();
+                        $('#ddlProjectvalue').show();
+                        $('#organizationName').hide();
+                        $('#CopyTestSuit').show();
+                        $('.labelHide').show();
+
+                        $('#PAT').hide();
+
+                        var count = Object.keys(data).length;
+                        if (count < 1) {
+                            console.log('no data 1')
+                            //$('.tableData').empty();
+                        }
+
+
+                        if (count >= 1) {
+                              tabledata = "<table id='dataTable'><thead> <tr><th>Test Case ID</th><th>Test Case Name</th><th><INPUT type='checkbox' onchange='selectAll(this)' name='chk[]' /></th></thead><tbody>";
+                                    $.each(data.value, function (i) {
+                                        let row = data[i];
+                                        tabledata += "<tr class='tableData'><td>" +data.value[i].workItem.id + "</td><td>" + data.value[i].workItem.name + "</td><td><input type='checkbox' name='ID' value=" + data.value[i].workItem.id + "  class='custom-checkbox chkCheckBoxId' /></td></tr>";
+                                    })
+                                    tabledata += "</tbody></table>";
+                                    console.log(tabledata);
+                                    $("#DataTableDiv").append(tabledata);
+                                    $('#dataTable').DataTable();                        
+                        }
+                        else {
+                            console.log('no data')
+                            //$('.tableData').empty();
+                        }
+                    },
+
+                    error: function (request, error) {
+                        //$('.tableData').empty();
+                        alert('Invalid Details');
+                    }
+
+                });
+
+            });
+
+                $('#childDestTestSuit').change(function () {
+                $('.labelHide').show();
+
+                var planId = $('#DestTestPlan').val();
+                var suitid = $('#DestTestSuit').val();
+                var childsuit = $('#childDestTestSuit').val();
+
+                var pat = $('#PAT').val();
+
+                $.ajax({
+                    url: '@Url.Action("GetTestCasesFromSuits", "CopyTest")',
+                    type: 'Get',
+                    data: { 'planId': planId, 'suitid': childsuit },
+                    dataType: 'json',
+                    success: function (data) {
+
+                        $('#checkCredintial').hide();
+                        $('.formlabel').hide();
+                        $('#ddlProjectvalue').show();
+                        $('#organizationName').hide();
+                        $('#CopyTestSuit').show();
+                        $('.labelHide').show();
+
+                        $('#PAT').hide();
+
+                        var count = Object.keys(data).length;
+                        if (count < 1) {
+                            console.log('no data 1')
+                            //$('.tableData').empty();
+                        }
+
+
+                        if (count >= 1) {
+                             $("#childDestTestSuit1").empty();
+
+                var optionhtml1 = '<option value="' +
+                    0 + '">' + "--Select sub Child Test Suite--" + '</option>';
+                $("#childDestTestSuit1").append(optionhtml1);
+
+                $.each(DestDataStore.value, function (K) {
+
+                    if (DestDataStore.value[K].parentSuite != null) {
+                        if (DestDataStore.value[K].parentSuite.id == childsuit) {
+                            if (DestDataStore.value[K].hasChildren == true) {
+                                $("#childDestTestSuit1").show();
+                                // console.log("appended");
+                                var optionhtml = '<option value="' +
+                                    DestDataStore.value[K].id + '">' + DestDataStore.value[K].name + '</option>';
+                                $("#childDestTestSuit1").append(optionhtml);
+
+                            }
+                        }
+                        else {
+                            console.log("not appended");
+                        }
+                    }
+                    else {
+                          $('#childDestTestSuit1').hide();
+                            $('#childDestTestSuit2').hide();
+                    }
+                });
+                            //$.each(data.value, function (i) {
+                            //    console.log(data.value[i].workItem.id);
+                            //    var tableData = "<tr class='tableData'><td>" + data.value[i].workItem.id + "</td><td>" + data.value[i].workItem.name + "</td><td><input type='checkbox' name='ID' value=" + data.value[i].workItem.id + "  class='custom-checkbox chkCheckBoxId' /></td></tr>"
+                            //    $("#DataTable").append(tableData);
+                            //})
+                        }
+                        else {
+                            console.log('no data')
+
+                        }
+                    },
+
+                    error: function (request, error) {
+
+                        alert('Invalid Details');
+                    }
+
+                });
+            });
+
+
+        //
+           $('#childDestTestSuit1').change(function () {
+                $('.labelHide').show();
+
+                var planId = $('#DestTestPlan').val();
+                var suitid = $('#DestTestSuit').val();
+                var childsuit = $('#childDestTestSuit1').val();
+
+                var pat = $('#PAT').val();
+
+                $.ajax({
+                    url: '@Url.Action("GetTestCasesFromSuits", "CopyTest")',
+                    type: 'Get',
+                    data: { 'planId': planId, 'suitid': childsuit },
+                    dataType: 'json',
+                    success: function (data) {
+
+                        $('#checkCredintial').hide();
+                        $('.formlabel').hide();
+                        $('#ddlProjectvalue').show();
+                        $('#organizationName').hide();
+                        $('#CopyTestSuit').show();
+                        $('.labelHide').show();
+                        $('#childDestTestSuit2').hide();
+
+                        $('#PAT').hide();
+
+                        var count = Object.keys(data).length;
+                        if (count < 1) {
+                            console.log('no data 1')
+                            //$('.tableData').empty();
+                        }
+
+
+                        if (count >= 1) {
+                             $("#childDestTestSuit2").empty();
+
+                var optionhtml1 = '<option value="' +
+                    0 + '">' + "--Select sub Child Test Suite--" + '</option>';
+                $("#childDestTestSuit2").append(optionhtml1);
+
+                $.each(DestDataStore.value, function (K) {
+
+                    if (DestDataStore.value[K].parentSuite != null) {
+                        if (DestDataStore.value[K].parentSuite.id == childsuit) {
+                            if (DestDataStore.value[K].hasChildren == true) {
+                                $("#childDestTestSuit2").show();
+                                // console.log("appended");
+                                var optionhtml = '<option value="' +
+                                    DestDataStore.value[K].id + '">' + DestDataStore.value[K].name + '</option>';
+                                $("#childDestTestSuit2").append(optionhtml);
+
+                            }
+                        }
+                        else {
+                            console.log("not appended");
+                        }
+                    }
+                });
+                            //$.each(data.value, function (i) {
+                            //    console.log(data.value[i].workItem.id);
+                            //    var tableData = "<tr class='tableData'><td>" + data.value[i].workItem.id + "</td><td>" + data.value[i].workItem.name + "</td><td><input type='checkbox' name='ID' value=" + data.value[i].workItem.id + "  class='custom-checkbox chkCheckBoxId' /></td></tr>"
+                            //    $("#DataTable").append(tableData);
+                            //})
+                        }
+                        else {
+                             $('#childDestTestSuit2').hide();
+                            console.log('no data')
+
+                        }
+                    },
+
+                    error: function (request, error) {
+
+                        alert('Invalid Details');
+                    }
+
+                });
+            });
+        function clearDrpdowns() {
+
+                                        //$("#DestTestSuit").append("Select Test Suit");
+
+                                        //$("#sourceTestSuit").text("Select Test Suit");
+
+                                        $("#childSourceTestSuit").hide();
+                                        $("#childSourceTestSuit1").hide();
+                                        $("#childSourceTestSuit2").hide();
+                                        $("#childDestTestSuit").hide();
+                                        $("#childDestTestSuit1").hide();
+                                        $("#childDestTestSuit2").hide();
+        }
+    })
+    function selectAll(ele) {
+              //$("#dataTable tr").each(function () {
+              //    //var isChecked = $("#chkPassport").is(":checked");
+              //    if ($(this).find("input").is(":checked")) {
+              //         $(this).find("input").attr('checked', false);
+              //     }
+              //     else {
+              //         $(selectAll).find("input").attr('checked', true);
+              //     }
+              // });
+            var checkboxes = document.getElementsByTagName('input');
+     if (ele.checked) {
+         for (var i = 0; i < checkboxes.length; i++) {
+             if (checkboxes[i].type == 'checkbox') {
+                 checkboxes[i].checked = true;
+             }
+         }
+     } else {
+         for (var i = 0; i < checkboxes.length; i++) {
+             console.log(i)
+             if (checkboxes[i].type == 'checkbox') {
+                 checkboxes[i].checked = false;
+             }
+         }
+     }
+
+        }
+</script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+
+
+<br />
+<br />
+
+<div align="center">
+    <h1 style="color:red;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">Copy Test Plan</h1><br />
+</div>
+
+<div class="form-group" align="center">
+    @*<select name="cs3" id="OrganizationDrop" class="form-control borderRadius width" style="opacity:0.8;"> </select>*@
+    <select name="cs3" id="OrganizationDrop" class="form-control borderRadius width" style="opacity:0.8;"> </select>
+    <br>
+    <select name="cs3" id="ddlProjectvalue" class="form-control borderRadius width" style="opacity:0.8;"> </select>
+</div>
+
+
+<div align="center">
+    <div class="col-xs-6 col-sm-4 col-md-6 col-lg-6">
+        <h4 class="labelHide">Source</h4>
+        <select name="cs3" id="sourceTestPlan" class="form-control borderRadius width" style="opacity:0.8;"> </select>
+        <br />
+        <select name="cs3" id="sourceTestSuit" class="form-control"> </select>
+        <br />
+        <select name="cs3" id="childSourceTestSuit" class="form-control"> </select>
+        <br />
+        <select name="cs3" id="childSourceTestSuit1" class="form-control"> </select>
+        <br />
+        <select name="cs3" id="childSourceTestSuit2" class="form-control"> </select>
+
+    </div>
+    <div class="col-xs-6 col-sm-4 col-md-6 col-lg-6">
+        <h4 class="labelHide">Destination</h4>
+        <select name="cs3" id="DestTestPlan" class="form-control"> </select>
+        <br />
+        <select name="cs3" id="DestTestSuit" class="form-control"> </select>
+        <br />
+        <select name="cs3" id="childDestTestSuit" class="form-control"> </select>
+        <br />
+        <select name="cs3" id="childDestTestSuit1" class="form-control"> </select>
+        <br />
+        <select name="cs3" id="childDestTestSuit2" class="form-control"> </select>
+    </div>
+</div>
+
+
+@*<div id="credintialsDiv" align="center">*@
+
+
+
+@*<div class="col-md-12">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <select name="cs3" id="OrganizationDrop" class="form-control"> </select>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    <div class="col-md-12"><br /></div>
+    <div class="col-md-12">
+        <div class="col-md-3"></div>
+        <div class="col-md-8">
+            <select name="cs3" id="ddlProjectvalue" class="form-control col-md-6"> </select>
+
+    </div>
+        <div class="col-md-3"></div>
+
+    </div>
+
+    <div id="listdata"></div>
+    <div align="center" style="margin-left:100px">
+        <div class="row" align="center">
+
+            <div class="col-md-6">
+                <h5 class="labelHide">Source</h5>
+                <div class="card mdb-color lighten-2 text-center z-depth-2">
+                    <div class="card-body">
+                        <select name="cs3" id="sourceTestPlan" class="form-control"> </select>
+                        <br />
+                        <select name="cs3" id="sourceTestSuit" class="form-control"> </select>
+                        <br />
+                        <select name="cs3" id="childSourceTestSuit" class="form-control"> </select>
+                        <br />
+                        <select name="cs3" id="childSourceTestSuit1" class="form-control"> </select>
+                        <br />
+                        <select name="cs3" id="childSourceTestSuit2" class="form-control"> </select>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-6">
+                <h5 class="labelHide">Destination</h5>
+                <div class="card mdb-color lighten-2 text-center z-depth-2">
+                    <div class="card-body">
+
+                        <select name="cs3" id="DestTestPlan" class="form-control"> </select>
+                        <br />
+                        <select name="cs3" id="DestTestSuit" class="form-control"> </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>*@
+
+
+<br />
+
+@*@using (Html.BeginForm("DestCopyTest", "Test", FormMethod.Post))
+{
+    <table id="DataTable" style="width:100%;" class="table table-bordered">
+        <thead>
+            <tr class="labelHide">
+                <th>TestCase ID</th>
+                <th>Test Cases</th>
+                <th><a id="selectAll">Select All</a></th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+
+}*@
+
+<div id="DataTableDiv" class="dvTableData">
+
+</div>
+
+
+<div align="center">
+    <button class="btn btn-success" id="CopyTestSuit">Click to Copy</button>
+    @*onclick="return confirm('Do you want Selected TestCases to be copied in the Destination Test Suite?')"*@
+</div>
+@*</div>*@

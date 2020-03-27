@@ -286,7 +286,8 @@
                         tabledata += "</tbody></table>";
                         table.innerHTML = tabledata;
                         table = $('#dataTable').DataTable();
-                          $('#dataTable tbody').on('click', 'tr.details-control', function () {
+                        $('#dataTable tbody').on('click', 'tr.details-control', function ()
+                        {
                          var tr = $(this).closest('tr');
                          var row = table.row(tr);
                             if ( row.child.isShown() ) {
@@ -311,8 +312,7 @@
 
                                     
                                     //a[n].nextSibling.innerHTML = '';
-                              
-
+                             
                                 }
                                 row.child(format(row.data(), 5) + '</table></div>').show();
                                 tr.addClass('shown');

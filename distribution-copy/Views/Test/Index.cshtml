@@ -18,6 +18,52 @@
     .width {
         width: 250px;
     }
+
+    #load {
+        /*border: 12px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 12px solid #444444;
+            width: 70px;
+            height: 70px;
+            animation: spin 1s linear infinite;*/
+        position: sticky;
+        z-index: 3;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+    }
+
+    #overlay {
+        position: fixed;
+        display: none;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 2;
+    }
+
+    td.details-control {
+        background: url('/examples/resources/details_open.png') no-repeat center center;
+        cursor: pointer;
+    }
+
+    tr.shown td.details-control {
+        background: url('/examples/resources/details_close.png') no-repeat center center;
+    }
+
+    div.slider {
+        display: none;
+    }
+
+    table.dataTable tbody td.no-padding {
+        padding: 0;
+    }
 </style>
 
 
@@ -25,9 +71,12 @@
 
 <script>
     $(document).ready(function () {
+        var options = { "backdrop": "static", keyboard: true };
         $('#dataTable').DataTable();
+        document.getElementById("overlay").style.display = "block";
         document.getElementById("load").hidden = false;
-    
+
+
         //GetOrganization
             $.ajax({
                 url: '@Url.Action("GetOrganization", "Test")',
@@ -49,12 +98,14 @@
                         });
                         //   alert('Request Successful');
                     };
+                    document.getElementById("overlay").style.display = "none";
                 },
 
                 error: function (request, error) {
                 //    $("#freeze").fadeIn();
-                     document.getElementById("load").hidden = true;
-                   
+                     document.getElementById("overlay").style.display = "none";
+                    document.getElementById('load').hidden = true;
+
                     alert('Invalid Details');
                 }
             });
@@ -79,6 +130,7 @@
         $('#OrganizationDrop').change(function () {
             $('#TestPlanDrop').empty();
             $('#ddlProjectvalue').empty();
+            document.getElementById("overlay").style.display = "block";
              document.getElementById("load").hidden = false;
             $("#load").show();
            //  $("#freeze").fadeOut();
@@ -95,7 +147,8 @@
                              $('#dataTable').DataTable().destroy();
                         $('#dataTable1').DataTable().destroy();
                         $('#dataTable').remove();
-                        $('#dataTable1').remove();
+                            $('#dataTable1').remove();
+                            document.getElementById("overlay").style.display = "none";
                  document.getElementById("load").hidden = true;
                            //  $("#freeze").fadeIn();
                             var count = Object.keys(data).length;
@@ -116,7 +169,8 @@
                              $('#dataTable').DataTable().destroy();
                         $('#dataTable1').DataTable().destroy();
                         $('#dataTable').remove();
-                        $('#dataTable1').remove();
+                            $('#dataTable1').remove();
+                            document.getElementById("overlay").style.display = "none";
                  document.getElementById("load").hidden = true;
                             alert('Invalid Details');
                         }
@@ -126,6 +180,7 @@
 
         $('#ddlProjectvalue').change(function () {
             $('#TestPlanDrop').empty();
+            document.getElementById("overlay").style.display = "block";
                  document.getElementById("load").hidden = false;
                 var selectedText = $("#ddlProjectvalue").find("option:selected").text();
                 var selectedValue = $("#ddlProjectvalue").val();
@@ -141,7 +196,7 @@
                         $('#dataTable1').DataTable().destroy();
                         $('#dataTable').remove();
                         $('#dataTable1').remove();
-                         document.getElementById("load").hidden = true;
+                         document.getElementById("overlay").style.display = "none";
                         document.getElementById('load').hidden = true;
                         if (data.count<1)
                         {
@@ -164,58 +219,210 @@
                     },
 
                     error: function (request, error) {
-                         $('#dataTable').DataTable().destroy();
-                        $('#dataTable1').DataTable().destroy();
-                        $('#dataTable').remove();
-                        $('#dataTable1').remove();
-                        document.getElementById('load').hidden = true;
-                        alert('Request Failed');
+                        document.getElementById("overlay").style.display = "none";
                     }
                 });
             });
 
+        var s = '<div class="slider"><table style="width:100" class="dataTable table bg-dark table-dark" >';
 
+        function format(d) {
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("load").hidden = false;
+            // `d` is the original data object for the row
+            var testPlan=$('#TestPlanDrop').val();
+            let Suiteid = d[0];
+
+              var data =  $.parseJSON($.ajax({
+            type: 'GET',
+                  url: '@Url.Action("TestCasesFromTestSuit", "Test")',
+                  data: { 'testPlanId':testPlan,'testSuitId':Suiteid },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false
+              }).responseText);
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("load").hidden = false;
+            
+              console.log(data);
+            var count = Object.keys(data).length;
+            if (data == null || count < 1) {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("load").hidden = true;
+
+      //  document.getElementById('load').hidden = true;
+            return s+'<tr style="background-color:#ffb3b3" class="details-controlRun"><td style="padding-left:42%" class="text-dark">No Testcases found</td></tr>';
+        } else if (data == null) {
+    //    document.getElementById('load').hidden = true;
+            return null;
+            }
+            s += '<tr style="background-color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>TestCase Id</td><td>TestCase Name</td><td>Outcome</td><td></td></tr>'
+            // s += '<tr style="background-color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>TestCase Id</td><td>TestCase Name</td></tr>'
+
+            $.each(data, function (i)
+            {
+                if (data[i].Outcome == "Passed") {
+                    s += '<tr style="background-color:#ffb3b3;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/pass-icon.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
+                    //s += '<tr style="background-color:#ffb3b3" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data.value[i].workItem.id + '</td><td>' + data.value[i].workItem.name + '</td></tr>'
+                }
+                if (data[i].Outcome == "Failed") {
+                    s += '<tr style="background-color:#ffb3b3;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/icon-error.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
+                }
+                if (data[i].Outcome == "Not Yet Runned") {
+                    s += '<tr style="background-color:#ffb3b3;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/need-Attention2.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
+                }
+                document.getElementById("overlay").style.display = "block";
+                document.getElementById("load").hidden = true;
+            })
+            return s;
+        }
+        function formatRun(d) {
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("load").hidden = false;
+            // `d` is the original data object for the row
+            var testPlan=$('#TestPlanDrop').val();
+            //let testcaseid = d[0];
+            let testcaseid = d;
+            /*var data = $.parseJSON(*/
+            $.ajax({
+                type: 'get',
+                @*url: '@Url.Action("TestRunFromTestCase", "Test")',*@
+                url: '@Url.Action("TestRun", "Test")',
+                data: { 'testCaseId': testcaseid },
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                
+                success: function (data) {
+                    document.getElementById("overlay").style.display = "none";
+            document.getElementById("load").hidden = true;
+                    console.log(data);
+                     $('#myModalContent').html(data);
+                    $('#myModal').modal(options);
+                    $('#myModal').modal('show');
+                    $('.modal-header').modal('show');
+                },
+                error: function (data) {
+                    document.getElementById("overlay").style.display = "none";
+            document.getElementById("load").hidden = true;
+                    console.log(data);
+                    alert('error occured');
+                }
+            });
+        }
 
         $('#TestPlanDrop').change(function () {
-            
-             document.getElementById("load").hidden = false;
-                var selectedValue = $("#TestPlanDrop").val();
-                $('#testPlanDrop').show();
-                $.ajax({
-                    url:'@Url.Action("GetTestSuits", "Test")',
-                    type: 'Get',
-                    data: { 'planid': selectedValue },
-                    dataType: 'json',
-                    success: function (data) {
-                        document.getElementById("load").hidden = true;
-                       // $(".dataTable").clear();
-                        $('#dataTable').DataTable().destroy();
-                        $('#dataTable1').DataTable().destroy();
-                        $('#dataTable').remove();
-                        $('#dataTable1').remove();
-                         $('#dataTable').show();
-                        if (data.count<1)
-                        {
-                            alert('No Test Suites Found')
-                        }
-                        var count = Object.keys(data).length;
-                           
 
-                        if (data.length > 0) {
-                            tabledata = "<table id='dataTable'><thead> <tr><th>Suite</th><th>Planned</th><th>Pass</th><th>Fail</th><th>Executed</th><th>Pass Based On Execution</th><th>Pass Based On Planing %</th><th>Executed Percentage</th><th>NotYetExecution</th></thead><tbody>";
+            var table = document.getElementById("table");
+            //$("#overlay").css("display", "block");
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("load").hidden = false;
+            var selectedValue = $("#TestPlanDrop").val();
+            $('#testPlanDrop').show();
+            $.ajax({
+                url: '@Url.Action("GetTestSuits", "Test")',
+                type: 'Get',
+                data: { 'planid': selectedValue },
+                dataType: 'json',
+                success: function (data) {
+                    document.getElementById("overlay").style.display = "none";
+                    document.getElementById("load").hidden = true;
+                    // $(".dataTable").clear();
+                    $('#dataTable').DataTable().destroy();
+                    $('#dataTable1').DataTable().destroy();
+                    $('#dataTable').remove();
+                    $('#dataTable1').remove();
+                    $('#dataTable').show();
+                    if (data.count < 1) {
+                        alert('No Test Suites Found')
+                    }
+                    var iData;
+                    var count = Object.keys(data).length;
+                    ico = "<img src='../Content/Icons/us.png' style='padding-left:42 px' id='expand'/>";
+                    if (data.length > 0) {
+                        tabledata = "<table id='dataTable'><thead> <tr><th>Suite ID</th><th>Suite</th><th>Planned</th><th>Pass</th><th>Fail</th><th>Executed</th><th>Pass Based On Execution</th><th>Pass Based On Planing %</th><th>Executed Percentage</th><th>NotYetExecution</th><th></th></thead><tbody>";
 
-                         //   for (let i = 0; i < data.length; i++) {
-                            $.each(data, function (i) {
-                                let row = data[i];
-                                tabledata += "<tr class='tableData'><td>" + data[i].Suite + "</td><td>" + data[i].Planned + "</td><td>" + data[i].Pass + "</td><td>" + data[i].Fail + "</td><td>" + data[i].Executed + "</td><td> " + data[i].PassBasedOnExecution +" %</td><td>" + data[i].PassPercentage + " %</td><td>" + data[i].ExecutedPercentage + " %</td><td>" + data[i].NotYetExecution + "</td></tr>";
-                            })
-                            tabledata += "</tbody></table>";
+                        //   for (let i = 0; i < data.length; i++) {
+                        $.each(data, function (i) {
+                            let row12 = data[i];
+                            //if (data[i].Executed != 0 || data[i]..,mjkjhgExecuted != null) {
+                            tabledata += "<tr class='tableData details-control'><td>" + data[i].SuiteId + "</td><td>" + data[i].Suite + "</td><td>" + data[i].Planned + "</td><td>" + data[i].Pass + "</td><td>" + data[i].Fail + "</td><td>" + data[i].Executed + "</td><td> " + data[i].PassBasedOnExecution + " %</td><td>" + data[i].PassPercentage + " %</td><td>" + data[i].ExecutedPercentage + " %</td><td>" + data[i].NotYetExecution + "</td><td><img src='../Content/Icons/scrollupdown-icon.png' height='50px' width='50px'/></td></tr>";
+                            //}
+                          //   tabledata += "</tbody></table>";
+                       // table.innerHTML = tabledata;
+                            iData = data[i].TestRun;
+                        });
+                        tabledata += "</tbody></table>";
+
                             console.log(tabledata);
                             $("#DataTableDiv").append(tabledata);
-                             $('#dataTable').DataTable();
-                        }
-                            //      alert('Request Successful');
+                      //  $('#dataTable').DataTable();
+                        table = $('#dataTable').DataTable();
 
+                        $('#dataTable tbody').on('click', 'tr.details-control', function ()
+                        {
+                            document.getElementById("overlay").style.display = "block";
+                            document.getElementById("load").hidden = false;
+
+                         var tr = $(this).closest('tr');
+                         var row = table.row(tr);
+                            if ( row.child.isShown() ) {
+                                // This row is already open - close it
+                                $('div.slider', row.child()).slideUp(function () {
+                                    row.child.hide();
+                                    document.getElementById("overlay").style.display = "none";
+                                    document.getElementById("load").hidden = true;
+                                    tr.removeClass('shown');
+                                });
+                                }
+                            else {
+                                
+                                var a = $(".shown");
+                                console.log(a);
+                                for (var n = 0; n < a.length; n++) {
+                                    console.log(a[n]);
+                                    var hiderow = table.row(a[n]);
+                                    $('div.slider', hiderow.child()).slideUp(function () {
+                                    hiderow.child.hide();
+                                    });
+                                    a[n].classList.remove("shown");
+                                    //a[n].nextSibling.innerHTML = '';                              ';hh
+                                }
+                                    document.getElementById("overlay").style.display = "block";
+                                    document.getElementById("load").hidden = false;                                
+                                row.child(format(row.data()) + '</table></div>').show();
+                                document.getElementById("overlay").style.display = "block";
+                                    document.getElementById("load").hidden = false;                                 
+                               // row.child(format(iData) + '</table></div>').show();
+                                tr.addClass('shown');
+                                $('div.slider', row.child()).slideDown('1000');
+                                document.getElementById("overlay").style.display = "none";
+                                document.getElementById("load").hidden = true;
+                            }
+                              s =  '<div class="slider"><table style="width:100" class="dataTable table bg-dark table-dark">';
+                            j = 0;
+                            
+ 
+
+                        });
+
+                        $('#dataTable tbody').on('click', 'tr.details-controlRun', function ()
+                        {
+                         var tr = $(this).closest('tr ');
+                            var row = table.row(tr);
+                            console.log(row)
+                            var $row = jQuery(this).closest('tr');
+                            var id = $(this).closest("tr").find('td:eq(1)').text();
+                            var $columns = $row.find('td');
+                            
+                               formatRun(id);
+                            
+                              s =  '<div class="slider"><table style="width:100" class="dataTable table bg-dark table-dark">';
+                              j = 0;
+                        });
+
+                        }
+
+                            //      alert('Request Successful');
                         var suite;
                         var planned=0;
                         var pass=0;
@@ -231,7 +438,7 @@
                         $.each(data, function (j) {
                             console.log(data[j].Pass);
                              //   var tableData = "<tr class='tableData'><td>" + data[i].Suite + "</td><td>" + data[i].Planned + "</td>" + data[i].Executed + "</td><td>" + data[i].ExecutedPercentage +"</td><td>"+data[i].Pass+"</td></td>"+data[i].Fail+"</td><td>"+data[i].PassPercentage+"</td><td>"+data[i].PassBasedOnExecution+"</td><td>"+data[i].NotYetExecution+"</td></tr>"
-                            
+
                             //$("#DataTable").append(tableData);
                             var PlanConvert = parseInt(data[j].Planned);
                             var PassConvert = parseInt(data[j].Pass);
@@ -241,7 +448,7 @@
                             var PassBasedPlanConvert =parseInt(data[j].PassPercentage);
                             var execPercentageConvert =parseInt(data[j].ExecutedPercentage);
                             var notExecutedConvert = parseInt(data[j].NotYetExecution);
-                          
+
                             suite = data[j].Suite;
                             planned = planned + PlanConvert;
                             pass = pass + PassConvert;
@@ -250,7 +457,7 @@
                             passBasedExec = passBasedExec + PassBasedExecConvert;
                             passBasedPlanning= passBasedPlanning + PassBasedPlanConvert;
                             execPercentage = execPercentage + execPercentageConvert;
-                            notExecuted = notExecuted + notExecutedConvert;                              
+                            notExecuted = notExecuted + notExecutedConvert;
                         });
                         console.log("plan: " + planned + " Not Executed:" + notExecuted + "PassBasedPlan: " + passBasedPlanning + "Fail: " + fail);
                         if (pass == 0 && executed == 0) {
@@ -276,8 +483,8 @@
                          var tabledata1 = "<table id='dataTable1'><thead> <tr><th>Planned</th><th>Pass</th><th>Fail</th><th>Executed</th><th>Pass Based On Execution</th><th>Pass Based On Planing %</th><th>Executed Percentage</th><th>NotYetExecution</th></thead><tbody>";
 
                          //   for (let i = 0; i < data.length; i++) {
-                        
-                        tabledata1 += "<tr class='tableData'><td>" + planned + "</td><td>" + pass + "</td><td>" + fail + "</td><td>" + executed + "</td><td> " + totalpassBasedExec + " %</td><td>" + totalpassBasedPlanning + " %</td><td>" + totalexecPercentage + " %</td><td>" + notExecuted + "</td></tr>";
+
+                        tabledata1 += "<tr id='tableData' style='background-color:lightgrey' class='details-control'><td>" + planned + "</td><td>" + pass + "</td><td>" + fail + "</td><td>" + executed + "</td><td> " + totalpassBasedExec + " %</td><td>" + totalpassBasedPlanning + " %</td><td>" + totalexecPercentage + " %</td><td>" + notExecuted + "</td></tr>";
                         tabledata1 += "</tbody></table>";
                         console.log("total Table");
                         console.log(tabledata1);
@@ -286,19 +493,30 @@
 
                     },
 
-                    error: function (request, error) {
+                error: function (request, error) {
+                    document.getElementById("overlay").style.display = "none";
+                    document.getElementById("load").hidden = true;
              $('#dataTable').DataTable().destroy();
                         $('#dataTable1').DataTable().destroy();
                         $('#dataTable').remove();
                         $('#dataTable1').remove();
-                        
+
                         alert('Request Failed');
                     }
                 });
-            });
+        });
+
     })
+
 </script>
 
+<div id='myModal' class='modal' align="left">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'></div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -313,8 +531,6 @@
     </div>
 
     <div class="form-horizontal" style="font-size:16px;margin-left:1.5%">
-
-
         <div class="form-row">
             <div class="col-xs-4">
                 <label class="control-label display-4  sizeNormal" style="padding-right:40px">Organization</label>
@@ -326,7 +542,6 @@
                 <label class="control-label display-4  sizeNormal" style="padding-right:40px">Project Name</label>
                 <select name="cs3" id="ddlProjectvalue" class="form-control borderRadius width" style="opacity:0.8;"> </select>
             </div>
-
             <div class="ml-5">
                 <label class="control-label display-4  sizeNormal" style="padding-right:40px">Test Plan</label>
                 <select name="cs3" id="TestPlanDrop" class="form-control borderRadius width" style="opacity:0.8;"> </select>
@@ -335,17 +550,11 @@
     </div>
     <img id="load" style="margin-left:45%" height="100" width="100" src="~/Content/Images/loadinggif.gif" hidden />
     <br />
-
     <div id="DataTableDiv1" class="dvTableData">
-        </div>
-    <br />
-    <br />
-        <div id="DataTableDiv" class="dvTableData">
-            
-        </div>
     </div>
-
-
-
-
-
+    <br />
+    <br />
+    <div id="DataTableDiv" class="dvTableData">
+    </div>
+</div>
+<div id="overlay"></div>

@@ -1,0 +1,63 @@
+﻿@model IEnumerable<distribution_copy.Controllers.TestRunPartial>
+
+@{
+    ViewBag.Title = "_TestRun";
+}
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h4 class="modal-title" id="myModalLabel" align="center">Test Run</h4>
+</div>
+
+<table class="table" align="center">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.outcome)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        if (item.outcome == "Passed")
+        {
+            <tr style="background-color:green;color:white">
+                <td>
+                    @Html.DisplayFor(modelItem => item.id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.name)
+                </td>
+                <td>
+                    <img src='../Content/Icons/pass-icon.png' height="50px" width="50px"/>
+                    @Html.DisplayFor(modelItem => item.outcome)
+                </td>
+
+            </tr>
+        }
+        if (item.outcome == "Failed")
+        {
+            <tr style="background-color:red;color:white">
+                <td>
+                    @Html.DisplayFor(modelItem => item.id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.name)
+                </td>
+                <td>
+                    <img src='../Content/Icons/icon-error.png'height="50px" width="50px" />
+                    @Html.DisplayFor(modelItem => item.outcome)
+                </td>
+
+            </tr>
+        }
+
+    }
+
+</table>

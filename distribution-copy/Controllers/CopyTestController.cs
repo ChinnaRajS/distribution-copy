@@ -106,17 +106,24 @@ namespace distribution_copy.Controllers
 
         public ActionResult CopyTestCase()
         {
-
-            if (Session["PAT"] == null || Session["PAT"] == "")
+            try
             {
-                return RedirectToAction("Index", "Account");
+                if (Session["PAT"] == null || Session["PAT"] == "")
+                {
+                    return RedirectToAction("Verify", "Account");
 
+                }
+                else
+                {
+                    Org.pat = Session["PAT"].ToString();
+                }
             }
-            else
+            catch
             {
-                Org.pat = Session["PAT"].ToString();
+             
+                return RedirectToAction("Verify", "Account");
             }
-
+        
             return View();
         }
     }
