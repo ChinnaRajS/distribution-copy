@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewBag.Title = "MigrateView";
+    Layout = "~/Views/Shared/_DashBoard.cshtml";
+}
+<script>
+     $(document).ready(function () {
+    $.ajax({
+    type: 'get',
+    dataType: 'json',
+    url: '@Url.Action("AccountList", "Account")',
+    success: function (data) {
+    var s = '<option value="0">--Choose Organisation--</option>';
+    $("#org").empty();
+    for (var i = 0; i < data.length; i++) {
+    s += '<option value="' + data[i].accountName + '">' + data[i].accountName + '</option>';
+    }
+        $("#org").append(s);
+        console.log(s);
+    }
+    });
+     });
+
+    function getProject() {
+        var orgName = $('#org').val();
+        $.ajax({
+            type: 'get',
+            data: { orgName } ,
+          
+            url: '@Url.Action("GetProjects", "Account")',
+            success: function (data) {
+                console.log(data);
+                var s = '<option value="0">--Choose Project--</option>';
+                $("#proj").empty();
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].name + '">' + data[i].name + '</option>';
+                }
+                $("#proj").append(s);
+            }
+        });
+    }
+
+</script>
+@using (Html.BeginForm("Index", "Migration", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Label("Organization", htmlAttributes: new { @class = "control-label  sizeNormal", style = "padding-right:35px" })
+
+    @Html.DropDownList("Org", new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "org", name = "Org", style = "opacity:0.8",onchange="getProject()" })
+
+    @Html.Label("Project", htmlAttributes: new { @class = "control-label sizeNormal", style = "padding-right:35px" })
+
+    @Html.DropDownList("Proj", new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "proj", name = "Proj", style = "opacity:0.8" })
+
+
+    <input type="file" name="Excel" />
+
+    <input type="file" name="Zip" />
+    <div>
+        <button class="btn btn-default">Submit</button>
+    </div>
+}
+

@@ -1,0 +1,52 @@
+﻿@model distribution_copy.Models.AccountsResponse.AccountsResponse.AccountList
+
+@{
+    Layout = "~/Views/Shared/_DashBoard.cshtml";
+}
+
+@if (Model.value.Count > 0)
+{
+    @*<div class="row col-md-12">*@
+    <div class="col-md-12">
+        <h5 class="text-center pt-3">Account and Project Selection</h5>
+        <hr class="mtop-bot10">
+        <div class="form-group form-inline">
+            <label class="w-25 text-right mr-4"><h6>Account :</h6> </label>
+            <select class="form-control inline w-50" id="ddlADOAccount">
+                @foreach (var accounts in Model.value)
+                {
+                    <option account-id="@accounts.accountName">@accounts.accountName</option>
+                }
+            </select>
+            <img src="~/Image/projectloader.gif" class="projectloader" style="width:30px;display:none" />
+        </div>
+
+        <div id="dvProjectDetails" class="form-group form-inline">
+        </div>
+    </div>
+    <div style="float: right;margin-right: 260px;">
+
+        <button type="button" id="btnGetWorkItems" class="btn btn-primary" disabled>Get WorkItems</button>
+    </div>
+    @*</div>*@
+}
+else
+{
+    <div class="alert alert-danger col-sm-12">Either the VSTS account does not exist or the tool has not been authorised to access VSTS account </div>
+
+}
+<img src="~/Content/Images/loadinggif.gif" class="loader text-center" style="margin-left:35%;width:7%;display:none"/>
+<div id="dvLoadWorkItems" class="pt-3">
+
+</div>
+
+
+<script src="~/Scripts/AppScripts/ADOScript.js"></script>
+
+
+<style>
+    select {
+        border-radius: 15px;
+    }
+
+</style>
