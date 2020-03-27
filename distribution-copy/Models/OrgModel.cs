@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -26,7 +27,7 @@ namespace distribution_copy.Models.OrgModel
         public int WIcountOrg { get; set; }
         public int WIcountType { get; set; }
         public int ProjWIcountByType { get; set; }
-        
+
     }
 
     public class MembersMod

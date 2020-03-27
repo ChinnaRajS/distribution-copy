@@ -12,12 +12,18 @@ using System.IO;
 using distribution_copy.Models.AccessDetails;
 using distribution_copy.Models.AccountsResponse;
 using distribution_copy.Models.ProfileDetails;
+using distribution_copy.Models.InputModel;
 
 namespace distribution_copy.Services
 {
     public class AccountService
 
     {
+        public string PAT;
+        public  AccountService()
+        {
+            this.PAT = HttpContext.Current.Session["PAT"]==null?"": HttpContext.Current.Session["PAT"].ToString();
+        }
         public string GenerateRequestPostData(string appSecret, string authCode, string callbackUrl)
         {
             try
@@ -105,7 +111,6 @@ namespace distribution_copy.Services
                 try
                 {
                     string baseAddress = System.Configuration.ConfigurationManager.AppSettings["BaseAddress"];
-
                     client.BaseAddress = new Uri(baseAddress);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -129,5 +134,40 @@ namespace distribution_copy.Services
             }
         }
 
+
+        public T GetApi<T>(string url, string method = "GET", string requestBody = null)
+        {
+            
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Add(
+                           new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
+                Convert.ToBase64String(
+                    System.Text.ASCIIEncoding.ASCII.GetBytes(
+                        string.Format("{0}:{1}", "",PAT ))));
+            HttpRequestMessage Request;
+            if (requestBody != null)
+            {
+                HttpContent content = new StringContent(requestBody, Encoding.UTF8, "application/json");
+                Request = new HttpRequestMessage(new HttpMethod(method), url) { Content = content };
+            }
+            else
+            {
+                Request = new HttpRequestMessage(new HttpMethod(method), url);
+            }
+            using (HttpResponseMessage response = client.SendAsync(Request).Result)
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseBody = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<T>(responseBody);
+                }
+                else
+                    return default;
+            }
+        }
     }
 }
