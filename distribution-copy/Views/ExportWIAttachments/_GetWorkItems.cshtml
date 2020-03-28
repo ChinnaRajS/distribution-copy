@@ -1,8 +1,7 @@
 ﻿@model ExportWIAttachmentsWeb.Models.AccountDetail
 <style>
     table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
+     
     }
 
     th, td {
@@ -15,7 +14,6 @@
     }
 
     table {
-        border-collapse: separate;
     }
 
     tr td:first-child:before {
@@ -52,14 +50,16 @@
 @if (Model.WorkItemDetails.Count > 0)
 {
     <div id="dvTable" class="pt-3 pb-5">
-        <table style="width:100%" id="tblWorkItems" class="mt-3 invisible visible">
-            <tr>
-                <th>SI. No</th>
-                <th>Work Item ID</th>
-                <th>Work Item Name</th>
-                <th>Work Itme Type</th>
-                <th>Attachment <input type="checkbox" id="chkAll" /></th>
-            </tr>
+        <table style="width:100%" id="tblWorkItems" class="mt-3 invisible visible table-bordered table-light">
+            <thead>
+                <tr>
+                    <th>SI. No</th>
+                    <th>Work Item ID</th>
+                    <th>Work Item Name</th>
+                    <th>Work Itme Type</th>
+                    <th>Attachment <input type="checkbox" id="chkAll" /></th>
+                </tr>
+            </thead>
             <tbody>
                 @foreach (var wi in Model.WorkItemDetails)
                 {

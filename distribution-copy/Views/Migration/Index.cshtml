@@ -6,10 +6,11 @@
 @if (IsPost)
 {
     <script>
-        alert('Migrated Succefully');
+        alert('@ViewBag.message');
     </script>
 }
 <style>
+ 
     .load {
         /*border: 12px solid #f3f3f3;
             border-radius: 50%;
@@ -17,7 +18,7 @@
             width: 70px;
             height: 70px;
             animation: spin 1s linear infinite;*/
-        position: sticky;
+        position:fixed;
         z-index: 2;
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Safari */
@@ -37,6 +38,19 @@
         bottom: 0;
         background-color: rgba(0,0,0,0.5);
         z-index: 2;
+    }
+       #ex,#zp,#submit{
+        border-radius:15px;
+    }
+        .borderRadius {
+        border-radius: 10px;
+    }
+
+    .width {
+        width: 250px;
+    }
+      .sizeNormal {
+        font-size: 16px;
     }
 </style>
 <script>
@@ -116,32 +130,38 @@ for (var i = 0; i < appBanners.length; i ++) {
 </script>
 <div id="overlay"></div>
 
-    <img style="margin-left: 42%; margin-top: 5%;display:none;" height="100" width="100" class="load" src="~/Content/Images/loadinggif.gif" />
-    <br />
-    <p style="margin-left: 42%; margin-top: 5%;display:none;" class="load">Migrating Please be Patient.</p>
-
+    
 <div class="ml-4 mt-3">
+    <h3 class="display-4" style="font-size:30px">Choose Where to Migrate.</h3>
+    <br />
     @using (Html.BeginForm("Index", "Migration", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
+<div class="form-row">
+    <div>
         @Html.Label("Organization", htmlAttributes: new { @class = "control-label  sizeNormal", style = "padding-right:35px" })
 
         @Html.DropDownList("Org", new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "org", name = "Org", style = "opacity:0.8", onchange = "getProject()" })
+    </div>
+    <div>
+        @Html.Label("Project", htmlAttributes: new { @class = "control-label sizeNormal ml-3", style = "padding-right:40px" })
 
-        @Html.Label("Project", htmlAttributes: new { @class = "control-label sizeNormal", style = "padding-right:35px" })
+        @Html.DropDownList("Proj", new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width ml-3", id = "proj", name = "Proj", style = "opacity:0.8", onchange = "check()" })
+    </div>
+</div>
+            <br />
+        <img style="margin-left: 35%; display: none;" height="100" width="100" class="load" src="~/Content/Images/loadinggif.gif" />
+     
+        <p style="margin-left: 32%; margin-top:8%;display:none;" class="load">Migrating Please be Patient.</p>
+        <div class="form-row">
+            <label id="ex" class="btn btn-success" for="Excel">Choose Excel</label>
+            <input id="Excel" type="file" name="Excel" data-max-size="32154" accept=".xls,.xlsx" style="display:none" onchange="check()" />
 
-        @Html.DropDownList("Proj", new SelectList(new[] { "Empty List" }), htmlAttributes: new { @class = "form-control borderRadius width", id = "proj", name = "Proj", style = "opacity:0.8", onchange = "check()" })
-        <br />
-        <label id="ex" class="btn btn-success" for="Excel">Choose Excel</label>
-        <br />
-        <input id="Excel" type="file" name="Excel" data-max-size="32154" accept=".xls,.xlsx" style="display:none" onchange="check()" />
-        <br />
-        <br />
 
-        <label id="zp" class="btn btn-danger" for="Zip">Choose Attatchment</label>
-        <br />
+            <label id="zp" class="btn btn-danger ml-4" for="Zip">Choose Attatchment</label>
 
-        <input id="Zip" type="file" name="Zip" data-max-size="32154" accept=".zip,.rar" style="display:none" onchange="check()" />
-        <br />
+            <input id="Zip" type="file" name="Zip" data-max-size="32154" accept=".zip,.rar" style="display:none" onchange="check()" />
+        </div>
+            <br />
         <br />
         <div>
             <button id="submit" class="btn btn-dark" onclick="load()" disabled>Submit</button>

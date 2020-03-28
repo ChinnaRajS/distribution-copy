@@ -3,28 +3,36 @@
 @{
     Layout = "~/Views/Shared/_DashBoard.cshtml";
 }
+<style>
+      .borderRadius {
+        border-radius: 10px;
+    }
 
+    .width {
+        width: 250px;
+    }
+</style>
 @if (Model.value.Count > 0)
 {
     @*<div class="row col-md-12">*@
     <div class="col-md-12">
-        <h5 class="text-center pt-3">Account and Project Selection</h5>
+        <h5 class="text-center pt-3 display-4" style="font-size:30px">Account and Project Selection</h5>
         <hr class="mtop-bot10">
-        <div class="form-group form-inline">
-            <label class="w-25 text-right mr-4"><h6>Account :</h6> </label>
-            <select class="form-control inline w-50" id="ddlADOAccount">
+        <div class="form-group form-inline" style="margin-left:34%">
+            <label class="w-auto text-right mr-1"><h6>Account :</h6> </label>
+            <select class="form-control inline w-50 borderRadius width" id="ddlADOAccount">
                 @foreach (var accounts in Model.value)
                 {
                     <option account-id="@accounts.accountName">@accounts.accountName</option>
                 }
             </select>
-            <img src="~/Image/projectloader.gif" class="projectloader" style="width:30px;display:none" />
+            <img src="~/Content/Images/loadinggif.gif" class="projectloader" style="width: 30px; display: none" />
         </div>
 
         <div id="dvProjectDetails" class="form-group form-inline">
         </div>
     </div>
-    <div style="float: right;margin-right: 260px;">
+    <div style="float: right;margin-right: 510px;">
 
         <button type="button" id="btnGetWorkItems" class="btn btn-primary" disabled>Get WorkItems</button>
     </div>

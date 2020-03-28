@@ -85,14 +85,24 @@ namespace distribution_copy.Controllers
             Url= @"https://dev.azure.com/"+Org+"/";
             UserPAT = Session["PAT"] != null ? Session["PAT"].ToString() : "";
             ProjectName = Proj;
-            var excelStream = Excel.InputStream;           
-            var zipStream = Zip.InputStream;
-            System.IO.Compression.ZipArchive zipArchive = new System.IO.Compression.ZipArchive(zipStream, System.IO.Compression.ZipArchiveMode.Read);
-            ExcelPackage excel = new ExcelPackage(excelStream);
-            WIOps.ConnectWithPAT(Url, UserPAT);
-            DT = ReadExcel(excel);
-            List<WorkitemFromExcel> WiList = GetWorkItems(zipArchive);
-            CreateLinks(WiList);
+            try
+            {
+                var excelStream = Excel.InputStream;
+                var zipStream = Zip.InputStream;
+                System.IO.Compression.ZipArchive zipArchive = new System.IO.Compression.ZipArchive(zipStream, System.IO.Compression.ZipArchiveMode.Read);
+                ExcelPackage excel = new ExcelPackage(excelStream);
+                WIOps.ConnectWithPAT(Url, UserPAT);
+                DT = ReadExcel(excel);
+                List<WorkitemFromExcel> WiList = GetWorkItems(zipArchive);
+
+                CreateLinks(WiList);
+                ViewBag.message = "Migrated Succeffully";
+            }
+            catch
+            {
+                ViewBag.message = "Something Went Wrong, Please Download Excel/Attachments From 'Export Attachments'";
+
+            }
             return View();
         }
         static List<WorkitemFromExcel> GetWorkItems(System.IO.Compression.ZipArchive zipArchive)
@@ -108,31 +118,38 @@ namespace distribution_copy.Controllers
                     string ID = dr["ID"].ToString();
                     if (!string.IsNullOrEmpty(ID))
                     {
-                        WorkitemFromExcel item = new WorkitemFromExcel();
-                        //item.id = ID;
-                        item.Id = createWorkItem(dr);
-                        addAttachment.findAttachments(Convert.ToInt32(dr["ID"].ToString()), item.Id,zipArchive);
-                        dr["ID"] = item.Id.ToString();
-                        item.WiState = dr["State"].ToString();
-                        item.AreaPath = dr["Area Path"].ToString();
-                        item.Itertation = dr["Iteration Path"].ToString();
-                        OldTeamProject = dr["Team Project"].ToString();
-                        int columnindex = 0;
-                        foreach (var col in TitleColumns)
+                        try
                         {
-                            if (!string.IsNullOrEmpty(col))
+                            WorkitemFromExcel item = new WorkitemFromExcel();
+                            //item.id = ID;
+                            item.Id = createWorkItem(dr);
+                            addAttachment.findAttachments(Convert.ToInt32(dr["ID"].ToString()), item.Id, zipArchive);
+                            dr["ID"] = item.Id.ToString();
+                            item.WiState = dr["State"].ToString();
+                            item.AreaPath = dr["Area Path"].ToString();
+                            item.Itertation = dr["Iteration Path"].ToString();
+                            OldTeamProject = dr["Team Project"].ToString();
+                            int columnindex = 0;
+                            foreach (var col in TitleColumns)
                             {
-                                if (!string.IsNullOrEmpty(dr[col].ToString()))
+                                if (!string.IsNullOrEmpty(col))
                                 {
-                                    item.Title = dr[col].ToString();
-                                    if (i > 0 && columnindex > 0)
-                                        item.Parent = getParentData(DT, i - 1, columnindex);
-                                    break;
+                                    if (!string.IsNullOrEmpty(dr[col].ToString()))
+                                    {
+                                        item.Title = dr[col].ToString();
+                                        if (i > 0 && columnindex > 0)
+                                            item.Parent = getParentData(DT, i - 1, columnindex);
+                                        break;
+                                    }
                                 }
+                                columnindex++;
                             }
-                            columnindex++;
+                            workitemlist.Add(item);
                         }
-                        workitemlist.Add(item);
+                        catch
+                        {
+                            return null;
+                        }
                     }
                 }
             }

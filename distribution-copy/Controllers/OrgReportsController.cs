@@ -18,6 +18,10 @@ namespace distribution_copy.Controllers
         // GET: OrgReports
         public ActionResult Index()
         {
+            if (Session["visited"] == null)
+            {
+                return RedirectToAction("../Account/Verify");
+            }
             return View();
         }
         APIRequest req;

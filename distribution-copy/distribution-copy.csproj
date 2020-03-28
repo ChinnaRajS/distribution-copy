@@ -256,6 +256,7 @@
     <Compile Include="Models\Model_AK\TestRunById.cs" />
     <Compile Include="Models\Model_AK\TestRunProject.cs" />
     <Compile Include="Models\Model_AK\TestSuit.cs" />
+    <Compile Include="Models\Model_AK\WorkItemsClass.cs" />
     <Compile Include="Models\OrgModel.cs" />
     <Compile Include="Models\ProfileDetails.cs" />
     <Compile Include="Models\ProjectModel.cs" />
