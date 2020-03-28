@@ -15,11 +15,11 @@
 @if (Model.value.Count > 0)
 {
     @*<div class="row col-md-12">*@
-    <div class="col-md-12">
-        <h5 class="text-center pt-3 display-4" style="font-size:30px">Account and Project Selection</h5>
+    <div class="">
+        @*<h5 class="pt-3 display-4" style="font-size:30px">Account and Project Selection</h5>*@
         <hr class="mtop-bot10">
-        <div class="form-group form-inline" style="margin-left:34%">
-            <label class="w-auto text-right mr-1"><h6>Account :</h6> </label>
+        <div class="form-group form-inline" style="margin-left:28%">
+            <label class="w-auto text-right mr-1"><h6>Organization :</h6> </label>
             <select class="form-control inline w-50 borderRadius width" id="ddlADOAccount">
                 @foreach (var accounts in Model.value)
                 {
@@ -32,9 +32,9 @@
         <div id="dvProjectDetails" class="form-group form-inline">
         </div>
     </div>
-    <div style="float: right;margin-right: 510px;">
+    <div style="float: right;margin-right: 520px;">
 
-        <button type="button" id="btnGetWorkItems" class="btn btn-primary" disabled>Get WorkItems</button>
+        <button type="button" id="btnGetWorkItems" style="border-radius:10px" class="btn btn-primary" disabled>Get WorkItems</button>
     </div>
     @*</div>*@
 }

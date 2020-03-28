@@ -42,7 +42,6 @@ namespace WorkItemPublish
         static void AddAttachment(int WiID, System.IO.Compression.ZipArchiveEntry FilePath)
         {
             AttachmentReference att;
-            //string[] filePathSplit = FilePath.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             using (var attStream=FilePath.Open())
             {

@@ -687,6 +687,7 @@
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="css\icon.css" />
+    <Content Include="Jsons\TestCaseJson.json" />
     <None Include="Properties\PublishProfiles\samplecustomreport - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - Web Deploy.pubxml" />
@@ -982,6 +983,8 @@
     <Content Include="Views\ExportWIAttachments\Index.cshtml" />
     <Content Include="Views\Migration\Index.cshtml" />
     <Content Include="Views\OrgReports\Index.cshtml" />
+    <Content Include="Views\CopyTest\CopyTestCase.cshtml" />
+    <Content Include="Views\Test\_TestRun.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
