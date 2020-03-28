@@ -46,7 +46,7 @@ namespace distribution_copy.Controllers
                 url = string.Format(url, clientId, AppScope, redirectUrl);
                 return Redirect(url);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //logger.Debug(JsonConvert.SerializeObject(ex, Formatting.Indented) + Environment.NewLine);
             }
@@ -64,8 +64,7 @@ namespace distribution_copy.Controllers
 
         [HttpPost]
         public JsonResult ProjectList(string ORG)
-        {
-        
+        {        
             var pm = service.GetApi<ProjectModel>("https://dev.azure.com/" + ORG + "/_apis/projects?api-version=5.1");
             return Json(pm.Value, JsonRequestBehavior.AllowGet);
         }
@@ -100,7 +99,7 @@ namespace distribution_copy.Controllers
                 if (j % 200 == 0 && j != 0)
                 {
 
-                    var batchResponse = getWorkItems<ResponseWI>(url);
+                    var batchResponse = service.GetApi<ResponseWI>(url+b);
                     urlResponse.count += batchResponse.count;
                     foreach (var item in batchResponse.value)
                     {
@@ -119,7 +118,7 @@ namespace distribution_copy.Controllers
             }
             url += b;
 
-            var lastBatchResponse = getWorkItems<ResponseWI>(url);
+            var lastBatchResponse = service.GetApi<ResponseWI>(url);
             urlResponse.count += lastBatchResponse.count;
             foreach (var item in lastBatchResponse.value)
             {
@@ -134,37 +133,12 @@ namespace distribution_copy.Controllers
             }
             return Json(Types, JsonRequestBehavior.AllowGet);
         }
-        public T getWorkItems<T>(string getUrl) where T:new()
-        {
-            T batch=new T();
-
-            try
-            {
-                batch= service.GetApi<T>(getUrl);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return batch;
-
-        }
-        public JsonResult getWorkItembyType(InputModel inp)
-        {
-            ResponseWI Witems = new ResponseWI();
-            if (Session["WorkItems"] == null)
-                WITypes(inp);
-            Witems = (ResponseWI)Session["WorkItems"];
-            var result = Json(Witems.value.Where(x => x.fields.WorkItemType == inp.WorkItemType.Trim()), JsonRequestBehavior.AllowGet);
-            return result;
-        }
+        
         public JsonResult AllList(InputModel inp)
         {
             ResponseWI Witems = new ResponseWI();
             if (Session["WorkItems"] == null)
                 WITypes(inp);
-
-
             List<string> WorkItemList = new List<string>();
             List<string> AssignedToList = new List<string>();
             List<string> SprintList = new List<string>();
@@ -201,11 +175,13 @@ namespace distribution_copy.Controllers
                         WorkItemList.Add(i.fields.WorkItemType);
                 }
             }
-            List<List<string>> all = new List<List<string>>();
-            all.Add(AssignedToList);
-            all.Add(SprintList);
-            all.Add(StateList);
-            all.Add(WorkItemList);
+            List<List<string>> all = new List<List<string>>
+            {
+                AssignedToList,
+                SprintList,
+                StateList,
+                WorkItemList
+            };
             return Json(all, JsonRequestBehavior.AllowGet);
         }
 
@@ -317,15 +293,11 @@ namespace distribution_copy.Controllers
 
         public ActionResult Export(InputModel inp)
         {
-            //var data = .Data;
-            ResponseWI response = new ResponseWI();
-            response.value = new List<Value>();
-            response = (ResponseWI)Filter(inp, 1);
-            //response.value = JsonConvert.DeserializeObject<List<Value>>(new JavaScriptSerializer().Serialize(Filter(inp,1).Data));
-            generateExcel(response, inp );
+            GenerateExcel((ResponseWI)Filter(inp, 1), inp );
             return RedirectToAction("../WIReport/Index");
         }
-        public void generateExcel(ResponseWI wi, InputModel inp)
+
+        public void GenerateExcel(ResponseWI wi, InputModel inp)
         {
             ExcelPackage excel = new ExcelPackage();
             var workSheet = excel.Workbook.Worksheets.Add("WorkItems");
@@ -379,11 +351,10 @@ namespace distribution_copy.Controllers
                 workSheet.Cells[recordIndex, ++columnNo].Value = WI.fields.AssignedTo == null ? "" : WI.fields.AssignedTo.displayName;
                 workSheet.Cells[recordIndex, ++columnNo].Value = WI.fields.ChangedBy == null ? "" : WI.fields.ChangedBy.displayName;
                 recordIndex++;
-
             }
             for (var i = 1; i <= columnNo; i++)
                 workSheet.Column(i).AutoFit();
-            string excelName = inp.OrganizationName + "-" + (inp.ProjectName != null ? inp.ProjectName : "" )+ "-" + (inp.WorkItemType != null ? inp.WorkItemType : "" )+ DateTime.Now.ToString();
+            string excelName = inp.OrganizationName + "-" + (inp.ProjectName ?? "" )+ "-" + (inp.WorkItemType ?? "" )+ DateTime.Now.ToString();
             using (var memoryStream = new MemoryStream())
             {
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -394,12 +365,12 @@ namespace distribution_copy.Controllers
                 Response.End();
             }
         }
+
         public JsonResult CommitList(InputModel inp,int Id)
         {
             string url="https://dev.azure.com/" + inp.OrganizationName + "/"+inp.ProjectName+ "/_apis/wit/workItems/"+ Id + "/updates?api-version=5.1";
             Models.UpdatesModel.RootObject updates = service.GetApi<Models.UpdatesModel.RootObject>(url);
             return Json(updates.value, JsonRequestBehavior.AllowGet);
-
         } 
 
         public JsonResult GetProjects(string orgName)

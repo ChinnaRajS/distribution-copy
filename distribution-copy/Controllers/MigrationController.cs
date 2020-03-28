@@ -21,7 +21,7 @@ namespace distribution_copy.Controllers
 {
     public class MigrationController : Controller
     {
-        static string Url = "";
+        static string URI = "";
         static string UserPAT = "";
         static string ProjectName = "";
         static public int titlecount = 0;
@@ -31,8 +31,7 @@ namespace distribution_copy.Controllers
         static public string OldTeamProject;
         static public string rarpath = "";
 
-        public Services.MigrateService MigrateService = new Services.MigrateService();
-        AccountService Account = new AccountService();
+        readonly AccountService Account = new AccountService();
 
         // GET: Migration
         [HttpGet]
@@ -44,13 +43,9 @@ namespace distribution_copy.Controllers
             }
             if (Session["PAT"] == null)
             {
-                InputModel input = new InputModel();
                 try
                 {
-
                     AccessDetails _accessDetails = new AccessDetails();
-
-                    AccountsResponse.AccountList accountList = null;
                     string code = Session["PAT"] == null ? Request.QueryString["code"] : Session["PAT"].ToString();
                     string redirectUrl = ConfigurationManager.AppSettings["RedirectUri"];
                     string clientId = ConfigurationManager.AppSettings["ClientSecret"];
@@ -70,31 +65,33 @@ namespace distribution_copy.Controllers
                         }
                     }
                 }
-                catch
-                {
-
-                }
-
-        } 
-                    return View();
+                catch {  }
+            }
+            return View();
         }
 
         [HttpPost]
         public ActionResult Index(HttpPostedFileBase Excel, HttpPostedFileBase Zip,string Org,string Proj)
         {
-            Url= @"https://dev.azure.com/"+Org+"/";
+            URI= @"https://dev.azure.com/"+Org+"/";
             UserPAT = Session["PAT"] != null ? Session["PAT"].ToString() : "";
             ProjectName = Proj;
             try
             {
                 var excelStream = Excel.InputStream;
-                var zipStream = Zip.InputStream;
-                System.IO.Compression.ZipArchive zipArchive = new System.IO.Compression.ZipArchive(zipStream, System.IO.Compression.ZipArchiveMode.Read);
+                Stream zipStream;
+                System.IO.Compression.ZipArchive zipArchive;
+                List<WorkitemFromExcel> WiList;
                 ExcelPackage excel = new ExcelPackage(excelStream);
-                WIOps.ConnectWithPAT(Url, UserPAT);
+                WIOps.ConnectWithPAT(URI, UserPAT);
                 DT = ReadExcel(excel);
-                List<WorkitemFromExcel> WiList = GetWorkItems(zipArchive);
-
+                if (Zip != null) { 
+                zipStream = Zip.InputStream;
+                zipArchive = new System.IO.Compression.ZipArchive(zipStream, System.IO.Compression.ZipArchiveMode.Read);
+                    WiList = GetWorkItems(zipArchive);
+                }
+                else
+                    WiList = GetWorkItems();
                 CreateLinks(WiList);
                 ViewBag.message = "Migrated Succeffully";
             }
@@ -105,10 +102,9 @@ namespace distribution_copy.Controllers
             }
             return View();
         }
-        static List<WorkitemFromExcel> GetWorkItems(System.IO.Compression.ZipArchive zipArchive)
+        static List<WorkitemFromExcel> GetWorkItems(System.IO.Compression.ZipArchive zipArchive=null)
         {
-            AttatchmentAdder addAttachment = new AttatchmentAdder(Url,UserPAT );
-
+            AttatchmentAdder addAttachment = new AttatchmentAdder(URI,UserPAT);
             List<WorkitemFromExcel> workitemlist = new List<WorkitemFromExcel>();
             if (DT.Rows.Count > 0)
             {
@@ -120,10 +116,12 @@ namespace distribution_copy.Controllers
                     {
                         try
                         {
-                            WorkitemFromExcel item = new WorkitemFromExcel();
-                            //item.id = ID;
-                            item.Id = createWorkItem(dr);
-                            addAttachment.findAttachments(Convert.ToInt32(dr["ID"].ToString()), item.Id, zipArchive);
+                            WorkitemFromExcel item = new WorkitemFromExcel
+                            {
+                                Id = CreateWorkItem(dr)
+                            };
+                            if (zipArchive!=null)
+                                addAttachment.FindAttachments(Convert.ToInt32(dr["ID"].ToString()), item.Id, zipArchive);
                             dr["ID"] = item.Id.ToString();
                             item.WiState = dr["State"].ToString();
                             item.AreaPath = dr["Area Path"].ToString();
@@ -138,7 +136,7 @@ namespace distribution_copy.Controllers
                                     {
                                         item.Title = dr[col].ToString();
                                         if (i > 0 && columnindex > 0)
-                                            item.Parent = getParentData(DT, i - 1, columnindex);
+                                            item.Parent = GetParentData(DT, i - 1, columnindex);
                                         break;
                                     }
                                 }
@@ -178,7 +176,7 @@ namespace distribution_copy.Controllers
                 WIOps.UpdateWorkItemFields(wi.Id, Fields);
             }
         }
-         static ParentWorkItem getParentData(DataTable dt, int rowindex, int columnindex)
+         static ParentWorkItem GetParentData(DataTable dt, int rowindex, int columnindex)
         {
             ParentWorkItem workItem = new ParentWorkItem();
 
@@ -211,7 +209,7 @@ namespace distribution_copy.Controllers
         }
 
         public static List<string> inavlidCoumns = new List<string>();
-        static int createWorkItem(DataRow Dr)
+        static int CreateWorkItem(DataRow Dr)
         {
             Dictionary<string, object> fields = new Dictionary<string, object>();
             foreach (DataColumn column in DT.Columns)
@@ -246,16 +244,15 @@ namespace distribution_copy.Controllers
             int colCount = WorkSheet.Dimension.End.Column;
             DataTable Dt = new DataTable();
             DataRow row;
-
-            string ColName = "";
             for (int i = 1; i <= rowCount; i++)
             {
                 row = Dt.NewRow();
                 for (int j = 1; j <= colCount; j++)
                 {
+                    string ColName;
                     if (i == 1)
                     {
-                        ColName = WorkSheet.Cells[i,j].Value.ToString();
+                        ColName = WorkSheet.Cells[i, j].Value.ToString();
                         if (ColName.StartsWith("Title"))
                         {
                             TitleColumns.Add(ColName);
@@ -265,14 +262,13 @@ namespace distribution_copy.Controllers
                     }
                     else
                     {
-                        ColName = WorkSheet.Cells[1,j].Value.ToString();
-                        if (WorkSheet.Cells[i,j].Value != null)
-                            row[ColName] = WorkSheet.Cells[i,j].Value.ToString();
+                        ColName = WorkSheet.Cells[1, j].Value.ToString();
+                        if (WorkSheet.Cells[i, j].Value != null)
+                            row[ColName] = WorkSheet.Cells[i, j].Value.ToString();
                     }
                 }
                 if (i != 1)
                     Dt.Rows.Add(row);
-                /*string teststring =row.ItemArray[3].ToString();*/
             }
             return Dt;
         }

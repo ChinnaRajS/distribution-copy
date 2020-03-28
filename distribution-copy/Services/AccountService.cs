@@ -35,7 +35,7 @@ namespace distribution_copy.Services
                             callbackUrl
                      );
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //ViewBag.ErrorMessage = ex.Message;
             }
@@ -70,7 +70,7 @@ namespace distribution_copy.Services
                     return details;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //ViewBag.ErrorMessage = ex.Message;
             }
@@ -99,7 +99,7 @@ namespace distribution_copy.Services
                     var errorMessage = response.Content.ReadAsStringAsync();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             return accounts;
@@ -128,7 +128,7 @@ namespace distribution_copy.Services
                         var errorMessage = response.Content.ReadAsStringAsync();
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                 }
                 return profile;
@@ -138,27 +138,18 @@ namespace distribution_copy.Services
 
         public T GetApi<T>(string url, string method = "GET", string requestBody = null)
         {
-            
             HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Accept.Add(
-                           new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
-
-
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                Convert.ToBase64String(
-                    System.Text.ASCIIEncoding.ASCII.GetBytes(
-                        string.Format("{0}:{1}", "",PAT ))));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "",PAT ))));
             HttpRequestMessage Request;
             if (requestBody != null)
             {
                 HttpContent content = new StringContent(requestBody, Encoding.UTF8, "application/json");
                 Request = new HttpRequestMessage(new HttpMethod(method), url) { Content = content };
             }
-            else
-            {
+            else            
                 Request = new HttpRequestMessage(new HttpMethod(method), url);
-            }
+
             using (HttpResponseMessage response = client.SendAsync(Request).Result)
             {
                 if (response.IsSuccessStatusCode)
@@ -170,5 +161,6 @@ namespace distribution_copy.Services
                     return default;
             }
         }
+        
     }
 }

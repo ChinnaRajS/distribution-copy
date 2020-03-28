@@ -227,13 +227,11 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\distributionController.cs" />
     <Compile Include="Controllers\ExportWIAttachmentsController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MigrationController.cs" />
     <Compile Include="Controllers\OrgReportsController.cs" />
     <Compile Include="Controllers\TeamsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\TraceController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Controllers\WIReportController.cs" />
     <Compile Include="Controllers\WorkItemAPIController.cs" />
     <Compile Include="Global.asax.cs">
@@ -272,7 +270,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\AttatchmentAdder.cs" />
-    <Compile Include="Services\MigrateService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -949,7 +946,6 @@
     <Content Include="Content\Site.css" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="vendor\font-awesome\fonts\fontawesome-webfont.eot" />

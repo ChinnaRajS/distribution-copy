@@ -32,7 +32,7 @@ namespace WorkItemPublish
         {
             ConnectWithPAT(_Url, _PAT);
         }
-        public void findAttachments(int oldId, int newId,System.IO.Compression.ZipArchive zipArchive)
+        public void FindAttachments(int oldId, int newId,System.IO.Compression.ZipArchive zipArchive)
         {
             foreach (var file in zipArchive.Entries.Where(x => x.FullName.StartsWith(oldId.ToString())))
                 {
@@ -47,14 +47,15 @@ namespace WorkItemPublish
             {
                 att = WitClient.CreateAttachmentAsync(attStream, FilePath.Name).Result; // upload the file
             }
-            List<object> references = new List<object>(); //list with references
-
-            references.Add(new
+            List<object> references = new List<object>
             {
-                rel = RelConstants.AttachmentRefStr,
-                url = att.Url,
-                attributes = new { comment = "" }
-            });
+                new
+                {
+                    rel = RelConstants.AttachmentRefStr,
+                    url = att.Url,
+                    attributes = new { comment = "" }
+                }
+            };
 
             AddWorkItemRelations(WiID, references);
         }

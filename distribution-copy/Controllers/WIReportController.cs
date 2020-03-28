@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using distribution_copy.Models;
 using distribution_copy.Models.AccessDetails;
 using distribution_copy.Models.AccountsResponse;
-using distribution_copy.Models.InputModel;
 using distribution_copy.Models.ProfileDetails;
 using distribution_copy.Services;
 
@@ -15,16 +11,14 @@ namespace distribution_copy.Controllers
 {
     public class WIReportController : Controller
     {
-        AccountService Account = new AccountService();
+        readonly AccountService Account = new AccountService();
         // GET: WIReport
         public ActionResult Index()
         {
             if (Session["visited"]==null)
-            {
                 return RedirectToAction("../Account/Verify");
-            }
+
             if (Session["PAT"] == null) { 
-            InputModel input = new InputModel();
             try
             {
 
@@ -58,93 +52,10 @@ namespace distribution_copy.Controllers
                     OrganizationList.Add(new SelectListItem { Text = i.accountName, Value = i.accountName });
                 }
                 ViewBag.OrganizationList = OrganizationList;
-              
-
-
+                }
+            catch (Exception){}
             }
-            catch (Exception ex)
-            {
-
-
-
-            }
-            }
-
             return View();
-
-
-        }
-                     
-        // GET: WIReport/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: WIReport/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: WIReport/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: WIReport/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: WIReport/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: WIReport/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: WIReport/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        }                   
     }
 }
