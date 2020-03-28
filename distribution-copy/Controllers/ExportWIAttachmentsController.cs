@@ -9,14 +9,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
-using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
 using distribution_copy.Controllers;
 using distribution_copy.Services;
 using distribution_copy.Models.AccountsResponse;
-using distribution_copy.Models.InputModel;
 using distribution_copy.Models;
 
 namespace ExportWIAttachmentsWeb.Controllers
@@ -28,7 +25,6 @@ namespace ExportWIAttachmentsWeb.Controllers
         // GET: ExportWIAttachments
         public ActionResult Index()
         {
-            AccountService service = new AccountService();
             AccountsResponse.AccountList accountList = new AccountsResponse.AccountList();
             try
             {
@@ -51,7 +47,7 @@ namespace ExportWIAttachmentsWeb.Controllers
                     return RedirectToAction("../Account/Verify");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return View();
             }
@@ -85,10 +81,12 @@ namespace ExportWIAttachmentsWeb.Controllers
 
         public ActionResult GetWorkItems(string accountName, string projectName)
         {
-            AccountDetail accountDetail = new AccountDetail();
-            accountDetail.WorkItemDetails = new List<WorkItemDetail>();
-            accountDetail.SelectedAccountName = accountName;
-            accountDetail.SelectedProjectName = projectName;
+            AccountDetail accountDetail = new AccountDetail
+            {
+                WorkItemDetails = new List<WorkItemDetail>(),
+                SelectedAccountName = accountName,
+                SelectedProjectName = projectName
+            };
             try
             {
                 if (Convert.ToString(Session["PAT"]) != null)
@@ -108,11 +106,13 @@ namespace ExportWIAttachmentsWeb.Controllers
                                 var wiDs = JsonConvert.DeserializeObject<AzureDevOpsService.Models.WorkItemFetchResponse.WorkItems>(wiDetils.ResponseAsString);
                                 foreach (var widetail in wiDs.value)
                                 {
-                                    var wiDetailsMdel = new WorkItemDetail();
-                                    wiDetailsMdel.Id = Convert.ToString(widetail.id);
-                                    wiDetailsMdel.Name = Convert.ToString(widetail.fields.SystemTitle);
-                                    wiDetailsMdel.Type = Convert.ToString(widetail.fields.SystemWorkItemType);
-                                    wiDetailsMdel.AttachmentPath = new List<Attachment>();
+                                    var wiDetailsMdel = new WorkItemDetail
+                                    {
+                                        Id = Convert.ToString(widetail.id),
+                                        Name = Convert.ToString(widetail.fields.SystemTitle),
+                                        Type = Convert.ToString(widetail.fields.SystemWorkItemType),
+                                        AttachmentPath = new List<Attachment>()
+                                    };
                                     if (widetail.relations != null)
                                     {
                                         foreach (var rel in widetail.relations)
@@ -121,8 +121,10 @@ namespace ExportWIAttachmentsWeb.Controllers
                                             {
                                                 if (rel.rel == "AttachedFile")
                                                 {
-                                                    Attachment attachment = new Attachment();
-                                                    attachment.Uri = rel.url;
+                                                    Attachment attachment = new Attachment
+                                                    {
+                                                        Uri = rel.url
+                                                    };
                                                     string attachmentUrl = rel.url;
                                                     int index = attachmentUrl.LastIndexOf("/");
                                                     string attachmentId = attachmentUrl.Substring(index + 1);
@@ -146,7 +148,7 @@ namespace ExportWIAttachmentsWeb.Controllers
                     return RedirectToAction("../Account/Verify");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 return View(accountDetail);
@@ -272,15 +274,14 @@ namespace ExportWIAttachmentsWeb.Controllers
 
         public ActionResult DownloadAttachments(string data)
         {
-            Download model = new Download();
-            model = JsonConvert.DeserializeObject<Download>(data);
+            Download model = JsonConvert.DeserializeObject<Download>(data);
 
-            AccountDetail accountDetail = new AccountDetail();
-            accountDetail.WorkItemDetails = new List<WorkItemDetail>();
-            CreateZip.DirectoriesFiles sfiles = new CreateZip.DirectoriesFiles();
-            sfiles.Files = new List<CreateZip.FileInfo>();
-            sfiles.Folder = new List<CreateZip.Folder>();
-            string path = string.Empty;
+       
+            CreateZip.DirectoriesFiles sfiles = new CreateZip.DirectoriesFiles
+            {
+                Files = new List<CreateZip.FileInfo>(),
+                Folder = new List<CreateZip.Folder>()
+            };
             try
             {
                 if (Convert.ToString(Session["PAT"]) != null)

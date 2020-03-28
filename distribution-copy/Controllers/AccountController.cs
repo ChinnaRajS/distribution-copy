@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -14,11 +10,7 @@ using distribution_copy.Models.AccountsResponse;
 using distribution_copy.Models.ProjectModel;
 using distribution_copy.Models.InputModel;
 using Newtonsoft.Json;
-using Newtonsoft;
 using System.IO;
-using System.Web.Script.Serialization;
-using distribution_copy.Models;
-
 
 namespace distribution_copy.Controllers
 {
@@ -26,14 +18,9 @@ namespace distribution_copy.Controllers
     {
         public string url = "";
         public Services.AccountService service = new Services.AccountService();
-        // GET: Account
-        public ActionResult Verify(LoginModel model)
-        {
-            return View(model);
-        }
 
-        //[HttpGet]
-        //[AllowAnonymous]
+        public ActionResult Verify(LoginModel model) => View(model);
+
         public ActionResult Index()
         {
             try
@@ -64,18 +51,16 @@ namespace distribution_copy.Controllers
 
         [HttpPost]
         public JsonResult ProjectList(string ORG)
-        {        
+        {
             var pm = service.GetApi<ProjectModel>("https://dev.azure.com/" + ORG + "/_apis/projects?api-version=5.1");
             return Json(pm.Value, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         public JsonResult WITypes(InputModel inp)
-        {           
-
+        {
             ResponseWI urlResponse = new ResponseWI();
             string queryString = @"Select [Work Item Type],[State], [Title],[Created By] From WorkItems ";
-
             queryString += "Order By [Stack Rank] Desc, [Backlog Priority] Desc";
             var wiql = new
             {
@@ -84,7 +69,7 @@ namespace distribution_copy.Controllers
             var content = JsonConvert.SerializeObject(wiql);
             var Uri = "https://dev.azure.com/" + inp.OrganizationName + "/_apis/wit/wiql?api-version=5.1";
             ResponseWI wiqlResponse = service.GetApi<ResponseWI>(Uri, "POST", content);
-        
+
             if (wiqlResponse == null)
                 return null;
 
@@ -99,7 +84,7 @@ namespace distribution_copy.Controllers
                 if (j % 200 == 0 && j != 0)
                 {
 
-                    var batchResponse = service.GetApi<ResponseWI>(url+b);
+                    var batchResponse = service.GetApi<ResponseWI>(url + b);
                     urlResponse.count += batchResponse.count;
                     foreach (var item in batchResponse.value)
                     {
@@ -133,7 +118,7 @@ namespace distribution_copy.Controllers
             }
             return Json(Types, JsonRequestBehavior.AllowGet);
         }
-        
+
         public JsonResult AllList(InputModel inp)
         {
             ResponseWI Witems = new ResponseWI();
@@ -185,12 +170,11 @@ namespace distribution_copy.Controllers
             return Json(all, JsonRequestBehavior.AllowGet);
         }
 
-        public object Filter(InputModel inp,int loc)
+        public object Filter(InputModel inp, int loc)
         {
-
             ResponseWI wI = (ResponseWI)Session["WorkItems"];
             ResponseWI returnWI = new ResponseWI();
-            if (inp.ProjectName != null&&inp.ProjectName!= "Empty List"&&inp.ProjectName!="0")
+            if (inp.ProjectName != null && inp.ProjectName != "Empty List" && inp.ProjectName != "0")
             {
                 returnWI.value = new List<Value>();
                 foreach (var i in wI.value)
@@ -200,12 +184,10 @@ namespace distribution_copy.Controllers
                 }
             }
             else
-            {
                 returnWI = wI;
-            }
 
             ResponseWI returnWI2 = new ResponseWI();
-            if (inp.WorkItemType != null && inp.WorkItemType != "Empty List"&& inp.WorkItemType !="0")
+            if (inp.WorkItemType != null && inp.WorkItemType != "Empty List" && inp.WorkItemType != "0")
             {
                 returnWI2.value = new List<Value>();
                 foreach (var i in returnWI.value)
@@ -226,7 +208,7 @@ namespace distribution_copy.Controllers
                 {
                     if (i.fields.AssignedTo != null)
                     {
-                        if (i.fields.AssignedTo.uniqueName == inp.AssignedTo|| i.fields.AssignedTo.displayName ==  inp.AssignedTo)
+                        if (i.fields.AssignedTo.uniqueName == inp.AssignedTo || i.fields.AssignedTo.displayName == inp.AssignedTo)
                             returnWI3.value.Add(i);
                     }
                 }
@@ -263,7 +245,6 @@ namespace distribution_copy.Controllers
                 returnWI5 = returnWI4;
 
             ResponseWI FilteredWI = new ResponseWI();
-
             if (inp.CreatedDate != null && inp.CreatedDate != "")
             {
                 FilteredWI.value = new List<Value>();
@@ -275,12 +256,12 @@ namespace distribution_copy.Controllers
             }
             else
                 FilteredWI = returnWI5;
+
             if (loc > 0)
                 return FilteredWI;
             else
             {
                 string output = JsonConvert.SerializeObject(FilteredWI.value);
-                //return Json(FilteredWI.value, JsonRequestBehavior.AllowGet);
                 return output;
             }
 
@@ -288,12 +269,12 @@ namespace distribution_copy.Controllers
         public ActionResult SignOut()
         {
             Session.Clear();
-       return Redirect("https://app.vssps.visualstudio.com/_signout");
+            return Redirect("https://app.vssps.visualstudio.com/_signout");
         }
 
         public ActionResult Export(InputModel inp)
         {
-            GenerateExcel((ResponseWI)Filter(inp, 1), inp );
+            GenerateExcel((ResponseWI)Filter(inp, 1), inp);
             return RedirectToAction("../WIReport/Index");
         }
 
@@ -354,7 +335,7 @@ namespace distribution_copy.Controllers
             }
             for (var i = 1; i <= columnNo; i++)
                 workSheet.Column(i).AutoFit();
-            string excelName = inp.OrganizationName + "-" + (inp.ProjectName ?? "" )+ "-" + (inp.WorkItemType ?? "" )+ DateTime.Now.ToString();
+            string excelName = inp.OrganizationName + "-" + (inp.ProjectName ?? "") + "-" + (inp.WorkItemType ?? "") + DateTime.Now.ToString();
             using (var memoryStream = new MemoryStream())
             {
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -366,12 +347,12 @@ namespace distribution_copy.Controllers
             }
         }
 
-        public JsonResult CommitList(InputModel inp,int Id)
+        public JsonResult CommitList(InputModel inp, int Id)
         {
-            string url="https://dev.azure.com/" + inp.OrganizationName + "/"+inp.ProjectName+ "/_apis/wit/workItems/"+ Id + "/updates?api-version=5.1";
+            string url = "https://dev.azure.com/" + inp.OrganizationName + "/" + inp.ProjectName + "/_apis/wit/workItems/" + Id + "/updates?api-version=5.1";
             Models.UpdatesModel.RootObject updates = service.GetApi<Models.UpdatesModel.RootObject>(url);
             return Json(updates.value, JsonRequestBehavior.AllowGet);
-        } 
+        }
 
         public JsonResult GetProjects(string orgName)
         {

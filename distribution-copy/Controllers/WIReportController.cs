@@ -15,47 +15,45 @@ namespace distribution_copy.Controllers
         // GET: WIReport
         public ActionResult Index()
         {
-            if (Session["visited"]==null)
+            if (Session["visited"] == null)
                 return RedirectToAction("../Account/Verify");
 
-            if (Session["PAT"] == null) { 
-            try
+            if (Session["PAT"] == null)
             {
-
-                AccessDetails _accessDetails = new AccessDetails();
-
-                AccountsResponse.AccountList accountList = null;
-                string code = Session["PAT"] == null ? Request.QueryString["code"] : Session["PAT"].ToString();
-                string redirectUrl = ConfigurationManager.AppSettings["RedirectUri"];
-                string clientId = ConfigurationManager.AppSettings["ClientSecret"];
-                string accessRequestBody = string.Empty;
-                accessRequestBody = Account.GenerateRequestPostData(clientId, code, redirectUrl);
-                _accessDetails = Account.GetAccessToken(accessRequestBody);
-                    ProfileDetails profile = Account.GetProfile(_accessDetails);
-
-                    if (!string.IsNullOrEmpty(_accessDetails.access_token))
+                try
                 {
-                    Session["PAT"] = _accessDetails.access_token;
-                 
-                    if (profile.displayName != null || profile.emailAddress != null)
+                    AccessDetails _accessDetails = new AccessDetails();
+                    AccountsResponse.AccountList accountList = null;
+                    string code = Session["PAT"] == null ? Request.QueryString["code"] : Session["PAT"].ToString();
+                    string redirectUrl = ConfigurationManager.AppSettings["RedirectUri"];
+                    string clientId = ConfigurationManager.AppSettings["ClientSecret"];
+                    string accessRequestBody = string.Empty;
+                    accessRequestBody = Account.GenerateRequestPostData(clientId, code, redirectUrl);
+                    _accessDetails = Account.GetAccessToken(accessRequestBody);
+                    ProfileDetails profile = Account.GetProfile(_accessDetails);
+                    if (!string.IsNullOrEmpty(_accessDetails.access_token))
                     {
-                        Session["User"] = profile.displayName ?? string.Empty;
-                        Session["Email"] = profile.emailAddress ?? profile.displayName.ToLower();
+                        Session["PAT"] = _accessDetails.access_token;
+
+                        if (profile.displayName != null || profile.emailAddress != null)
+                        {
+                            Session["User"] = profile.displayName ?? string.Empty;
+                            Session["Email"] = profile.emailAddress ?? profile.displayName.ToLower();
+                        }
                     }
-                }
                     accountList = Account.GetAccounts(profile.id, _accessDetails);
                     Session["AccountList"] = accountList;
                     string pat = Session["PAT"].ToString();
-                List<SelectListItem> OrganizationList = new List<SelectListItem>();
-                foreach (var i in accountList.value)
-                {
-                    OrganizationList.Add(new SelectListItem { Text = i.accountName, Value = i.accountName });
+                    List<SelectListItem> OrganizationList = new List<SelectListItem>();
+                    foreach (var i in accountList.value)
+                    {
+                        OrganizationList.Add(new SelectListItem { Text = i.accountName, Value = i.accountName });
+                    }
+                    ViewBag.OrganizationList = OrganizationList;
                 }
-                ViewBag.OrganizationList = OrganizationList;
-                }
-            catch (Exception){}
+                catch (Exception) { }
             }
             return View();
-        }                   
+        }
     }
 }

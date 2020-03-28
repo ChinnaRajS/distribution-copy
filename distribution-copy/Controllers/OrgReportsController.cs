@@ -98,7 +98,7 @@ namespace distribution_copy.Controllers
                 countGen count = JsonConvert.DeserializeObject<countGen>(response);
                 c.repoCount = count.Count;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -188,7 +188,7 @@ namespace distribution_copy.Controllers
                 model = JsonConvert.DeserializeObject<ProjectModel>(response);
                 c.WIcountOrg = model.WorkItems.Count;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

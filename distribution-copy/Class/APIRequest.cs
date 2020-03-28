@@ -10,8 +10,7 @@ using System.Web;
 namespace distribution_copy.Class
 {
     public class APIRequest
-    {    
-
+    {
         HttpClient client;
         //Constructor for initialising Client
         public APIRequest(string PAT)
