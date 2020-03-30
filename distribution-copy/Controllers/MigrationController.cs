@@ -95,7 +95,11 @@ namespace distribution_copy.Controllers
                 CreateLinks(WiList);
                 ViewBag.message = "Migrated Succeffully";
             }
-            catch(Exception ex)
+            catch (IndexOutOfRangeException)
+            {
+                ViewBag.message = "No Work Sheets Found";
+            }
+            catch (Exception ex)
             {
                 //throw ex;
                 ViewBag.message = "Something Went Wrong, Please Download Excel/Attachments From 'Export Attachments'";
@@ -238,7 +242,7 @@ namespace distribution_copy.Controllers
         {
             //Console.Write("Enter The Ecel File Path:");
             /*string ExcelPath=Console.ReadLine();*/
-           var WorkSheet= Excel.Workbook.Worksheets[1];
+           var WorkSheet= Excel.Workbook.Worksheets[0];
 
             int rowCount = WorkSheet.Dimension.End.Row;
             int colCount = WorkSheet.Dimension.End.Column;
