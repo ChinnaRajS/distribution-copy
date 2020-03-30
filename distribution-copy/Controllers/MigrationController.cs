@@ -95,8 +95,9 @@ namespace distribution_copy.Controllers
                 CreateLinks(WiList);
                 ViewBag.message = "Migrated Succeffully";
             }
-            catch
+            catch(Exception ex)
             {
+                throw ex;
                 ViewBag.message = "Something Went Wrong, Please Download Excel/Attachments From 'Export Attachments'";
 
             }
@@ -172,7 +173,6 @@ namespace distribution_copy.Controllers
                 iteration = wi.Itertation.ToString().Replace(OldTeamProject, ProjectName);
                 Fields.Add("System.IterationPath", iteration);
                 Fields.Add("System.TeamProject", ProjectName);
-                Fields.Add("Old_ID", wi.Old_ID);
                 WIOps.UpdateWorkItemFields(wi.Id, Fields);
             }
         }

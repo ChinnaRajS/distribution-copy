@@ -262,14 +262,14 @@
             $.each(data, function (i)
             {
                 if (data[i].Outcome == "Passed") {
-                    s += '<tr style="background-color:#ffb3b3;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/pass-icon.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
+                    s += '<tr style="background-color:lightgrey;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/pass-icon.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
                     //s += '<tr style="background-color:#ffb3b3" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data.value[i].workItem.id + '</td><td>' + data.value[i].workItem.name + '</td></tr>'
                 }
                 if (data[i].Outcome == "Failed") {
-                    s += '<tr style="background-color:#ffb3b3;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/icon-error.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
+                    s += '<tr style="background-color:lightgrey;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/icon-error.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
                 }
                 if (data[i].Outcome == "Not Yet Runned") {
-                    s += '<tr style="background-color:#ffb3b3;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/need-Attention2.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
+                    s += '<tr style="background-color:lightgrey;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/need-Attention2.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
                 }
                 document.getElementById("overlay").style.display = "block";
                 document.getElementById("load").hidden = true;
