@@ -97,7 +97,7 @@ namespace distribution_copy.Controllers
             }
             catch(Exception ex)
             {
-                throw ex;
+                //throw ex;
                 ViewBag.message = "Something Went Wrong, Please Download Excel/Attachments From 'Export Attachments'";
 
             }
