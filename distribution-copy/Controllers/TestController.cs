@@ -265,7 +265,11 @@ namespace distribution_copy.Controllers
             return TestClass;
         }
 
-      
+      /// <summary>
+      /// To Get the Test Suits From Test Plan
+      /// </summary>
+      /// <param name="planid"></param>
+      /// <returns></returns>
         public JsonResult GetTestSuits(string planid)
         {
             List<TestRunById> runStore;
@@ -461,7 +465,6 @@ namespace distribution_copy.Controllers
         public string ID { get; set; }
         public string Name { get; set; }
         public string Outcome { get; set; }
-
     }
 
     public class TestRunPartial
