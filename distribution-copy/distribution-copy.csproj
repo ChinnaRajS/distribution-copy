@@ -225,6 +225,7 @@
     <Compile Include="BL\ClientRequest.cs" />
     <Compile Include="BL\CreateTest.cs" />
     <Compile Include="Class\APIRequest.cs" />
+    <Compile Include="Class\WIOps.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CopyTestController.cs" />
     <Compile Include="Controllers\distributionController.cs" />
