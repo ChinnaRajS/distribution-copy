@@ -249,29 +249,32 @@
             if (data == null || count < 1) {
             document.getElementById("overlay").style.display = "none";
             document.getElementById("load").hidden = true;
-
+                
       //  document.getElementById('load').hidden = true;
             return s+'<tr style="background-color:#ffb3b3" class="details-controlRun"><td style="padding-left:42%" class="text-dark">No Testcases found</td></tr>';
-        } else if (data == null) {
-    //    document.getElementById('load').hidden = true;
-            return null;
+            } else if (data == null) {
+                            document.getElementById("overlay").style.display = "none";
+                            document.getElementById("load").hidden = true;
+              return null;
             }
             s += '<tr style="background-color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>TestCase Id</td><td>TestCase Name</td><td>Outcome</td><td></td></tr>'
             // s += '<tr style="background-color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>TestCase Id</td><td>TestCase Name</td></tr>'
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("load").hidden = false;
 
             $.each(data, function (i)
             {
                 if (data[i].Outcome == "Passed") {
-                    s += '<tr style="background-color:lightgrey;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/pass-icon.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
+                    s += '<tr style="background-color:lightgrey;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/pass-icon.png" height="20px" width="20px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="20px" width="20px"/></td></tr>'
                     //s += '<tr style="background-color:#ffb3b3" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data.value[i].workItem.id + '</td><td>' + data.value[i].workItem.name + '</td></tr>'
                 }
                 if (data[i].Outcome == "Failed") {
-                    s += '<tr style="background-color:lightgrey;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/icon-error.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
+                    s += '<tr style="background-color:lightgrey;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/icon-error.png" height="20px" width="20px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="20px" width="20px"/></td></tr>'
                 }
                 if (data[i].Outcome == "Not Yet Runned") {
-                    s += '<tr style="background-color:lightgrey;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/need-Attention2.png" height="50px" width="50px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="50px" width="50px"/></td></tr>'
+                    s += '<tr style="background-color:lightgrey;color:black" class="details-controlRun"><td style="padding-left:42%" class="text-dark"><td>' + data[i].ID + '</td><td>' + data[i].Name + '</td><td><img src="../Content/Icons/need-Attention2.png" height="20px" width="20px"/>  ' + data[i].Outcome + '</td><td><img src="../Content/Icons/downarrow1.png" height="20px" width="20px"/></td></tr>'
                 }
-                document.getElementById("overlay").style.display = "block";
+                document.getElementById("overlay").style.display = "none";
                 document.getElementById("load").hidden = true;
             })
             return s;
@@ -345,7 +348,7 @@
                         $.each(data, function (i) {
                             let row12 = data[i];
                             //if (data[i].Executed != 0 || data[i]..,mjkjhgExecuted != null) {
-                            tabledata += "<tr class='tableData details-control'><td>" + data[i].SuiteId + "</td><td>" + data[i].Suite + "</td><td>" + data[i].Planned + "</td><td>" + data[i].Pass + "</td><td>" + data[i].Fail + "</td><td>" + data[i].Executed + "</td><td> " + data[i].PassBasedOnExecution + " %</td><td>" + data[i].PassPercentage + " %</td><td>" + data[i].ExecutedPercentage + " %</td><td>" + data[i].NotYetExecution + "</td><td><img src='../Content/Icons/scrollupdown-icon.png' height='50px' width='50px'/></td></tr>";
+                            tabledata += "<tr class='tableData details-control'><td>" + data[i].SuiteId + "</td><td>" + data[i].Suite + "</td><td>" + data[i].Planned + "</td><td>" + data[i].Pass + "</td><td>" + data[i].Fail + "</td><td>" + data[i].Executed + "</td><td> " + data[i].PassBasedOnExecution + " %</td><td>" + data[i].PassPercentage + " %</td><td>" + data[i].ExecutedPercentage + " %</td><td>" + data[i].NotYetExecution + "</td><td><img src='../Content/Icons/scrollupdown-icon.png' height='20px' width='20px'/></td></tr>";
                             //}
                           //   tabledata += "</tbody></table>";
                        // table.innerHTML = tabledata;
@@ -362,15 +365,12 @@
                         {
                             document.getElementById("overlay").style.display = "block";
                             document.getElementById("load").hidden = false;
-
                          var tr = $(this).closest('tr');
                          var row = table.row(tr);
                             if ( row.child.isShown() ) {
                                 // This row is already open - close it
                                 $('div.slider', row.child()).slideUp(function () {
                                     row.child.hide();
-                                    document.getElementById("overlay").style.display = "none";
-                                    document.getElementById("load").hidden = true;
                                     tr.removeClass('shown');
                                 });
                                 }
@@ -387,21 +387,17 @@
                                     a[n].classList.remove("shown");
                                     //a[n].nextSibling.innerHTML = '';                              ';hh
                                 }
-                                    document.getElementById("overlay").style.display = "block";
-                                    document.getElementById("load").hidden = false;                                
+                               
                                 row.child(format(row.data()) + '</table></div>').show();
-                                document.getElementById("overlay").style.display = "block";
-                                    document.getElementById("load").hidden = false;                                 
+                                
                                // row.child(format(iData) + '</table></div>').show();
                                 tr.addClass('shown');
+                                 
                                 $('div.slider', row.child()).slideDown('1000');
-                                document.getElementById("overlay").style.display = "none";
-                                document.getElementById("load").hidden = true;
+                               
                             }
                               s =  '<div class="slider"><table style="width:100" class="dataTable table bg-dark table-dark">';
                             j = 0;
-                            
- 
 
                         });
 
