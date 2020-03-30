@@ -128,9 +128,9 @@ namespace distribution_copy.Controllers
                             if (zipArchive!=null)
                                 addAttachment.FindAttachments(Convert.ToInt32(dr["ID"].ToString()), item.Id, zipArchive);
                             dr["ID"] = item.Id.ToString();
-                            item.WiState = dr["State"].ToString();
+                           /* item.WiState = dr["State"].ToString();
                             item.AreaPath = dr["Area Path"].ToString();
-                            item.Itertation = dr["Iteration Path"].ToString();
+                            item.Itertation = dr["Iteration Path"].ToString();*/
                             OldTeamProject = dr["Team Project"].ToString();
                             int columnindex = 0;
                             foreach (var col in TitleColumns)
@@ -159,12 +159,12 @@ namespace distribution_copy.Controllers
 
             return workitemlist;
         }
+        
+        //updated 
         static void CreateLinks(List<WorkitemFromExcel> WiList)
         {
             Dictionary<string, object> Fields;
             List<string> newStates = new List<string>() { "New", "To Do" };
-            string Areapath;
-            string iteration;
             foreach (var wi in WiList)
             {
                 Fields = new Dictionary<string, object>();
@@ -172,15 +172,11 @@ namespace distribution_copy.Controllers
                     WIOps.UpdateWorkItemLink(wi.Parent.Id, wi.Id, "");
                 if (!newStates.Contains(wi.WiState.ToString()))
                     Fields.Add("State", wi.WiState.ToString());
-                Areapath = wi.AreaPath.ToString().Replace(OldTeamProject, ProjectName);
-                Fields.Add("System.AreaPath", Areapath);
-                iteration = wi.Itertation.ToString().Replace(OldTeamProject, ProjectName);
-                Fields.Add("System.IterationPath", iteration);
-                Fields.Add("System.TeamProject", ProjectName);
-                WIOps.UpdateWorkItemFields(wi.Id, Fields);
+                if (Fields.Count != 0)
+                    WIOps.UpdateWorkItemFields(wi.Id, Fields);
             }
         }
-         static ParentWorkItem GetParentData(DataTable dt, int rowindex, int columnindex)
+        static ParentWorkItem GetParentData(DataTable dt, int rowindex, int columnindex)
         {
             ParentWorkItem workItem = new ParentWorkItem();
 
@@ -203,9 +199,7 @@ namespace distribution_copy.Controllers
                     }
                     if (!string.IsNullOrEmpty(workItem.Title))
                     { break; }
-                    /*if (hasParent == false)
-                        return null;*/
-
+                   
                 }
             }
             return workItem;
@@ -215,6 +209,7 @@ namespace distribution_copy.Controllers
         public static List<string> inavlidCoumns = new List<string>();
         static int CreateWorkItem(DataRow Dr)
         {
+
             Dictionary<string, object> fields = new Dictionary<string, object>();
             foreach (DataColumn column in DT.Columns)
             {
@@ -222,19 +217,16 @@ namespace distribution_copy.Controllers
                 {
                     if (column.ToString().StartsWith("Title"))
                         fields.Add("Title", Dr[column.ToString()]);
-                    /*if (column.ToString()== "Work Item Type")
-                    {          
+                    else if (column.ColumnName == "Iteration")
+                    {
+                        fields.Add("Iteration Path", Dr[column.ToString()]);
+                    }
+                    else if (column.ToString() != "State")
                         fields.Add(column.ToString(), Dr[column.ToString()]);
-                    }*/
                 }
-                if (fields.Count != 0)
-                    break;
+
             }
-            WorkItem newWi = new WorkItem();
-            if (fields.Count != 0)
-            {
-                newWi = WIOps.CreateWorkItem(ProjectName, Dr["Work Item Type"].ToString(), fields);
-            }
+            var newWi = WIOps.CreateWorkItem(ProjectName, Dr["Work Item Type"].ToString(), fields);
             return newWi.Id.Value;
         }
 
@@ -267,8 +259,11 @@ namespace distribution_copy.Controllers
                     else
                     {
                         ColName = WorkSheet.Cells[1, j].Value.ToString();
-                        if (WorkSheet.Cells[i, j].Value != null)
-                            row[ColName] = WorkSheet.Cells[i, j].Value.ToString();
+                        /* if (WorkSheet.Cells[i, j].Value != null)
+                             row[ColName] = WorkSheet.Cells[i, j].Value.ToString();*/
+                        string val = WorkSheet.Cells[i,j].Value.ToString().TrimStart('\\');
+                        val = val.Replace(OldTeamProject, ProjectName);
+                        row[ColName] = val;
                     }
                 }
                 if (i != 1)
