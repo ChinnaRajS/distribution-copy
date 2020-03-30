@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using distribution_copy.Models.AccessDetails;
+using distribution_copy.Models.AccountsResponse;
+using distribution_copy.Models.InputModel;
+using distribution_copy.Models.ProfileDetails;
+using distribution_copy.Services;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using OfficeOpenXml;
 using SharpCompress.Readers.Rar;
@@ -15,7 +21,7 @@ namespace distribution_copy.Controllers
 {
     public class MigrationController : Controller
     {
-        static string Url = "";
+        static string URI = "";
         static string UserPAT = "";
         static string ProjectName = "";
         static public int titlecount = 0;
@@ -25,52 +31,80 @@ namespace distribution_copy.Controllers
         static public string OldTeamProject;
         static public string rarpath = "";
 
-        public Services.MigrateService MigrateService = new Services.MigrateService();
+        readonly AccountService Account = new AccountService();
+
         // GET: Migration
         [HttpGet]
         public ActionResult Index()
         {
+            if (Session["visited"] == null)
+            {
+                return RedirectToAction("../Account/Verify");
+            }
+            if (Session["PAT"] == null)
+            {
+                try
+                {
+                    AccessDetails _accessDetails = new AccessDetails();
+                    string code = Session["PAT"] == null ? Request.QueryString["code"] : Session["PAT"].ToString();
+                    string redirectUrl = ConfigurationManager.AppSettings["RedirectUri"];
+                    string clientId = ConfigurationManager.AppSettings["ClientSecret"];
+                    string accessRequestBody = string.Empty;
+                    accessRequestBody = Account.GenerateRequestPostData(clientId, code, redirectUrl);
+                    _accessDetails = Account.GetAccessToken(accessRequestBody);
+                    ProfileDetails profile = Account.GetProfile(_accessDetails);
+
+                    if (!string.IsNullOrEmpty(_accessDetails.access_token))
+                    {
+                        Session["PAT"] = _accessDetails.access_token;
+
+                        if (profile.displayName != null || profile.emailAddress != null)
+                        {
+                            Session["User"] = profile.displayName ?? string.Empty;
+                            Session["Email"] = profile.emailAddress ?? profile.displayName.ToLower();
+                        }
+                    }
+                }
+                catch {  }
+            }
             return View();
         }
 
         [HttpPost]
         public ActionResult Index(HttpPostedFileBase Excel, HttpPostedFileBase Zip,string Org,string Proj)
         {
-            Url= @"https://dev.azure.com/"+Org+"/";
+            URI= @"https://dev.azure.com/"+Org+"/";
             UserPAT = Session["PAT"] != null ? Session["PAT"].ToString() : "";
             ProjectName = Proj;
-            var excelStream = Excel.InputStream;           
-            var zipStream = Zip.InputStream;
-            System.IO.Compression.ZipArchive zipArchive = new System.IO.Compression.ZipArchive(zipStream, System.IO.Compression.ZipArchiveMode.Read);
+            try
+            {
+                var excelStream = Excel.InputStream;
+                Stream zipStream;
+                System.IO.Compression.ZipArchive zipArchive;
+                List<WorkitemFromExcel> WiList;
+                ExcelPackage excel = new ExcelPackage(excelStream);
+                WIOps.ConnectWithPAT(URI, UserPAT);
+                DT = ReadExcel(excel);
+                if (Zip != null) { 
+                zipStream = Zip.InputStream;
+                zipArchive = new System.IO.Compression.ZipArchive(zipStream, System.IO.Compression.ZipArchiveMode.Read);
+                    WiList = GetWorkItems(zipArchive);
+                }
+                else
+                    WiList = GetWorkItems();
+                CreateLinks(WiList);
+                ViewBag.message = "Migrated Succeffully";
+            }
+            catch
+            {
+                ViewBag.message = "Something Went Wrong, Please Download Excel/Attachments From 'Export Attachments'";
 
-
-            ExcelPackage excel = new ExcelPackage(excelStream);
-            WIOps.ConnectWithPAT(Url, UserPAT);
-            DT = ReadExcel(excel);
-            List<WorkitemFromExcel> WiList = GetWorkItems(zipArchive);
-            CreateLinks(WiList);
-            // Get temp file name
-            //var temp = Path.GetTempPath(); // Get %TEMP% path
-            //var file = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()); // Get random file name without extension
-            //var zippath = Path.Combine(temp, file + ".zip"); // Get random file path
-
-            //using (var fs = new FileStream(zippath, FileMode.Create, FileAccess.Write))
-            //{
-            //    // Write content of your memory stream into file stream
-            //    ms.WriteTo(fs);
-            //}
-
-            // Create Excel app
-
-    
-      
-
-            return null;
+            }
+            return View();
         }
-        static List<WorkitemFromExcel> GetWorkItems(System.IO.Compression.ZipArchive zipArchive)
+        static List<WorkitemFromExcel> GetWorkItems(System.IO.Compression.ZipArchive zipArchive=null)
         {
-            AttatchmentAdder addAttachment = new AttatchmentAdder(Url,UserPAT );
-
+            AttatchmentAdder addAttachment = new AttatchmentAdder(URI,UserPAT);
             List<WorkitemFromExcel> workitemlist = new List<WorkitemFromExcel>();
             if (DT.Rows.Count > 0)
             {
@@ -80,31 +114,40 @@ namespace distribution_copy.Controllers
                     string ID = dr["ID"].ToString();
                     if (!string.IsNullOrEmpty(ID))
                     {
-                        WorkitemFromExcel item = new WorkitemFromExcel();
-                        //item.id = ID;
-                        item.Id = createWorkItem(dr);
-                        addAttachment.findAttachments(Convert.ToInt32(dr["ID"].ToString()), item.Id,zipArchive);
-                        dr["ID"] = item.Id.ToString();
-                        item.WiState = dr["State"].ToString();
-                        item.AreaPath = dr["Area Path"].ToString();
-                        item.Itertation = dr["Iteration Path"].ToString();
-                        OldTeamProject = dr["Team Project"].ToString();
-                        int columnindex = 0;
-                        foreach (var col in TitleColumns)
+                        try
                         {
-                            if (!string.IsNullOrEmpty(col))
+                            WorkitemFromExcel item = new WorkitemFromExcel
                             {
-                                if (!string.IsNullOrEmpty(dr[col].ToString()))
+                                Id = CreateWorkItem(dr)
+                            };
+                            if (zipArchive!=null)
+                                addAttachment.FindAttachments(Convert.ToInt32(dr["ID"].ToString()), item.Id, zipArchive);
+                            dr["ID"] = item.Id.ToString();
+                            item.WiState = dr["State"].ToString();
+                            item.AreaPath = dr["Area Path"].ToString();
+                            item.Itertation = dr["Iteration Path"].ToString();
+                            OldTeamProject = dr["Team Project"].ToString();
+                            int columnindex = 0;
+                            foreach (var col in TitleColumns)
+                            {
+                                if (!string.IsNullOrEmpty(col))
                                 {
-                                    item.Title = dr[col].ToString();
-                                    if (i > 0 && columnindex > 0)
-                                        item.Parent = getParentData(DT, i - 1, columnindex);
-                                    break;
+                                    if (!string.IsNullOrEmpty(dr[col].ToString()))
+                                    {
+                                        item.Title = dr[col].ToString();
+                                        if (i > 0 && columnindex > 0)
+                                            item.Parent = GetParentData(DT, i - 1, columnindex);
+                                        break;
+                                    }
                                 }
+                                columnindex++;
                             }
-                            columnindex++;
+                            workitemlist.Add(item);
                         }
-                        workitemlist.Add(item);
+                        catch
+                        {
+                            return null;
+                        }
                     }
                 }
             }
@@ -133,7 +176,7 @@ namespace distribution_copy.Controllers
                 WIOps.UpdateWorkItemFields(wi.Id, Fields);
             }
         }
-         static ParentWorkItem getParentData(DataTable dt, int rowindex, int columnindex)
+         static ParentWorkItem GetParentData(DataTable dt, int rowindex, int columnindex)
         {
             ParentWorkItem workItem = new ParentWorkItem();
 
@@ -166,7 +209,7 @@ namespace distribution_copy.Controllers
         }
 
         public static List<string> inavlidCoumns = new List<string>();
-        static int createWorkItem(DataRow Dr)
+        static int CreateWorkItem(DataRow Dr)
         {
             Dictionary<string, object> fields = new Dictionary<string, object>();
             foreach (DataColumn column in DT.Columns)
@@ -195,22 +238,21 @@ namespace distribution_copy.Controllers
         {
             //Console.Write("Enter The Ecel File Path:");
             /*string ExcelPath=Console.ReadLine();*/
-           var WorkSheet= Excel.Workbook.Worksheets[0];
+           var WorkSheet= Excel.Workbook.Worksheets[1];
 
             int rowCount = WorkSheet.Dimension.End.Row;
             int colCount = WorkSheet.Dimension.End.Column;
             DataTable Dt = new DataTable();
             DataRow row;
-
-            string ColName = "";
             for (int i = 1; i <= rowCount; i++)
             {
                 row = Dt.NewRow();
                 for (int j = 1; j <= colCount; j++)
                 {
+                    string ColName;
                     if (i == 1)
                     {
-                        ColName = WorkSheet.Cells[j,i].Value.ToString();
+                        ColName = WorkSheet.Cells[i, j].Value.ToString();
                         if (ColName.StartsWith("Title"))
                         {
                             TitleColumns.Add(ColName);
@@ -220,14 +262,13 @@ namespace distribution_copy.Controllers
                     }
                     else
                     {
-                        ColName = WorkSheet.Cells[j,1].Value.ToString();
-                        if (WorkSheet.Cells[j,i].Value != null)
-                            row[ColName] = WorkSheet.Cells[j,i].Value.ToString();
+                        ColName = WorkSheet.Cells[1, j].Value.ToString();
+                        if (WorkSheet.Cells[i, j].Value != null)
+                            row[ColName] = WorkSheet.Cells[i, j].Value.ToString();
                     }
                 }
                 if (i != 1)
                     Dt.Rows.Add(row);
-                /*string teststring =row.ItemArray[3].ToString();*/
             }
             return Dt;
         }

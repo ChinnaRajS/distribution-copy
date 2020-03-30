@@ -6,6 +6,7 @@ using Microsoft.TeamFoundation.TestManagement.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
+using Microsoft.VisualStudio.Services.OAuth;
 using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
@@ -31,7 +32,7 @@ namespace WorkItemPublish
         {
             ConnectWithPAT(_Url, _PAT);
         }
-        public void findAttachments(int oldId, int newId,System.IO.Compression.ZipArchive zipArchive)
+        public void FindAttachments(int oldId, int newId,System.IO.Compression.ZipArchive zipArchive)
         {
             foreach (var file in zipArchive.Entries.Where(x => x.FullName.StartsWith(oldId.ToString())))
                 {
@@ -41,20 +42,20 @@ namespace WorkItemPublish
         static void AddAttachment(int WiID, System.IO.Compression.ZipArchiveEntry FilePath)
         {
             AttachmentReference att;
-            //string[] filePathSplit = FilePath.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-            using (FileStream attStream=FilePath.Open() as FileStream)
+            using (var attStream=FilePath.Open())
             {
                 att = WitClient.CreateAttachmentAsync(attStream, FilePath.Name).Result; // upload the file
             }
-            List<object> references = new List<object>(); //list with references
-
-            references.Add(new
+            List<object> references = new List<object>
             {
-                rel = RelConstants.AttachmentRefStr,
-                url = att.Url,
-                attributes = new { comment = "" }
-            });
+                new
+                {
+                    rel = RelConstants.AttachmentRefStr,
+                    url = att.Url,
+                    attributes = new { comment = "" }
+                }
+            };
 
             AddWorkItemRelations(WiID, references);
         }
@@ -77,7 +78,7 @@ namespace WorkItemPublish
 
         public static void ConnectWithPAT(string ServiceURL, string PAT)
         {
-            VssConnection connection = new VssConnection(new Uri(ServiceURL), new VssBasicCredential("xx", PAT));
+            VssConnection connection = new VssConnection(new Uri(ServiceURL), new VssOAuthAccessTokenCredential(PAT));
             InitClients(connection);
         }
         static void InitClients(VssConnection Connection)

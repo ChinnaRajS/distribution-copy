@@ -11,8 +11,16 @@
         <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
         <select class="form-control" id="org" name="departmentsDropdown"></select>
     </div>*@
+<div class="breadcrumb-holder">
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            @*<li class="breadcrumb-item"><a href="index.html">Home</a></li>*@
+            <li class="breadcrumb-item active">Migrate To </li>
+        </ul>
+    </div>
+</div>
 <div class="row">
-    <div class="col-md-3" style="margin-left:40px">
+    <div class="col-md-3" style="margin-left:80px">
         <label for="orgsDropdown" style="margin-top:30px;">
             <b>
                 Organisations
@@ -48,12 +56,12 @@
         <label id="WItypeErr" hidden="hidden" class="text-danger">please select any workitem type </label>
     </div>
 </div>
-<div align="center" style="margin-top:10px">
-    <img src="~/Content/Images/LoadingCounts.gif" id="Load" @*width="150" height="150"*@ hidden />
+<div align="center" style="margin-top:70px">
+    <img src="~/Content/Images/loadinggif.gif" id="Load" width="100" height="100" hidden />
 </div>
 
 <div id="OrgChange" style="margin-left:30px" hidden>
-    <div class="row">
+    <div class="row" style="margin-left:410px">
         <label class="bg-info text-white badge-pill">Organization Level Counts</label>
     </div>
 
@@ -178,7 +186,12 @@
 
 
 </div>
-
+<style>
+    #org,#projectDrop,#WorkItemType{
+        border-radius: 10px;
+        width: 250px;
+    }
+</style>
 <script>
     //Ajax Call to fetch Organization
     $(document).ready(function () {
@@ -207,11 +220,14 @@
 
                 var s = '<option value="0">--Choose Organisation--</option>';
                 $("#org").empty();
+               
                 for (var i = 0; i < data.length; i++) {
                     s += '<option value="' + data[i].accountName + '">' + data[i].accountName + '</option>';
                 }
                 $("#org").append(s);
             }
+            
+            
         });
 
         function GetReport(data) {

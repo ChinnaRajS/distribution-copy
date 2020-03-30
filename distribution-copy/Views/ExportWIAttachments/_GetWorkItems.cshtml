@@ -1,8 +1,7 @@
 ﻿@model ExportWIAttachmentsWeb.Models.AccountDetail
 <style>
     table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
+     
     }
 
     th, td {
@@ -15,7 +14,6 @@
     }
 
     table {
-        border-collapse: separate;
     }
 
     tr td:first-child:before {
@@ -52,14 +50,16 @@
 @if (Model.WorkItemDetails.Count > 0)
 {
     <div id="dvTable" class="pt-3 pb-5">
-        <table style="width:100%" id="tblWorkItems" class="mt-3 invisible visible">
-            <tr>
-                <th>SI. No</th>
-                <th>Work Item ID</th>
-                <th>Work Item Name</th>
-                <th>Work Itme Type</th>
-                <th>Attachment <input type="checkbox" id="chkAll" /></th>
-            </tr>
+        <table style="width:100%" id="tblWorkItems" class="mt-3 invisible visible table-bordered">
+            <thead class="bg-dark text-light">
+                <tr>
+                    <th>SI. No</th>
+                    <th>Work Item ID</th>
+                    <th>Work Item Name</th>
+                    <th>Work Itme Type</th>
+                    <th>Attachment <input type="checkbox" class="checkbox" id="chkAll" /></th>
+                </tr>
+            </thead>
             <tbody>
                 @foreach (var wi in Model.WorkItemDetails)
                 {
@@ -101,6 +101,8 @@
                     <span class="caret"></span> <span class="glyphicon glyphicon-save"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-left" id="ulExport">
+                    <li class="mb-1"><input type="button" id="btnExportToExcel" class="btn btn-success form-control" value="Excel for Migration" /></li>
+
                     <li><input type="button" id="btnExportToFile" class="btn btn-success form-control" value="File" /></li>
                     <li><input type="button" id="btnExportToFolder" class="btn btn-success form-control mt-1" value="Folder" /></li>
                 </ul>
@@ -137,5 +139,15 @@ else
         else {
             alert("Atleast select one Attachment");
         }
+    });
+
+    $('#btnExportToExcel').on('click', function () {
+                var documentDetails = {};
+        documentDetails["AccountName"] = $('#ddlADOAccount option:selected').attr('account-id');
+        documentDetails["ProjectName"] = $('#ddlADOProjects option:selected').attr('project-id');
+        var url = "/ExportWIAttachments/DownloadExcel?data=" + JSON.stringify(documentDetails);
+            window.location = url;
+
+
     });
 </script>

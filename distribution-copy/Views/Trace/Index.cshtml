@@ -26,16 +26,15 @@
             width: 70px;
             height: 70px;
             animation: spin 1s linear infinite;*/
-        position:sticky;
+        position: sticky;
         z-index: 3;
         -webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none; /* Safari */
-	-moz-user-select: none; /* Firefox */
-	-ms-user-select: none; /* Internet Explorer/Edge */
-	user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-
-
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
     }
+
     #overlay {
         position: fixed;
         display: none;
@@ -46,10 +45,8 @@
         right: 0;
         bottom: 0;
         background-color: rgba(0,0,0,0.5);
-     
         z-index: 2;
     }
-
 </style>
 <script>
         $(document).ready(function () {
@@ -80,41 +77,16 @@
         document.getElementById("ProjectName").innerHTML = "<option value='0' >Loading Projects...</option>";
         document.getElementById('exc').disabled = true;
         if (ORG == "--Choose Organisation--") {
-            
-            return;s
+            document.getElementById("overlay").style.display = "none";
+        document.getElementById("ProjectName").innerHTML = "<option value='0' >--Empty--</option>";
+            document.getElementById('exc').disabled = true;
+
+            return;
         }
         document.getElementById('load').hidden = false;
-
                 var inp = new Object();
         inp.OrganizationName = o.options[o.selectedIndex].text;
 
-
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("WITypes", "Trace")',
-            data: { inp },
-
-            success:
-                function(data) {
-                    console.log(data);
-                    //document.getElementById("WorkItemType").innerHTML = "<option value='0' >--ALL--</option>";
-                    //for (let i = 0; i < data.length; i++) {
-                    //    document.getElementById("WorkItemType").innerHTML += "<option value='" + data[i] + "'>" + data[i] + "</option>";
-                    //}
-                    //if (data.length > 0) {
-                    //    filter();
-                    //}
-                    //else {
-                    //   // document.getElementById("Count").innerHTML = "Count : 0"
-                    //   // document.getElementById("Count").hidden = false;
-                    //   //document.getElementById("load").hidden = true;
-                    //    document.getElementById("table").innerHTML = "No Data";
-                    //}
-                },
-           failure:
-                function() { alert("Something went wrong"); }
-
-        });
 
                 $.ajax({
             type: "POST",
@@ -159,7 +131,11 @@
         var p = document.getElementById("ProjectName");
         inp.ProjectName = p.options[p.selectedIndex].text;
         if (inp.ProjectName == "--Choose Project--") {
-        document.getElementById('load').hidden = true;
+            document.getElementById('load').hidden = true;
+          document.getElementById("overlay").style.display = "none";
+         document.getElementById("WorkItemType").innerHTML = "<option value='0' >--Empty--</option>";
+            document.getElementById('exc').disabled = true;
+
 
             return;
         }
@@ -167,26 +143,24 @@
 
         }
          document.getElementById("WorkItemType").innerHTML = "<option value='0' >Loading Types...</option>";
-
-        $.ajax({
+          $.ajax({
             type: "POST",
-            url: '@Url.Action("AllList", "Trace")',
+            url: '@Url.Action("WITypes", "Trace")',
             data: { inp },
 
             success:
-                function (data) {
+                function(data) {
                     console.log(data);
-                    document.getElementById("WorkItemType").innerHTML = "<option value='0' >--Choose WorkItem Type--</option>";
-                    for (let i = 0; i < data[3].length; i++) {
-                        document.getElementById("WorkItemType").innerHTML += "<option value='" + data[3][i] + "'>" + data[3][i] + "</option>";
+                      document.getElementById("WorkItemType").innerHTML = "<option value='0' >--Choose WorkItem Type--</option>";
+                    for (let i = 0; i < data.length; i++) {
+                        document.getElementById("WorkItemType").innerHTML += "<option value='" + data[i] + "'>" + data[i] + "</option>";
                     }
-        document.getElementById('load').hidden = true;
-          document.getElementById("overlay").style.display = "none";
+                document.getElementById('load').hidden = true;
+                document.getElementById("overlay").style.display = "none";
+                },
+           failure:
+                function() { alert("Something went wrong"); }
 
-                }
-            ,
-            failure:
-                function () { alert("Something went wrong"); }
         });
 
     }
@@ -224,7 +198,9 @@
         document.getElementById('load').hidden = true;
             document.getElementById('table').hidden = true;
             document.getElementById("Count").hidden = true;
+          document.getElementById("overlay").style.display = "none";
 
+            document.getElementById('exc').disabled = true;
 
             w.focus();
             return;
@@ -257,7 +233,7 @@
                     }
                     var tabledata;
                     var icon = "";
-       
+
                     if (data.length > 0) {
                         tabledata = "<table id='dataTable' class='table' ><thead> <tr><th><img src='../Content/Icons/structure.png' /></th><th>Id</th><th>Title</th><th>Sprint</th><th>State</th><th>Type</th><th></th></tr></thead><tbody class='text-dark'>";
                         for (let i = 0; i < data.length; i++) {
@@ -269,7 +245,7 @@
             }
             else if (data[i]["fields"]["System.WorkItemType"] == 'Bug') {
                                   icon = "<img src='../Content/Icons/bug.png' />";
-                                
+
             }
             else if (data[i]["fields"]["System.WorkItemType"] == 'Epic') {
                 icon = "<img src='../Content/Icons/epic.png'/>";
@@ -313,12 +289,12 @@
                                     });
                                     a[n].classList.remove("shown");
 
-                                    
+
                                     //a[n].nextSibling.innerHTML = '';
-                             
+
                                 }
                                 row.child(format(row.data(), 5) + '</table></div>').show();
-                      
+
                                 tr.addClass('shown');
                                 $('div.slider', row.child()).slideDown('1000');
 
@@ -383,7 +359,7 @@
             @Html.ValidationMessageFor(model => model.OrgName, "", new { @class = "text-danger" })
 
         </div>
-        
+
         <div class="col-xs-4 ml-5">
 
             @Html.Label("Project Name ", htmlAttributes: new { @class = "control-label  display-4 sizeNormal", style = "padding-right:35px" })
@@ -527,7 +503,7 @@
             }
             else if (data.Forward[i].fields.WorkItemType == 'Bug') {
 
-                bugBtn="<td onclick='showCommits(this)'>Show Commits</td>"
+                //bugBtn = "<td onclick='showCommits(this)'>Show Commits</td>";
                 ico = "<img src='../Content/Icons/bug.png' style='padding-left:" + margin + "px'/>";
             }
             else if (data.Forward[i].fields.WorkItemType == 'Epic') {
@@ -572,7 +548,7 @@
 
 
     function showCommits(a) {
-                
+
              var Id = $(a).closest('tr').find('.Id').text();
         var row = $(a).closest('tr');
         var inp = getInp();
@@ -599,8 +575,8 @@
                 function() { alert("Something went wrong, Please try Again"); }
 
         });
-      
-                          
+
+
     }
 
     function getInp() {
@@ -613,6 +589,6 @@
 </script>
 <style>
     div.slider {
-    display: none;
-}
+        display: none;
+    }
 </style>

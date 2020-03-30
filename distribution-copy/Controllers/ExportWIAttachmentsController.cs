@@ -9,23 +9,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
-using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
 using distribution_copy.Controllers;
 using distribution_copy.Services;
 using distribution_copy.Models.AccountsResponse;
+using distribution_copy.Models;
 
 namespace ExportWIAttachmentsWeb.Controllers
 {
     public class ExportWIAttachmentsController : Controller
     {
         StringBuilder logger = new StringBuilder();
+        public string url = "";
         // GET: ExportWIAttachments
         public ActionResult Index()
         {
-            AccountService service = new AccountService();
             AccountsResponse.AccountList accountList = new AccountsResponse.AccountList();
             try
             {
@@ -48,7 +47,7 @@ namespace ExportWIAttachmentsWeb.Controllers
                     return RedirectToAction("../Account/Verify");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return View();
             }
@@ -82,10 +81,12 @@ namespace ExportWIAttachmentsWeb.Controllers
 
         public ActionResult GetWorkItems(string accountName, string projectName)
         {
-            AccountDetail accountDetail = new AccountDetail();
-            accountDetail.WorkItemDetails = new List<WorkItemDetail>();
-            accountDetail.SelectedAccountName = accountName;
-            accountDetail.SelectedProjectName = projectName;
+            AccountDetail accountDetail = new AccountDetail
+            {
+                WorkItemDetails = new List<WorkItemDetail>(),
+                SelectedAccountName = accountName,
+                SelectedProjectName = projectName
+            };
             try
             {
                 if (Convert.ToString(Session["PAT"]) != null)
@@ -105,11 +106,13 @@ namespace ExportWIAttachmentsWeb.Controllers
                                 var wiDs = JsonConvert.DeserializeObject<AzureDevOpsService.Models.WorkItemFetchResponse.WorkItems>(wiDetils.ResponseAsString);
                                 foreach (var widetail in wiDs.value)
                                 {
-                                    var wiDetailsMdel = new WorkItemDetail();
-                                    wiDetailsMdel.Id = Convert.ToString(widetail.id);
-                                    wiDetailsMdel.Name = Convert.ToString(widetail.fields.SystemTitle);
-                                    wiDetailsMdel.Type = Convert.ToString(widetail.fields.SystemWorkItemType);
-                                    wiDetailsMdel.AttachmentPath = new List<Attachment>();
+                                    var wiDetailsMdel = new WorkItemDetail
+                                    {
+                                        Id = Convert.ToString(widetail.id),
+                                        Name = Convert.ToString(widetail.fields.SystemTitle),
+                                        Type = Convert.ToString(widetail.fields.SystemWorkItemType),
+                                        AttachmentPath = new List<Attachment>()
+                                    };
                                     if (widetail.relations != null)
                                     {
                                         foreach (var rel in widetail.relations)
@@ -118,8 +121,10 @@ namespace ExportWIAttachmentsWeb.Controllers
                                             {
                                                 if (rel.rel == "AttachedFile")
                                                 {
-                                                    Attachment attachment = new Attachment();
-                                                    attachment.Uri = rel.url;
+                                                    Attachment attachment = new Attachment
+                                                    {
+                                                        Uri = rel.url
+                                                    };
                                                     string attachmentUrl = rel.url;
                                                     int index = attachmentUrl.LastIndexOf("/");
                                                     string attachmentId = attachmentUrl.Substring(index + 1);
@@ -143,7 +148,7 @@ namespace ExportWIAttachmentsWeb.Controllers
                     return RedirectToAction("../Account/Verify");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 return View(accountDetail);
@@ -179,7 +184,7 @@ namespace ExportWIAttachmentsWeb.Controllers
         }
 
         //[HttpPost]
-        public ActionResult DownloadExcel(string accountName, string projectName)
+        public ActionResult DownloadExcell(string accountName, string projectName)
         {
             CLTestCaseReport sample = new CLTestCaseReport();
             string token = Convert.ToString(Session["PAT"]);
@@ -269,15 +274,14 @@ namespace ExportWIAttachmentsWeb.Controllers
 
         public ActionResult DownloadAttachments(string data)
         {
-            Download model = new Download();
-            model = JsonConvert.DeserializeObject<Download>(data);
+            Download model = JsonConvert.DeserializeObject<Download>(data);
 
-            AccountDetail accountDetail = new AccountDetail();
-            accountDetail.WorkItemDetails = new List<WorkItemDetail>();
-            CreateZip.DirectoriesFiles sfiles = new CreateZip.DirectoriesFiles();
-            sfiles.Files = new List<CreateZip.FileInfo>();
-            sfiles.Folder = new List<CreateZip.Folder>();
-            string path = string.Empty;
+       
+            CreateZip.DirectoriesFiles sfiles = new CreateZip.DirectoriesFiles
+            {
+                Files = new List<CreateZip.FileInfo>(),
+                Folder = new List<CreateZip.Folder>()
+            };
             try
             {
                 if (Convert.ToString(Session["PAT"]) != null)
@@ -363,7 +367,7 @@ namespace ExportWIAttachmentsWeb.Controllers
                                         foreach (var file in fldr.FolderItems)
                                         {
                                             // add the item name to the zip
-                                            System.IO.Compression.ZipArchiveEntry zipItem = zip.CreateEntry(fldr.FolderName+"/"+ file.Name + "." + file.Extension);
+                                            System.IO.Compression.ZipArchiveEntry zipItem = zip.CreateEntry(fldr.FolderName + "/" + file.Name + "." + file.Extension);
                                             // add the item bytes to the zip entry by opening the original file and copying the bytes 
                                             using (System.IO.MemoryStream originalFileMemoryStream = new System.IO.MemoryStream(file.FileBytes))
                                             {
@@ -395,6 +399,58 @@ namespace ExportWIAttachmentsWeb.Controllers
 
                 return RedirectToAction("../Account/Verify");
             }
+
         }
+        public ActionResult DownloadExcel(string data)
+        {
+            distribution_copy.Models.ExpandWI.RootObject urlResponse = new distribution_copy.Models.ExpandWI.RootObject();
+            Download model = new Download();
+            model = JsonConvert.DeserializeObject<Download>(data);
+            TraceInputModel input = new TraceInputModel();
+            input.OrgName = model.AccountName;
+            input.ProjectName = model.ProjectName;
+            input.WIType = "Epic";
+            AccountService accountService = new AccountService();
+            TraceController trace = new TraceController();
+            ExcelPackage excel = trace.TraceExport(input,false);
+            var added = trace.added;
+            urlResponse.value = ((distribution_copy.Models.ExpandWI.RootObject)System.Web.HttpContext.Current.Session["EWorkItems"]).value.Where(x=>(!added.Contains(x))&&x.fields.TeamProject==input.ProjectName).ToList();
+            var workSheet = excel.Workbook.Worksheets[1];
+            var colcount = workSheet.Dimension.End.Column;
+            var rowCount = workSheet.Dimension.End.Row+1;
+            List<string> colNames = new List<string>();
+            for(int i = 1; i <= colcount; i++)
+            {
+             colNames.Add(workSheet.Cells[1, i].Value.ToString());
+            }
+            int titlecount = colNames.Where(x => x.ToLower().StartsWith("title")).Count();
+            foreach (var WI in urlResponse.value)
+            {
+                int columnNo = 0;
+                workSheet.Cells[rowCount, ++columnNo].Value = WI.id;
+                workSheet.Cells[rowCount, ++columnNo].Value = WI.fields.WorkItemType;
+                workSheet.Cells[rowCount, ++columnNo].Value = WI.fields.Title;
+                columnNo += titlecount;
+                workSheet.Cells[rowCount, columnNo++].Value = WI.fields.TeamProject;
+                workSheet.Cells[rowCount, columnNo++].Value = WI.fields.State;
+                workSheet.Cells[rowCount, columnNo++].Value = WI.fields.AreaPath;
+                workSheet.Cells[rowCount, columnNo++].Value = WI.fields.IterationPath;
+                rowCount++;
+            }
+            string excelName = input.OrgName + "-" + input.ProjectName + DateTime.Now.ToString();
+
+            using (var memoryStream = new MemoryStream())
+            {
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment; filename=" + excelName + ".xlsx");
+                excel.SaveAs(memoryStream);
+                memoryStream.WriteTo(Response.OutputStream);
+                Response.Flush();
+                Response.End();
+            }
+            return null;
+        }
+
+
     }
 }

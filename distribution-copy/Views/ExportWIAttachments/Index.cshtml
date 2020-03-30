@@ -3,30 +3,45 @@
 @{
     Layout = "~/Views/Shared/_DashBoard.cshtml";
 }
+<style>
+      .borderRadius {
+        border-radius: 10px;
+    }
 
+    .width {
+        width: 250px;
+    }
+</style>
+<div class="breadcrumb-holder">
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            @*<li class="breadcrumb-item"><a href="index.html">Home</a></li>*@
+            <li class="breadcrumb-item active">Download Excel/Attachments   </li>
+        </ul>
+    </div>
+</div>
 @if (Model.value.Count > 0)
 {
     @*<div class="row col-md-12">*@
-    <div class="col-md-12">
-        <h5 class="text-center pt-3">Account and Project Selection</h5>
-        <hr class="mtop-bot10">
-        <div class="form-group form-inline">
-            <label class="w-25 text-right mr-4"><h6>Account :</h6> </label>
-            <select class="form-control inline w-50" id="ddlADOAccount">
+    <div class="mt-3">
+        @*<h5 class="pt-3 display-4" style="font-size:30px">Account and Project Selection</h5>*@
+        <div class="form-group form-inline" style="margin-left:28%">
+            <label class="w-auto text-right mr-1"><h6>Organization :</h6> </label>
+            <select class="form-control inline w-50 borderRadius width" id="ddlADOAccount">
                 @foreach (var accounts in Model.value)
                 {
                     <option account-id="@accounts.accountName">@accounts.accountName</option>
                 }
             </select>
-            <img src="~/Image/projectloader.gif" class="projectloader" style="width:30px;display:none" />
+            <img src="~/Content/Images/loadinggif.gif" class="projectloader" style="width: 30px; display: none" />
         </div>
 
         <div id="dvProjectDetails" class="form-group form-inline">
         </div>
     </div>
-    <div style="float: right;margin-right: 260px;">
+    <div style="float: right;margin-right: 530px;">
 
-        <button type="button" id="btnGetWorkItems" class="btn btn-primary" disabled>Get WorkItems</button>
+        <button type="button" id="btnGetWorkItems" style="border-radius:10px" class="btn btn-primary" disabled>Get WorkItems</button>
     </div>
     @*</div>*@
 }
@@ -35,7 +50,7 @@ else
     <div class="alert alert-danger col-sm-12">Either the VSTS account does not exist or the tool has not been authorised to access VSTS account </div>
 
 }
-<img src="~/Content/Images/loadinggif.gif" class="loader text-center" style="margin-left:35%;width:7%;display:none"/>
+<img src="~/Content/Images/loadinggif.gif" class="loader text-center" style="margin-left:45%;margin-top:5%; width :7%;display:none"/>
 <div id="dvLoadWorkItems" class="pt-3">
 
 </div>

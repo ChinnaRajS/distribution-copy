@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "distribution-copy", "distribution-copy\distribution-copy.csproj", "{8DB1B0D6-5511-45F0-9228-6E8A2AB0A496}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportWIAttachmentsService", "..\..\ExportWorkItemAttachments\AzureDevOpsService\ExportWIAttachmentsService.csproj", "{89B270D7-921C-431C-A1BA-DC89AFDDEB8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportWIAttachmentsService", "AzureDevOpsService\ExportWIAttachmentsService.csproj", "{89B270D7-921C-431C-A1BA-DC89AFDDEB8E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,8 +1,8 @@
 ﻿@model ExportWIAttachmentsWeb.Models.ProjectDetail
 @if (Model.ProjectDetails.Count > 0)
 {
-    <label class="w-25 text-right mr-4"><h6>Project :</h6> </label>
-    <select class="form-control inline w-50" id="ddlADOProjects">
+    <label class="w=10 text-right mr-1" style="padding-right:44px;margin-left:28%"><h6>Project      :</h6> </label>
+    <select class="form-control inline w-50 borderRadius width" id="ddlADOProjects">
         @foreach (var project in Model.ProjectDetails)
         {
             <option project-id="@project.name">@project.name</option>
