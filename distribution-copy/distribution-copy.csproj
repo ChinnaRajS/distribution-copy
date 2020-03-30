@@ -221,10 +221,13 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="BL\BussinessLogic.cs" />
+    <Compile Include="BL\BussinessLogicCopy.cs" />
     <Compile Include="BL\ClientRequest.cs" />
+    <Compile Include="BL\CreateTest.cs" />
     <Compile Include="Class\APIRequest.cs" />
     <Compile Include="Class\WIOps.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CopyTestController.cs" />
     <Compile Include="Controllers\distributionController.cs" />
     <Compile Include="Controllers\ExportWIAttachmentsController.cs" />
     <Compile Include="Controllers\MigrationController.cs" />
@@ -248,11 +251,13 @@
     <Compile Include="Models\Model_AK\Organization.cs" />
     <Compile Include="Models\Model_AK\Profile.cs" />
     <Compile Include="Models\Model_AK\RespData.cs" />
+    <Compile Include="Models\Model_AK\TestCaseResponseModel.cs" />
     <Compile Include="Models\Model_AK\TestCasesFromSuits.cs" />
     <Compile Include="Models\Model_AK\TestPlan.cs" />
     <Compile Include="Models\Model_AK\TestRunById.cs" />
     <Compile Include="Models\Model_AK\TestRunProject.cs" />
     <Compile Include="Models\Model_AK\TestSuit.cs" />
+    <Compile Include="Models\Model_AK\Validate.cs" />
     <Compile Include="Models\Model_AK\WorkItemsClass.cs" />
     <Compile Include="Models\OrgModel.cs" />
     <Compile Include="Models\ProfileDetails.cs" />
@@ -272,6 +277,40 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="bin\Antlr3.Runtime.dll" />
+    <Content Include="bin\Antlr3.Runtime.pdb" />
+    <Content Include="bin\distribution-copy.dll" />
+    <Content Include="bin\distribution-copy.pdb" />
+    <Content Include="bin\EPPlus.dll" />
+    <Content Include="bin\EPPlus.xml" />
+    <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\Newtonsoft.Json.dll" />
+    <Content Include="bin\Newtonsoft.Json.xml" />
+    <Content Include="bin\SharpCompress.dll" />
+    <Content Include="bin\System.Net.Http.Formatting.dll" />
+    <Content Include="bin\System.Net.Http.Formatting.xml" />
+    <Content Include="bin\System.Web.Cors.dll" />
+    <Content Include="bin\System.Web.Helpers.dll" />
+    <Content Include="bin\System.Web.Helpers.xml" />
+    <Content Include="bin\System.Web.Http.Cors.dll" />
+    <Content Include="bin\System.Web.Http.Cors.xml" />
+    <Content Include="bin\System.Web.Http.dll" />
+    <Content Include="bin\System.Web.Http.WebHost.dll" />
+    <Content Include="bin\System.Web.Http.WebHost.xml" />
+    <Content Include="bin\System.Web.Http.xml" />
+    <Content Include="bin\System.Web.Mvc.dll" />
+    <Content Include="bin\System.Web.Mvc.xml" />
+    <Content Include="bin\System.Web.Optimization.dll" />
+    <Content Include="bin\System.Web.Optimization.xml" />
+    <Content Include="bin\System.Web.Razor.dll" />
+    <Content Include="bin\System.Web.Razor.xml" />
+    <Content Include="bin\System.Web.WebPages.Deployment.dll" />
+    <Content Include="bin\System.Web.WebPages.Deployment.xml" />
+    <Content Include="bin\System.Web.WebPages.dll" />
+    <Content Include="bin\System.Web.WebPages.Razor.dll" />
+    <Content Include="bin\System.Web.WebPages.Razor.xml" />
+    <Content Include="bin\System.Web.WebPages.xml" />
+    <Content Include="bin\WebGrease.dll" />
     <Content Include="Content\datatables.min.css" />
     <Content Include="Content\Icons\pbi.png" />
     <Content Include="charts.html" />
@@ -642,6 +681,9 @@
     <Content Include="icons-reference\fonts\dashboard.eot" />
     <Content Include="icons-reference\fonts\dashboard.ttf" />
     <Content Include="icons-reference\fonts\dashboard.woff" />
+    <Content Include="obj\Debug\distribution-copy.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\distribution-copy.dll" />
+    <Content Include="obj\Debug\distribution-copy.pdb" />
     <Content Include="Scripts\AppScripts\ADOScript.js" />
     <Content Include="Scripts\AppScripts\ADOWIImport.js" />
     <Content Include="Scripts\AppScripts\app.js" />
@@ -684,6 +726,13 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="css\icon.css" />
     <Content Include="Jsons\TestCaseJson.json" />
+    <Content Include="bin\distribution-copy.dll.config" />
+    <Content Include="obj\Debug\build.force" />
+    <Content Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <Content Include="obj\Debug\distribution-copy.csproj.CopyComplete" />
+    <Content Include="obj\Debug\distribution-copy.csprojAssemblyReference.cache" />
+    <Content Include="obj\Debug\Tsc.out" />
+    <Content Include="obj\Release\distribution-copy.csprojAssemblyReference.cache" />
     <None Include="Properties\PublishProfiles\samplecustomreport - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - Web Deploy.pubxml" />
@@ -983,6 +1032,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="NewFolder1\" />
+    <Folder Include="obj\Debug\TempPE\" />
     <Folder Include="vendor\font-awesome\less\" />
     <Folder Include="vendor\font-awesome\scss\" />
   </ItemGroup>
