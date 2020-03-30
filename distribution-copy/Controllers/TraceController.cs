@@ -22,11 +22,11 @@ namespace distribution_copy.Controllers
     {
         #region Fields
         readonly AccountService Account = new AccountService();
-        readonly ExcelPackage excel = new ExcelPackage();
+        ExcelPackage excel = new ExcelPackage();
         ExcelWorksheet workSheet;
         int recordIndex;
         int columnNo;
-        int i = 0;
+        int i = 1;
         public List<Models.ExpandWI.Value> added = new List<Models.ExpandWI.Value>();
         #endregion
 
@@ -310,7 +310,7 @@ namespace distribution_copy.Controllers
                 counts.Add(count);
             }
             int maxtitles = counts.Max();
-            if (maxtitles == 1)
+            if (maxtitles == 0)
             {
                 workSheet.Cells[1, 3].Value = "Title";
                 this.columnNo = maxtitles + 3;

@@ -37,7 +37,7 @@ namespace distribution_copy.Controllers
             {
                 //logger.Debug(JsonConvert.SerializeObject(ex, Formatting.Indented) + Environment.NewLine);
             }
-            return RedirectToAction("../shared/error");
+            return RedirectToAction("Verify", "Account");
         }
         public JsonResult AccountList()
         {
@@ -274,8 +274,15 @@ namespace distribution_copy.Controllers
 
         public ActionResult Export(InputModel inp)
         {
-            GenerateExcel((ResponseWI)Filter(inp, 1), inp);
-            return RedirectToAction("../WIReport/Index");
+            try
+            {
+                GenerateExcel((ResponseWI)Filter(inp, 1), inp);
+                return RedirectToAction("../WIReport/Index");                
+            }
+            catch
+            {
+                return RedirectToAction("Verify", "Account");
+            }
         }
 
         public void GenerateExcel(ResponseWI wi, InputModel inp)
