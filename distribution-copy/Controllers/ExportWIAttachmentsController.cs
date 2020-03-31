@@ -415,7 +415,7 @@ namespace ExportWIAttachmentsWeb.Controllers
             ExcelPackage excel = trace.TraceExport(input,false);
             var added = trace.added;
             urlResponse.value = ((distribution_copy.Models.ExpandWI.RootObject)System.Web.HttpContext.Current.Session["EWorkItems"]).value.Where(x=>(!added.Contains(x))&&x.fields.TeamProject==input.ProjectName).ToList();
-            var workSheet = excel.Workbook.Worksheets[1];
+            var workSheet = excel.Workbook.Worksheets[0];
             var colcount = workSheet.Dimension.End.Column;
             var rowCount = workSheet.Dimension.End.Row+1;
             List<string> colNames = new List<string>();
