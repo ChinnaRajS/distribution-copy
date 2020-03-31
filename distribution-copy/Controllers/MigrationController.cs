@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using distribution_copy.Models.AccessDetails;
@@ -37,6 +38,7 @@ namespace distribution_copy.Controllers
         [HttpGet]
         public ActionResult Index()
         {
+        
             if (Session["visited"] == null)
             {
                 return RedirectToAction("../Account/Verify");
@@ -78,6 +80,7 @@ namespace distribution_copy.Controllers
             ProjectName = Proj;
             try
             {
+                
                 var excelStream = Excel.InputStream;
                 Stream zipStream;
                 System.IO.Compression.ZipArchive zipArchive;
