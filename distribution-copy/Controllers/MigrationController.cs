@@ -105,7 +105,7 @@ namespace distribution_copy.Controllers
             catch (Exception ex)
             {
                 //throw ex;
-                ViewBag.message = "Something Went Wrong, Please Download Excel/Attachments From 'Export Attachments'";
+                ViewBag.message = "Something Went Wrong, Please check if the Project contains all the Custom Fields and follows the Same Process Template as the Migrating Project";
 
             }
             return View();

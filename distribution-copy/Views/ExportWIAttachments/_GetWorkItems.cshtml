@@ -1,7 +1,8 @@
 ﻿@model ExportWIAttachmentsWeb.Models.AccountDetail
 <style>
     table, th, td {
-     
+        border: 1px solid black;
+        border-collapse: collapse;
     }
 
     th, td {
@@ -14,6 +15,7 @@
     }
 
     table {
+        border-collapse: separate;
     }
 
     tr td:first-child:before {
@@ -47,17 +49,31 @@
         });
     });
 </script>
+<button type="button" id="btnExportToExcel" class="btn btn-success mt-2" style="margin-left:37%;border-radius:10px">Export WorkItems for Migration</button>
+<div class="col-md-2 pt-2 invisible" style="" id="btnSection">
+    <button class="btn btn-primary btn-success dropdown-toggle mb-3" style="font-weight:bold;margin-left: 475px;border-radius:10px" type="button" data-toggle="dropdown">
+        Export to
+        <span class="caret"></span> <span class="glyphicon glyphicon-save"></span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-left" id="ulExport">
+
+        <li><input type="button" id="btnExportToFile" class="btn btn-success form-control" value="File" /></li>
+        <li><input type="button" id="btnExportToFolder" class="btn btn-success form-control mt-1" value="Folder" /></li>
+    </ul>
+
+</div>
 @if (Model.WorkItemDetails.Count > 0)
 {
     <div id="dvTable" class="pt-3 pb-5">
-        <table style="width:100%" id="tblWorkItems" class="mt-3 invisible visible">
-                <tr>
-                    <th>SI. No</th>
-                    <th>Work Item ID</th>
-                    <th>Work Item Name</th>
-                    <th>Work Itme Type</th>
-                    <th>Attachment <input type="checkbox" class="checkbox" id="chkAll" /></th>
-                </tr>
+
+        <table style="width:100%" id="tblWorkItems" class="mt-3 invisible visible table table-bordered">
+            <tr class="bg-dark text-light">
+                <th style="width:80px">SI. No</th>
+                <th style="width:130px">Work Item ID</th>
+                <th>Work Item Name</th>
+                <th style="width:140px">Work Item Type</th>
+                <th>Attachments <input type="checkbox" id="chkAll" /></th>
+            </tr>
             <tbody>
                 @foreach (var wi in Model.WorkItemDetails)
                 {
@@ -93,18 +109,8 @@
                 }
             </tbody>
             <b style="text-align:center" id="noAttachments">No WorkItems with Attachments Found</b>
-            <div class="col-md-2 pt-3 invisible" style="float:right" id="btnSection">
-                <button class="btn btn-primary btn-success dropdown-toggle form-control mb-3" style="font-weight:bold;margin-left: 406px;" type="button" data-toggle="dropdown">
-                    Export to
-                    <span class="caret"></span> <span class="glyphicon glyphicon-save"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-left" id="ulExport">
-                    <li class="mb-1"><input type="button" id="btnExportToExcel" class="btn btn-success form-control" value="Excel for Migration" /></li>
+            
 
-                    <li><input type="button" id="btnExportToFile" class="btn btn-success form-control" value="File" /></li>
-                    <li><input type="button" id="btnExportToFolder" class="btn btn-success form-control mt-1" value="Folder" /></li>
-                </ul>
-            </div>
         </table>
     </div>
 }
@@ -138,14 +144,14 @@ else
             alert("Atleast select one Attachment");
         }
     });
-
     $('#btnExportToExcel').on('click', function () {
-                var documentDetails = {};
+        var documentDetails = {};
         documentDetails["AccountName"] = $('#ddlADOAccount option:selected').attr('account-id');
         documentDetails["ProjectName"] = $('#ddlADOProjects option:selected').attr('project-id');
         var url = "/ExportWIAttachments/DownloadExcel?data=" + JSON.stringify(documentDetails);
-            window.location = url;
+        window.location = url;
 
 
     });
+
 </script>
