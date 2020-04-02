@@ -679,6 +679,7 @@
                 else if (DestChildSuit != null && DestChildSuit != "" && DestChildSuit != "0") {
 
                     DestSuitPass = DestChildSuit;
+
                 }
                 else if (DestSuitId != null && DestSuitId != "" && DestSuitId != "0") {
 
@@ -747,7 +748,7 @@
                                     //Emptying Dropdown after copying
 
                                     clearDrpdowns();
-
+                                    $("#sourceTestSuit").val("--Select Test Suit--");
                                 }
                             },
 
@@ -755,6 +756,7 @@
                                  document.getElementById("overlay").style.display = "none";
                                 document.getElementById('load').hidden = true;
                                 clearDrpdowns();
+                                $("#sourceTestSuit").val("--Select Test Suit--");
                                 alert('Some features are not created');
                             }
                         });
