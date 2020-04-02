@@ -139,6 +139,7 @@ namespace distribution_copy.Controllers
                     if (i.fields.TeamProject == inp.ProjectName)
                         returnWI.value.Add(i);
                 }
+
             }
             else
                 returnWI = wI;
