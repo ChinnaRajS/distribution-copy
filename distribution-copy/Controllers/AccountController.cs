@@ -277,7 +277,7 @@ namespace distribution_copy.Controllers
             try
             {
                 GenerateExcel((ResponseWI)Filter(inp, 1), inp);
-                return RedirectToAction("../WIReport/Index");                
+                return RedirectToAction("../WIReport/Index");
             }
             catch
             {
@@ -356,9 +356,20 @@ namespace distribution_copy.Controllers
 
         public JsonResult CommitList(InputModel inp, int Id)
         {
-            string url = "https://dev.azure.com/" + inp.OrganizationName + "/" + inp.ProjectName + "/_apis/wit/workItems/" + Id + "/updates?api-version=5.1";
-            Models.UpdatesModel.RootObject updates = service.GetApi<Models.UpdatesModel.RootObject>(url);
-            return Json(updates.value, JsonRequestBehavior.AllowGet);
+            string url = "https://dev.azure.com/" + inp.OrganizationName + "/" + inp.ProjectName + "/_apis/wit/workitems/" + Id + "?$expand=all&api-version=5.1";
+            Models.ExpandWI.Value WI = service.GetApi<Models.ExpandWI.Value>(url);
+            var Commits = WI.relations.Where(x => x.attributes.name.ToLower().Contains("commit"));
+            List<Models.CommitModel.CommitModel> commitDetails = new List<Models.CommitModel.CommitModel>();
+            foreach (var commit in Commits)
+            {
+                string[] separator = { "%2F" };
+                var arr = commit.url.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                if (!(arr.Length > 0))
+                    continue;
+                string commiturl = "https://dev.azure.com/" + inp.OrganizationName + "/" + inp.ProjectName + "/_apis/git/repositories/" + arr[1] + "/commits/" + arr[2] + "?api-version=5.1";
+                commitDetails.Add(service.GetApi<Models.CommitModel.CommitModel>(commiturl));
+            }
+            return Json(commitDetails, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult GetProjects(string orgName)

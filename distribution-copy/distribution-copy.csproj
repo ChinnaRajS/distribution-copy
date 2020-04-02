@@ -243,6 +243,7 @@
     <Compile Include="Models\AccessDetails.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountsResponse.cs" />
+    <Compile Include="Models\CommitModel.cs" />
     <Compile Include="Models\ExpandWI.cs" />
     <Compile Include="Models\InputModel.cs" />
     <Compile Include="Models\IterationDetails.cs" />
