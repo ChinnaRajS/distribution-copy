@@ -1,11 +1,13 @@
 ﻿@model distribution_copy.Models.InputModel.InputModel
 
-@{
-    ViewBag.Title = "Index";
-}
+
 @{
     Layout = "~/Views/Shared/_DashBoard.cshtml";
 }
+
+<script>
+    $("li.reports").addClass('active');
+</script>
 
 
 
@@ -147,7 +149,7 @@
                         }
                         else if (data[i]["fields"]["System.WorkItemType"] == 'Bug') {
                             icon = "<img src='../Content/Icons/bug.png' />";
-                     
+
                         }
                         else if (data[i]["fields"]["System.WorkItemType"] == 'Epic') {
                             icon = "<img src='../Content/Icons/epic.png'/>";
@@ -157,6 +159,13 @@
                         }
                         else if (data[i]["fields"]["System.WorkItemType"] == 'User Story') {
                             icon = "<img src='../Content/Icons/us.png' />";
+                        }
+                        else if (data[i]["fields"]["System.WorkItemType"] == 'Issue') {
+                            icon = '<img src="../Content/Icons/issue.png" />';
+                        }
+                        else if (data[i]["fields"]["System.WorkItemType"] == 'Test Case') {
+                            icon = '<img src="../Content/Icons/testcase.png" />';
+
                         }
                         else {
                             icon = '#';
@@ -408,10 +417,10 @@
     <div><p id="Count" class="display-4" style="font-size:15px"></p></div>
 
 </div>
-    <div id="table">
+<div id="table">
 
 
-    </div>
+</div>
 <script>
 
     $(document).ready(function () {
@@ -522,6 +531,4 @@
         height: 25px;
         overflow: scroll;
     }
-
-
 </style>

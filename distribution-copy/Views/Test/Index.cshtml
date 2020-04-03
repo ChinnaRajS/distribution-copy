@@ -3,6 +3,13 @@
     Layout = "~/Views/Shared/_DashBoard.cshtml";
     ViewBag.Title = "Index";
 }
+
+    <script>
+        $("li.testresults").addClass('active');
+    </script>
+
+
+
 <script scr="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script scr="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
@@ -243,13 +250,13 @@
               }).responseText);
             document.getElementById("overlay").style.display = "block";
             document.getElementById("load").hidden = false;
-            
+
               console.log(data);
             var count = Object.keys(data).length;
             if (data == null || count < 1) {
             document.getElementById("overlay").style.display = "none";
             document.getElementById("load").hidden = true;
-                
+
       //  document.getElementById('load').hidden = true;
             return s+'<tr style="background-color:#ffb3b3" class="details-controlRun"><td style="padding-left:42%" class="text-dark">No Testcases found</td></tr>';
             } else if (data == null) {
@@ -294,7 +301,7 @@
                 data: { 'testCaseId': testcaseid },
                 contentType: "application/json; charset=utf-8",
                 dataType: "html",
-                
+
                 success: function (data) {
                     document.getElementById("overlay").style.display = "none";
             document.getElementById("load").hidden = true;
@@ -375,7 +382,7 @@
                                 });
                                 }
                             else {
-                                
+
                                 var a = $(".shown");
                                 console.log(a);
                                 for (var n = 0; n < a.length; n++) {
@@ -387,14 +394,14 @@
                                     a[n].classList.remove("shown");
                                     //a[n].nextSibling.innerHTML = '';                              ';hh
                                 }
-                               
+
                                 row.child(format(row.data()) + '</table></div>').show();
-                                
+
                                // row.child(format(iData) + '</table></div>').show();
                                 tr.addClass('shown');
-                                 
+
                                 $('div.slider', row.child()).slideDown('1000');
-                               
+
                             }
                               s =  '<div class="slider"><table style="width:100" class="dataTable table bg-dark table-dark">';
                             j = 0;
@@ -409,9 +416,9 @@
                             var $row = jQuery(this).closest('tr');
                             var id = $(this).closest("tr").find('td:eq(1)').text();
                             var $columns = $row.find('td');
-                            
+
                                formatRun(id);
-                            
+
                               s =  '<div class="slider"><table style="width:100" class="dataTable table bg-dark table-dark">';
                               j = 0;
                         });

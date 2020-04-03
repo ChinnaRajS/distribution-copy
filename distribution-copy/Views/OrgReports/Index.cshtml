@@ -6,6 +6,11 @@
     ViewBag.Title = "Index";
 }
 
+    <script>
+        $("li.orgreport").addClass('active');
+    </script>
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 @*<div align="center">
         <label for="orgsDropdown" style="margin-top:50px;"><b>Organisations</b></label>
@@ -22,10 +27,10 @@
 <div class="row">
     <div class="col-md-3" style="margin-left:80px">
         <label for="orgsDropdown" style="margin-top:30px;">
-            
-                Organisations
-                @*<img src="~/Content/Images/Organization.png" />*@
-            
+
+            Organisations
+            @*<img src="~/Content/Images/Organization.png" />*@
+
         </label>
         @*<select class="form-control" id="org" name="departmentsDropdown"></select>*@
         <select class="form-control" id="org" name="departmentsDropdown"></select>
@@ -34,10 +39,10 @@
 
     <div id="projDrop" hidden="hidden" class="col-md-3 WorkItemType" style="margin-top:30px">
         <label>
-            
-                Projects
-                @*<img src="~/Content/Images/Project.png" />*@
-            
+
+            Projects
+            @*<img src="~/Content/Images/Project.png" />*@
+
         </label>
         <select class="form-control" id="projectDrop" name="departmentsDropdown"></select>
         <p id="noProj" hidden="hidden" class="text-danger"> please select the project</p>
@@ -45,10 +50,10 @@
 
     <div class="col-md-3 dropdowns" style="margin-top:10px" id="WItypeDrop" hidden="hidden">
         <label style="margin-top:20px;" class="WorkItemType">
-            
-                WorkItem Type
-                @*<img src="~/Content/Images/WorkItem.png" />*@
-            
+
+            WorkItem Type
+            @*<img src="~/Content/Images/WorkItem.png" />*@
+
         </label>
         @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "--Workitem Types--" }), htmlAttributes: new { @class = "form-control WorkItemType", id = "WorkItemType" })
 
@@ -187,7 +192,7 @@
 
 </div>
 <style>
-    #org,#projectDrop,#WorkItemType{
+    #org, #projectDrop, #WorkItemType {
         border-radius: 10px;
         width: 250px;
     }
@@ -220,14 +225,14 @@
 
                 var s = '<option value="0">--Choose Organisation--</option>';
                 $("#org").empty();
-               
+
                 for (var i = 0; i < data.length; i++) {
                     s += '<option value="' + data[i].accountName + '">' + data[i].accountName + '</option>';
                 }
                 $("#org").append(s);
             }
-            
-            
+
+
         });
 
         function GetReport(data) {
@@ -428,7 +433,7 @@
                                 } else if (WIType == 'Test Case') {
                                     icon = "<img src='../Content/Icons/testcase.png' />";
                                     $("#PWorkItem").html(icon + WIType + "s  :" + ProjWICount);
-                                } 
+                                }
                                 else {
                                     $("#PWorkItem").html(WIType + "s  :" + ProjWICount);
                                 }

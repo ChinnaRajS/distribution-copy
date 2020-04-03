@@ -3,8 +3,13 @@
 @{
     Layout = "~/Views/Shared/_DashBoard.cshtml";
 }
+
+    <script>
+        $("li.export").addClass('active');
+    </script>
+
 <style>
-      .borderRadius {
+    .borderRadius {
         border-radius: 10px;
     }
 
@@ -50,7 +55,7 @@ else
     <div class="alert alert-danger col-sm-12">Either the VSTS account does not exist or the tool has not been authorised to access VSTS account </div>
 
 }
-<img src="~/Content/Images/loadinggif.gif" class="loader text-center" style="margin-left:45%;margin-top:5%; width :7%;display:none"/>
+<img src="~/Content/Images/loadinggif.gif" class="loader text-center" style="margin-left:45%;margin-top:5%; width :7%;display:none" />
 <div id="dvLoadWorkItems" class="pt-3">
 
 </div>
@@ -63,5 +68,4 @@ else
     select {
         border-radius: 15px;
     }
-
 </style>

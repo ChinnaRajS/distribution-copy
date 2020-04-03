@@ -3,6 +3,11 @@
     ViewBag.Title = "Capacity";
     Layout = "~/Views/Shared/_DashBoard.cshtml";
 }
+
+    <script>
+        $("li.teamcapacity").addClass('active');
+    </script>
+
 <style>
     .sizeNormal {
         font-size: 16px;
@@ -69,18 +74,16 @@
         border-style: hidden; /* hide standard table (collapsed) border */
         box-shadow: 0 0 0 1px #666; /* this draws the table border  */
     }
-    #load {        
-        position:sticky;
+
+    #load {
+        position: sticky;
         z-index: 3;
         -webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none; /* Safari */
-	-moz-user-select: none; /* Firefox */
-	-ms-user-select: none; /* Internet Explorer/Edge */
-	user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-
-
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
     }
-
 </style>
 
 
@@ -136,7 +139,7 @@
                         document.getElementById("ProjectName").innerHTML += "<option value='" + data[i].Name + "'>" + data[i].Name + "</option>";
                     }
                      document.getElementById('load').hidden = true;
-                }            
+                }
             ,
             failure:
                 function() { alert("Something went wrong, Please try Again"); }
@@ -213,7 +216,7 @@
             success:
                 function (data) {
                     var tabledata;
-                     
+
                     if (data.currentTeamCapacities.length > 0) {
                         tabledata = "<table class='dataTable'><thead> <tr><th>Iteration Path</th><th>Team Name</th><th>CurrentCapacity</th><th>CurrentWorking Days</th></tr></thead><tbody>";
                         for (let i = 0; i < data.currentTeamCapacities.length; i++) {
@@ -224,7 +227,7 @@
                         console.log(tabledata);
                         $('#tblCurrentTeamCapacity').append(tabledata);
                         $('#dvhead1').css("display", "");
-                    } 
+                    }
                     tabledata = '';
                     if (data.totalTeamCapacities.length > 0) {
                         tabledata = "<table class='dataTable'><thead> <tr><th>Iteration Path</th><th>Team Name</th><th>totalCapacity</th><th>Iteration Start</th><th>Iteration End</th><th>Total Working Days </th></tr></thead><tbody>";
@@ -236,7 +239,7 @@
                         console.log(tabledata);
                         $('#tblTotalTeamCapacity').append(tabledata);
                         $('#dvhead2').css("display", "");
-                    } 
+                    }
                     tabledata = '';
                     if (data.capacitybyTeamMembers.length > 0) {
                         tabledata = "<table class='dataTable'><thead> <tr><th>Team Member</th><th>Capacity Per Day</th><th>Iteration Path</th><th>Team Name</th><th>Iteration Start</th><th>Iteration End</th></tr></thead><tbody>";
@@ -248,7 +251,7 @@
                         console.log(tabledata);
                         $('#tblCapacitybyTeamMember').append(tabledata);
                         $('#dvhead3').css("display", "");
-                    } 
+                    }
                     tabledata = '';
                     if (data.leavesbyTeamMembers.length > 0) {
 
@@ -261,7 +264,7 @@
                         console.log(tabledata);
                         $('#tblLeavesbyTeamMember').append(tabledata);
                         $('#dvhead4').css("display", "");
-                    } 
+                    }
                     tabledata = '';
                     $('.dataTable').DataTable();
                     document.getElementById('load').hidden = true;
@@ -278,7 +281,7 @@
 
 <div class="breadcrumb-holder">
     <div class="container-fluid">
-        <ul class="breadcrumb">            
+        <ul class="breadcrumb">
             <li class="breadcrumb-item active">Team Capacity</li>
         </ul>
     </div>
@@ -342,7 +345,7 @@
 
         </div>
     </div>
-   
+
 
 </div>
 
