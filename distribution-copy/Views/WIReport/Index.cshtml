@@ -135,9 +135,33 @@
                     }
                     var tabledata;
                     if (data.length > 0) {
-                        tabledata = "<table id='dataTable'><thead> <tr><th>Id</th><th>Title</th><th>Project</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody class='text-dark'>";
+                        tabledata = "<table id='dataTable'><thead> <tr><th></th><th>Id</th><th>Title</th><th>Project</th><th>Sprint</th><th>State</th><th>Type</th></tr></thead><tbody class='text-dark'>";
                         for (let i = 0; i < data.length; i++) {
-                            tabledata += "<tr><td style=''>" + data[i].id + "</td><td><a href='https://dev.azure.com/" + inp.OrganizationName + "/" + data[i]["fields"]["System.TeamProject"] + "/_workitems/edit/" + data[i].id + "' target='_blank'>" + data[i]["fields"]["System.Title"] + "</a></td><td>" + data[i]["fields"]["System.TeamProject"] + "</td><td>" + data[i]["fields"]["System.IterationPath"] + "</td><td>" + data[i]["fields"]["System.State"] + "</td><td>" + data[i]["fields"]["System.WorkItemType"] + "</td></tr>";
+                            var icon = "";
+
+                        if (data[i]["fields"]["System.WorkItemType"] == 'Feature') {
+                            icon = "<img src='../Content/Icons/feature.png' ";
+                        }
+                        else if (data[i]["fields"]["System.WorkItemType"] == 'Task') {
+                            icon = "<img src='../Content/Icons/task.png' />";
+                        }
+                        else if (data[i]["fields"]["System.WorkItemType"] == 'Bug') {
+                            icon = "<img src='../Content/Icons/bug.png' />";
+                     
+                        }
+                        else if (data[i]["fields"]["System.WorkItemType"] == 'Epic') {
+                            icon = "<img src='../Content/Icons/epic.png'/>";
+                        }
+                        else if (data[i]["fields"]["System.WorkItemType"] == 'Product Backlog Item') {
+                            icon = "<img src='../Content/Icons/pbi.png' />";
+                        }
+                        else if (data[i]["fields"]["System.WorkItemType"] == 'User Story') {
+                            icon = "<img src='../Content/Icons/us.png' />";
+                        }
+                        else {
+                            icon = '#';
+                            }
+                            tabledata += "<tr style='background-color:lightgrey'><td>" + icon + "</td><td>" + data[i].id + "</td><td><a href='https://dev.azure.com/" + inp.OrganizationName + "/" + data[i]["fields"]["System.TeamProject"] + "/_workitems/edit/" + data[i].id + "' target='_blank'>" + data[i]["fields"]["System.Title"] + "</a></td><td>" + data[i]["fields"]["System.TeamProject"] + "</td><td>" + data[i]["fields"]["System.IterationPath"] + "</td><td>" + data[i]["fields"]["System.State"] + "</td><td>" + data[i]["fields"]["System.WorkItemType"] + "</td></tr>";
                         }
                         document.getElementById("Count").innerHTML = " Count = " + data.length;
                         tabledata += "</tbody></table>";

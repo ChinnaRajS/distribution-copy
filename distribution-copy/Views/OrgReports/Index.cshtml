@@ -22,10 +22,10 @@
 <div class="row">
     <div class="col-md-3" style="margin-left:80px">
         <label for="orgsDropdown" style="margin-top:30px;">
-            <b>
+            
                 Organisations
                 @*<img src="~/Content/Images/Organization.png" />*@
-            </b>
+            
         </label>
         @*<select class="form-control" id="org" name="departmentsDropdown"></select>*@
         <select class="form-control" id="org" name="departmentsDropdown"></select>
@@ -34,10 +34,10 @@
 
     <div id="projDrop" hidden="hidden" class="col-md-3 WorkItemType" style="margin-top:30px">
         <label>
-            <b>
+            
                 Projects
                 @*<img src="~/Content/Images/Project.png" />*@
-            </b>
+            
         </label>
         <select class="form-control" id="projectDrop" name="departmentsDropdown"></select>
         <p id="noProj" hidden="hidden" class="text-danger"> please select the project</p>
@@ -45,10 +45,10 @@
 
     <div class="col-md-3 dropdowns" style="margin-top:10px" id="WItypeDrop" hidden="hidden">
         <label style="margin-top:20px;" class="WorkItemType">
-            <b>
+            
                 WorkItem Type
                 @*<img src="~/Content/Images/WorkItem.png" />*@
-            </b>
+            
         </label>
         @Html.DropDownListFor(model => model.WorkItemType, new SelectList(new[] { "--Workitem Types--" }), htmlAttributes: new { @class = "form-control WorkItemType", id = "WorkItemType" })
 
@@ -144,7 +144,7 @@
 
     <div>
         <div class="row" id="ProjCountsLabel" style="margin-top: 10px;">
-            <label class="bg-info text-white badge-pill">Project Level Counts</label>
+            <label class="bg-info text-white badge-pill" style="margin-left:447px">Project Level Counts</label>
         </div>
         <div class="row" id="ProjCounts" style="margin-left: 30px;">
             @*<label for="orgsDropdown" id="ProjCountsLabel" style="margin-top:60px;">
