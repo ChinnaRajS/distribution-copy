@@ -1,7 +1,17 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162977525-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
+
+
+        gtag('config', 'UA-162977525-1');
+    </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Canarys Custom Report</title>
@@ -75,6 +85,7 @@
                     <li class="export"><a href="~/ExportWIAttachments/Index"><i class="fa fa-download"></i>Export</a></li>
                     <li class="migrate"><a href="~/Migration/Index"><i class="fa fa-recycle"></i>Migrate</a></li>
                     <li class="orgreport"><a href="~/OrgReports/Index"><i class="fa fa-book"></i>Org Reports</a></li>
+                    @*<li class="charts"><a href="~/Chart/Index"><i class="fa fa-pie-chart"></i>Charts</a></li>*@
 
                     @*<li>
             <a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Other Reports </a>
@@ -230,7 +241,6 @@
     <script src="~/vendor/chart.js/Chart.min.js"></script>
     <script src="~/vendor/jquery-validation/jquery.validate.min.js"></script>
     <script src="~/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="~/js/charts-custom.js"></script>
     <!-- Main File-->
     <script src="~/js/front.js"></script>
 

@@ -1,0 +1,200 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_DashBoard.cshtml";
+}
+<script>
+    $("li.charts").addClass('active');
+
+</script>
+<style>
+    #load {
+        /*border: 12px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 12px solid #444444;*/
+        height: 170px;
+        /*animation: spin 1s linear infinite;*/
+        align-content: center;
+        position: sticky;
+        z-index: 3;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+    }
+</style>
+<script>
+
+    $(document).ready(function () {
+     $.ajax({
+                type: 'get',
+                dataType: 'json',
+                url: '@Url.Action("AccountList","Account")',
+                success: function (data) {
+                var s = '<option value="0">--Choose Organisation--</option>';
+                $("#org").empty();
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].accountName + '">' + data[i].accountName + '</option>';
+                    }
+                $("#org").append(s);
+                }
+            });
+    });
+</script>
+<script src="~/js/charts-custom.js"></script>
+<script src="~/js/charts-home.js"></script>
+<div class="row">
+    <select id="org" onchange="getChart(this)" class="form-control"></select>
+    <select id="ProjectName" onchange="getProjChart(this)" class="form-control"></select>
+</div>
+<section class="charts">
+    <div class="container-fluid">
+        <!-- Page Header-->
+        <header>
+            <h1 class="h3 display">Charts            </h1>
+        </header>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card pie-chart-example">
+                    <div class="card-header d-flex align-items-center">
+                        <h4>Pie Chart</h4>
+                    </div>
+                    <div class="card-body">
+
+                        <div id="chartContainer" class="chart-container">
+                            <img id="load" src="~/Content/Images/loadinggif.gif" hidden />
+                            <canvas id="pieChartExample"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card line-chart-example">
+                    <div class="card-header d-flex align-items-center">
+                        <h4>Line Chart Example</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="lineChartExample"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card bar-chart-example">
+                    <div class="card-header d-flex align-items-center">
+                        <h4>Bar Chart Example</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="barChartExample"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card polar-chart-example">
+                    <div class="card-header d-flex align-items-center">
+                        <h4>Ploar Chart Example</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="polarChartExample"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="card radar-chart-example">
+                    <div class="card-header d-flex align-items-center">
+                        <h4>Radar Chart Example</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="radarChartExample"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    var brandPrimary = 'rgba(51, 179, 90, 1)';
+function getRandomRgb() {
+  var num = Math.round(0xffffff * Math.random());
+  var r = num >> 16;
+  var g = num >> 8 & 255;
+  var b = num & 255;
+  return 'rgb(' + r + ', ' + g + ', ' + b + ',1)';
+    }
+
+    var pieChartExample;
+    var data;
+    function getChart(org) {
+
+        $('#chartContainer').html(' <img id="load" src="../Content/Images/loadinggif.gif" /><canvas id="pieChartExample"></canvas>');
+               $.ajax({
+            type: "POST",
+            url: '@Url.Action("ProjectList", "Account")',
+            data: { "ORG":$(org).val() },
+
+            success:
+                function(data) {
+                    console.log(data);s
+                    document.getElementById("ProjectName").innerHTML = "<option value='0'>--Choose Project--</option>";
+                    for (let i = 0; i < data.length; i++) {
+                        document.getElementById("ProjectName").innerHTML += "<option value='" + data[i].Name + "'>" + data[i].Name + "</option>";
+                    }
+        
+                }
+            ,
+            failure:
+                function() { alert("Something went wrong, Please try Again"); }
+
+        });
+        data = $.parseJSON($.ajax({
+            type: 'POST',
+            data: { "orgName": $(org).val() },
+            url: '@Url.Action("WITypesCount","Chart")',
+            dataType: "json",
+            async:false
+        }).responseText);
+        console.log(data);
+        var keys = [];
+        var values = [];
+        var borderwidth = [];
+        var backgroundColor = [];
+        for (let key in data.CountByOrg) {
+            if (data.CountByOrg.hasOwnProperty(key)) {
+                keys[keys.length] = key;
+                values[values.length] = data.CountByOrg[key];
+                borderwidth[borderwidth.length] = 1;
+                backgroundColor[backgroundColor.length] = getRandomRgb();
+            }
+        }
+
+        console.log(pieChartExample);
+        var PIECHARTEXMPLE = $('#pieChartExample');
+        document.getElementById('load').hidden = true;
+        pieChartExample = new Chart(PIECHARTEXMPLE, {
+            type: 'doughnut',
+            data: {
+                labels: keys,
+                datasets: [
+                    {
+                        data: values,
+                        borderWidth: borderwidth,
+                        backgroundColor: backgroundColor,
+                        hoverBackgroundColor: backgroundColor
+                    }
+                ]
+            }
+        });
+
+    }
+     var pieChartExample = {
+            responsive: true
+    };
+    function getProjChart(proj) {
+
+    }
+</script>

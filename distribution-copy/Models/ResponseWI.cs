@@ -20,12 +20,6 @@ namespace distribution_copy.Models.ResponseWI
         public string State { get; set; }
 
 
-        [JsonProperty(PropertyName = "Custom.PlannedHours")]
-        public float PlannedHours { get; set; }
-
-
-        [JsonProperty(PropertyName = "Custom.ActualHours")]
-        public float ActualHours { get; set; }
 
 
         [JsonProperty(PropertyName = "System.IterationPath")]

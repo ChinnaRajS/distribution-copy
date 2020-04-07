@@ -6,9 +6,9 @@
     ViewBag.Title = "Index";
 }
 
-    <script>
-        $("li.orgreport").addClass('active');
-    </script>
+<script>
+    $("li.orgreport").addClass('active');
+</script>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -245,7 +245,12 @@
                         for (var i = 0; i < data.Value.length; i++) {
                             s += '<option value="' + data.Value[i].Name + '">' + data.Value[i].Name + '</option>';
                         }
-                        $("#projectDrop").append(s);
+                    
+            $("#projectDrop").append(s);
+                        document.getElementById("WorkItemType").innerHTML = "<option value='0' >--Choose Workitem Type--</option>";
+                        for (let i = 0; i < data.WiTypes.length; i++) {
+                                    document.getElementById("WorkItemType").innerHTML += "<option value='" + data.WiTypes[i] + "'>" + data.WiTypes[i] + "</option>";
+                                }
                         load.hidden = true;
                         $("#BuildDef").html("" + data.counts.buildDefCount);//Build Definitions
                         $("#ReleaseDef").html("" + data.counts.releaseDefCount);//Release Definitions
@@ -313,6 +318,7 @@
                     data: { 'organisation': Org },
                     url: '@Url.Action("report","OrgReports")',
                     success: function (data) {
+                        console.log(data);
                         GetReport(data);
                     },
                     failure: function (data) {
@@ -323,29 +329,7 @@
                 });
 
                 //Fetching the Dropdown workitem types
-                var inp = new Object();
-                inp.OrganizationName = Org;
-                if (inp.OrganizationName != null) {
-                    $.ajax({
-                        type: "POST",
-                        url: '@Url.Action("WITypes", "Account")',
-                        data: { inp },
 
-                        success:
-                            function (data) {
-                                console.log(data);
-                                document.getElementById("WorkItemType").innerHTML = "<option value='0' >--Choose Workitem Type--</option>";
-                                for (let i = 0; i < data.length; i++) {
-                                    document.getElementById("WorkItemType").innerHTML += "<option value='" + data[i] + "'>" + data[i] + "</option>";
-                                }
-                            },
-                        failure:
-                            function () { alert("Something went wrong"); }
-                    });
-                }
-                else {
-                    return;
-                }
 
             })
             //Sending type value to controller

@@ -11,6 +11,7 @@ namespace distribution_copy.Models.OrgModel
     {
         public int Count { get; set; }
         public List<ProjectDetails> Value { get; set; }
+        public List<string> WiTypes { get; set; }
         public orgCounts counts { get; set; }
     }
     public class countGen

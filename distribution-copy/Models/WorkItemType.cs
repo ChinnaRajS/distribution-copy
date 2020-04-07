@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using distribution_copy.Models.ResponseWI;
 
 namespace distribution_copy.Models.WorkItemType
 {
@@ -16,7 +15,7 @@ namespace distribution_copy.Models.WorkItemType
         public Value[] Value { get; set; }
     }
 
-    public partial class Values
+    public partial class Value
     {
         [JsonProperty("name")]
         public string Name { get; set; }

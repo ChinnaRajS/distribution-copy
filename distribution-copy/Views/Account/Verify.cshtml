@@ -7,32 +7,94 @@
     ViewBag.Title = "";
 }
 
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Verify</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162977525-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+
+
+        gtag('config', 'UA-162977525-1');
+    </script>
     <script src="~/Scripts/jquery-3.4.1.js"></script>
     <script src="~/Scripts/jquery-3.4.1.min.js"></script>
-    <title>Verify</title>
+    <script src="/bundles/jquery?v=8Oos0avDZyPg-cbyVzvkIfERIE1DGSe3sRQdCSYrgEQ1"></script>
+    <script src="/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="/bundles/bootstrap?v=w6BYJb0bUOvf8s68Ce8tszYipolOdhcRhcKpxn6l8841"></script>
+    <link href="http://samplecustomreport.azurewebsites.net/Content/css?v=7LmF0YldXiIoW_NDCG729ThAEunuLxvJ4bQv_-6aZfM1" rel="stylesheet" />
+    <script src="/bundles/modernizr?v=inCVuEFe6J4Q07A0AcRsbJic_UE5MwpRMNGcOtk94TE1"></script>
+    <style>
+        body {
+            background: #ccc;
+            background: linear-gradient(45deg, rgba(150,94,205,1) 0%, rgba(0,162,255,1) 99%, rgba(0,162,255,1) 100%);
+            height: 100%;
+            margin: 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 
+        .vs_logo {
+            max-width: 97px !important;
+        }
+
+        .signInPage h1 {
+            color: #fff;
+            font-weight: 400
+        }
+
+        .sign_button {
+            border: 1px solid #fff;
+            background: transparent;
+            border-radius: 6px;
+            padding: 8px 49px;
+            color: #fff;
+        }
+    
+
+.signInPage img{max-width:92%}
+
+
+
+        .signInPage h1 span {
+            font-weight: 200
+        }
+
+        .sign_button:hover {
+            background: #ccc;
+            background: linear-gradient(45deg, rgba(150,94,205,1) 0%, rgba(0,162,255,1) 99%, rgba(0,162,255,1) 100%);
+        }
+    </style>
 </head>
 <body>
-    
-   
-    <h3 class="display-3 text-light my-5" style="padding-left:22%;font-size:35px"><span><img width="75" src="~/Content/Images/VS_logo.png" class="mr-3"/></span> Azure DevOps Custom Report</h3>
-
-    @*<h4 class="display-4" style="padding-left:32%;font-size:30px">Please Sign-In to Continue</h4>*@
-    <section class="section-1 d-flex flex-column">
-        <main class="d-flex">
-
-
-            <div class="text-center" style="margin-left:56%;margin-top:145px">
-                <button class="btn btn-lg text-primary btn-block font-weight-light" id="signInWithVSTS" onclick="this.blur();" >Sign In ></button>
+    <div class="container-fluid signInPage">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="row">
+                    <img src="../Content/Images/index.png" class="img-fluid" />
+                </div>
             </div>
-
-
-        </main>
-
-    </section>
+            <div class="col-md-5 d-flex ">
+                <div class="d-flex align-items-center">
+                    <div class="flex-column text-center">
+                        <img src="../Content/Images/VS_logo.png" class="img-fluid vs_logo" />
+                        <h1 class="mt-4">Azure DevOps <span>Custom Reports</span></h1>
+                        <button class="sign_button mt-5" id="signInWithVSTS">
+                            Sign In
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 <script type="text/javascript">
@@ -43,4 +105,4 @@
 
 
     });
-    </script>
+</script>

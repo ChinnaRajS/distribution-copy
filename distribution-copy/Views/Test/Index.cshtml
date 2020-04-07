@@ -287,6 +287,10 @@
             return s;
         }
         function formatRun(d) {
+                     $('#myModalContent').html('<img style="margin:100px 190px;" height="120px" src="../Content/Images/loadinggif.gif" />');
+
+                    $('#myModal').modal('show');
+
             document.getElementById("overlay").style.display = "block";
             document.getElementById("load").hidden = false;
             // `d` is the original data object for the row
@@ -308,7 +312,6 @@
                     console.log(data);
                      $('#myModalContent').html(data);
                     $('#myModal').modal(options);
-                    $('#myModal').modal('show');
                     $('.modal-header').modal('show');
                 },
                 error: function (data) {
@@ -513,10 +516,11 @@
 
 </script>
 
-<div id='myModal' class='modal' align="left">
+<div id='myModal' class='modal fade' align="left">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div id='myModalContent'></div>
+            <div id='myModalContent'>
+            </div>
         </div>
     </div>
 </div>

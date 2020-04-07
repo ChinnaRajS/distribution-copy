@@ -300,18 +300,16 @@ namespace distribution_copy.Controllers
             workSheet.Cells[1, 4].Value = "Team Project";
             workSheet.Cells[1, 5].Value = "Assigned To";
             workSheet.Cells[1, 6].Value = "State";
-            workSheet.Cells[1, 7].Value = "Url";
-            workSheet.Cells[1, 8].Value = "PlannedHours";
-            workSheet.Cells[1, 9].Value = "ActualHours";
-            workSheet.Cells[1, 10].Value = "Sprint";
-            workSheet.Cells[1, 11].Value = "OriginalEstimate";
-            workSheet.Cells[1, 12].Value = "CompletedWork";
-            workSheet.Cells[1, 13].Value = "RemainingWork";
-            workSheet.Cells[1, 14].Value = "CreatedDate";
-            workSheet.Cells[1, 15].Value = "Description";
-            workSheet.Cells[1, 16].Value = "CreatedBy";
-            workSheet.Cells[1, 17].Value = "AssignedTo";
-            workSheet.Cells[1, 18].Value = "ChangedBy";
+            workSheet.Cells[1, 7].Value = "Url";   
+            workSheet.Cells[1, 8].Value = "Sprint";
+            workSheet.Cells[1, 9].Value = "OriginalEstimate";
+            workSheet.Cells[1, 10].Value = "CompletedWork";
+            workSheet.Cells[1, 11].Value = "RemainingWork";
+            workSheet.Cells[1, 12].Value = "CreatedDate";
+            workSheet.Cells[1, 13].Value = "Description";
+            workSheet.Cells[1, 14].Value = "CreatedBy";
+            workSheet.Cells[1, 15].Value = "AssignedTo";
+            workSheet.Cells[1, 16].Value = "ChangedBy";
             int recordIndex = 2;
             int columnNo = 0;
             foreach (var WI in wi.value)
@@ -326,9 +324,7 @@ namespace distribution_copy.Controllers
                 else
                     workSheet.Cells[recordIndex, ++columnNo].Value = "Unassigned";
                 workSheet.Cells[recordIndex, ++columnNo].Value = WI.fields.State;
-                workSheet.Cells[recordIndex, ++columnNo].Value = WI.url;
-                workSheet.Cells[recordIndex, ++columnNo].Value = WI.fields.PlannedHours;
-                workSheet.Cells[recordIndex, ++columnNo].Value = WI.fields.ActualHours;
+                workSheet.Cells[recordIndex, ++columnNo].Value = WI.url;          
                 workSheet.Cells[recordIndex, ++columnNo].Value = WI.fields.Sprint;
                 workSheet.Cells[recordIndex, ++columnNo].Value = WI.fields.OriginalEstimate;
                 workSheet.Cells[recordIndex, ++columnNo].Value = WI.fields.CompletedWork;

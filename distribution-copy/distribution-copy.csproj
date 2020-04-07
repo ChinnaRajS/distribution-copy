@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.9.10\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.9.10\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -26,6 +27,8 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TypeScriptToolsVersion>3.7</TypeScriptToolsVersion>
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerLaunchUrl>http://{ServiceIPAddress}</DockerLaunchUrl>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -228,7 +231,7 @@
     <Compile Include="Class\WIOps.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CopyTestController.cs" />
-    <Compile Include="Controllers\distributionController.cs" />
+    <Compile Include="Controllers\ChartController.cs" />
     <Compile Include="Controllers\ExportWIAttachmentsController.cs" />
     <Compile Include="Controllers\MigrationController.cs" />
     <Compile Include="Controllers\OrgReportsController.cs" />
@@ -243,6 +246,7 @@
     <Compile Include="Models\AccessDetails.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountsResponse.cs" />
+    <Compile Include="Models\ChartCountModel.cs" />
     <Compile Include="Models\CommitModel.cs" />
     <Compile Include="Models\ExpandWI.cs" />
     <Compile Include="Models\InputModel.cs" />
@@ -270,11 +274,13 @@
     <Compile Include="Models\TeamDetails.cs" />
     <Compile Include="Models\UpdatesModel.cs" />
     <Compile Include="Models\WIFields.cs" />
+    <Compile Include="Models\WorkItemAPI.cs" />
     <Compile Include="Models\WorkItemFromExcel.cs" />
     <Compile Include="Models\WorkItemType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\AttatchmentAdder.cs" />
+    <Compile Include="Services\ChartService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -308,6 +314,7 @@
     <Content Include="Content\Icons\testplan.png" />
     <Content Include="Content\Icons\testsuite.png" />
     <Content Include="Content\Icons\userstory.png" />
+    <Content Include="Content\Images\index.png" />
     <Content Include="Content\Images\loadinggif2.gif" />
     <Content Include="Content\Images\details_open.png" />
     <Content Include="Content\Images\details_close.png" />
@@ -694,6 +701,13 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="css\icon.css" />
     <Content Include="Jsons\TestCaseJson.json" />
+    <None Include="Dockerfile" />
+    <None Include=".dockerignore">
+      <DependentUpon>Dockerfile</DependentUpon>
+    </None>
+    <None Include="Properties\PublishProfiles\azuredevopsorgreports - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\azuredevopsorgreports - ReadOnly - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\azuredevopsorgreports - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\samplecustomreport - Web Deploy.pubxml" />
@@ -974,7 +988,6 @@
     <Content Include="vendor\jquery.cookie\component.json" />
     <Content Include="vendor\jquery.cookie\cookie.jquery.json" />
     <Content Include="vendor\popper.js\umd\poppper.js.flow" />
-    <Content Include="Views\distribution\Index.cshtml" />
     <Content Include="Views\Shared\_DashBoard.cshtml" />
     <Content Include="Views\Account\Verify.cshtml" />
     <Content Include="Views\WIReport\Index.cshtml" />
@@ -999,6 +1012,7 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Views\Chart\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1043,6 +1057,14 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.9.10\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.9.10\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.9.10\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.9.10\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets'))" />
+  </Target>
+  <Import Project="..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.9.10\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.9.10\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
