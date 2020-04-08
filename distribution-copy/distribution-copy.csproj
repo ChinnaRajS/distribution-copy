@@ -243,6 +243,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\Exetnsion.cs" />
+    <Compile Include="Interfaces\IResponseWI.cs" />
     <Compile Include="Models\AccessDetails.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountsResponse.cs" />
@@ -701,6 +702,9 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="css\icon.css" />
     <Content Include="Jsons\TestCaseJson.json" />
+    <Content Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </Content>
     <None Include="Dockerfile" />
     <None Include=".dockerignore">
       <DependentUpon>Dockerfile</DependentUpon>

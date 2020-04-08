@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-
+using distribution_copy.Interfaces;
 namespace distribution_copy.Models.ResponseWI
 {
     public class Fields
@@ -73,7 +73,7 @@ namespace distribution_copy.Models.ResponseWI
         public string url { get; set; }
         public Fields fields { get; set; }
     }
-    public class ResponseWI
+    public class ResponseWI: IResponseWI
     {
         public int count { get; set; }
         public List<Value> value { get; set; }

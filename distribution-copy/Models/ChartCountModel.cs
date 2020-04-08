@@ -10,6 +10,9 @@ namespace distribution_copy.Models.ChartCountModel
         public Dictionary<string, Dictionary<string, int>> CountByProject { get; set; }
 
         public Dictionary<string, int> CountByOrg { get; set; }
-        
+
+        public Dictionary<string, Dictionary<string, int>> BugChart { get; set; }
+
+
     }
 }

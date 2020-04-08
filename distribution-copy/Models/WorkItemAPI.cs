@@ -53,7 +53,7 @@ namespace distribution_copy.Models.ResponseWIAPI
             [JsonProperty(PropertyName = "System.AreaPath")]
             public string AreaPath { get; set; }
 
-            [JsonProperty(PropertyName = "System.TeamProjecty")]
+            [JsonProperty(PropertyName = "System.TeamProject")]
             public string TeamProject { get; set; }
 
             [JsonProperty(PropertyName = "System.IterationPath")]

@@ -22,6 +22,9 @@
         -ms-user-select: none; /* Internet Explorer/Edge */
         user-select: none;
     }
+
+    #chartContainer {
+    }
 </style>
 <script>
 
@@ -29,16 +32,22 @@
      $.ajax({
                 type: 'get',
                 dataType: 'json',
-                url: '@Url.Action("AccountList","Account")',
+         url: '@Url.Action("AccountList","Account")',
+         async:false,
                 success: function (data) {
-                var s = '<option value="0">--Choose Organisation--</option>';
-                $("#org").empty();
+                //var s = '<option value="0">--Choose Organisation--</option>';
+                    $("#org").empty();
+                    s = "";
                 for (var i = 0; i < data.length; i++) {
                     s += '<option value="' + data[i].accountName + '">' + data[i].accountName + '</option>';
                     }
                 $("#org").append(s);
-                }
-            });
+         }
+
+
+     });
+        getChart($('#org'));
+        $("#load").hide();
     });
 </script>
 <script src="~/js/charts-custom.js"></script>
@@ -47,7 +56,9 @@
     <select id="org" onchange="getChart(this)" class="form-control"></select>
     <select id="ProjectName" onchange="getProjChart(this)" class="form-control"></select>
 </div>
-<section class="charts">
+<img id="load" src="~/Content/Images/loadinggif.gif" />
+
+<section id="charts" class="charts" hidden>
     <div class="container-fluid">
         <!-- Page Header-->
         <header>
@@ -59,10 +70,11 @@
                     <div class="card-header d-flex align-items-center">
                         <h4>Pie Chart</h4>
                     </div>
-                    <div class="card-body">
+
+                    <div class="card-body" style="height:auto">
 
                         <div id="chartContainer" class="chart-container">
-                            <img id="load" src="~/Content/Images/loadinggif.gif" hidden />
+                            <img class="load" src="~/Content/Images/loadinggif.gif" hidden />
                             <canvas id="pieChartExample"></canvas>
                         </div>
                     </div>
@@ -102,13 +114,14 @@
                 </div>
             </div>
             <div class="col-lg-12">
-                <div class="card radar-chart-example">
+                <div class="card ">
                     <div class="card-header d-flex align-items-center">
-                        <h4>Radar Chart Example</h4>
+                        <h4>Bug Severity Chart </h4>
                     </div>
                     <div class="card-body">
-                        <div class="chart-container">
-                            <canvas id="radarChartExample"></canvas>
+                        <div id="bugChartContainer" class="chart-container">
+                            <img class="load" src="~/Content/Images/loadinggif.gif" hidden />
+                            <canvas id="bugChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -130,35 +143,59 @@ function getRandomRgb() {
     var pieChartExample;
     var data;
     function getChart(org) {
+        document.getElementById("charts").hidden = true;
+        $("#load").show();
 
-        $('#chartContainer').html(' <img id="load" src="../Content/Images/loadinggif.gif" /><canvas id="pieChartExample"></canvas>');
-               $.ajax({
+        $('#chartContainer').html(' <img class="load" src="../Content/Images/loadinggif.gif" hidden=false/><canvas id="pieChartExample"></canvas>');
+        $('#bugChartContainer').html(' <img class="load" src="../Content/Images/loadinggif.gif" hidden=false/><canvas id="bugChart"></canvas>');
+        
+        @*$.ajax({
             type: "POST",
             url: '@Url.Action("ProjectList", "Account")',
             data: { "ORG":$(org).val() },
 
             success:
                 function(data) {
-                    console.log(data);s
+                    console.log(data);
                     document.getElementById("ProjectName").innerHTML = "<option value='0'>--Choose Project--</option>";
                     for (let i = 0; i < data.length; i++) {
                         document.getElementById("ProjectName").innerHTML += "<option value='" + data[i].Name + "'>" + data[i].Name + "</option>";
                     }
-        
+
                 }
             ,
             failure:
                 function() { alert("Something went wrong, Please try Again"); }
 
-        });
-        data = $.parseJSON($.ajax({
+        });*@
+        data = $.ajax({
             type: 'POST',
             data: { "orgName": $(org).val() },
             url: '@Url.Action("WITypesCount","Chart")',
             dataType: "json",
             async:false
-        }).responseText);
+
+        }).responseJSON;
+        document.getElementById("charts").hidden = false;
+
         console.log(data);
+        orgChartCreator();
+        bugChartCreator();
+        $("#load").hide();
+
+    }
+     var pieChartExample = {
+            responsive: true
+    };
+    function orgChartCreator() {
+         document.getElementById("ProjectName").innerHTML = "<option value='0'>--Choose Project--</option>";
+
+        for (let key in data.CountByProject) {
+            if (data.CountByProject.hasOwnProperty(key)) {
+        document.getElementById("ProjectName").innerHTML += "<option value='" + key + "'>" + key + "</option>";
+
+            }
+        }
         var keys = [];
         var values = [];
         var borderwidth = [];
@@ -171,30 +208,147 @@ function getRandomRgb() {
                 backgroundColor[backgroundColor.length] = getRandomRgb();
             }
         }
+          var val = [{
+            data: values,
+            borderWidth: borderwidth,
+            backgroundColor: backgroundColor,
+            hoverBackgroundColor: backgroundColor
+        }];
+        var chart=$('#pieChartExample');
 
-        console.log(pieChartExample);
-        var PIECHARTEXMPLE = $('#pieChartExample');
-        document.getElementById('load').hidden = true;
-        pieChartExample = new Chart(PIECHARTEXMPLE, {
+        PieChartCreator(chart,keys, val);
+    }
+    function getProjChart(proj) {
+        console.log(data);
+        $('#chartContainer').html('<canvas id="pieChartExample"></canvas>');
+        var keys = [];
+        var values = [];
+        var borderwidth = [];
+        var backgroundColor = [];
+        if ($(proj).val() == "0") {
+            orgChartCreator();
+            return;
+        }
+        console.log(data.CountByProject[$(proj).val()]);
+        if (data.CountByProject[$(proj).val()] == undefined) {
+            $('#chartContainer').html('<p>No WorkItems.</p>');
+            return;
+        }
+
+
+        for (let key in data.CountByProject[$(proj).val()]) {
+            if (data.CountByProject[$(proj).val()].hasOwnProperty(key)) {
+
+
+                keys[keys.length] = key;
+                values[values.length] = data.CountByProject[$(proj).val()][key];
+                borderwidth[borderwidth.length] = 1;
+                backgroundColor[backgroundColor.length] = getRandomRgb();
+            }
+        }
+        var val = [{
+            data: values,
+            borderWidth: borderwidth,
+            backgroundColor: backgroundColor,
+            hoverBackgroundColor: backgroundColor
+        }];
+        var chart=$('#pieChartExample');
+        PieChartCreator(chart,keys,val);
+
+    }
+    function PieChartCreator(chart,keys,val) {
+
+        pieChartExample = new Chart(chart, {
             type: 'doughnut',
             data: {
                 labels: keys,
-                datasets: [
-                    {
-                        data: values,
-                        borderWidth: borderwidth,
-                        backgroundColor: backgroundColor,
-                        hoverBackgroundColor: backgroundColor
-                    }
-                ]
+                datasets:val
             }
         });
-
     }
-     var pieChartExample = {
-            responsive: true
-    };
-    function getProjChart(proj) {
 
+
+    function bugChartCreator() {
+        var keys = [];
+        var label = [];
+        var values = [];
+        var borderwidth = [];
+        var backgroundColor = [];
+        var val = [];
+        var datavalues = [];
+        var severities = [];
+        for (let key in data.BugChart) {
+            if (data.BugChart.hasOwnProperty(key)) {
+                keys[keys.length] = key;
+                for (let key2 in data.BugChart[key]) {
+                    if (data.BugChart[key].hasOwnProperty(key2)) {
+                        if (severities.indexOf(key2)== -1) {
+                            severities[severities.length] = key2;
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+        for (let i = 0; i < severities.length; i++) {
+            Label = severities[i];
+            var rgb = getRandomRgb();
+            datavalues = [];
+            backgroundColor = [];
+            for (let key in data.BugChart) {
+                if (data.BugChart.hasOwnProperty(key)) {
+                    backgroundColor[backgroundColor.length] = rgb;
+                     var lastkey;
+                            for (let key2 in data.BugChart[key]) {
+                                if (data.BugChart[key].hasOwnProperty(key2)) {
+                                    lastkey = key2;
+                                }
+                            }
+                    for (let key2 in data.BugChart[key]) {
+                        if (data.BugChart[key].hasOwnProperty(key2)) {
+                            if (severities[i] == key2) {
+                                datavalues[datavalues.length] = data.BugChart[key][key2];
+                                break;
+                            }
+
+                    if (key2==lastkey) { datavalues[datavalues.length] = 0; }
+
+
+                            }
+                    }
+                    }
+            }
+            val[val.length] = { label: Label, backgroundColor: backgroundColor, borderColor: backgroundColor, data: datavalues };
+
+            }
+
+
+            console.log(val);
+
+        console.log(severities);
+
+        StackChartCreator($('#bugChart'),keys, val)
     }
+    function StackChartCreator(chart,keys,val) {
+
+        var arr = document.getElementsByClassName('load');
+        for (let i = 0; i < arr.length; i++) {
+            arr[i].hidden = true;
+        }
+        pieChartExample = new Chart(chart, {
+            type: 'bar',
+            data: {
+                labels: keys,
+                datasets:val
+            }, options: {
+            scales: {
+                xAxes: [{ stacked: true }],
+                yAxes: [{ stacked: true }]
+            }
+        }
+        });
+    }
+
 </script>

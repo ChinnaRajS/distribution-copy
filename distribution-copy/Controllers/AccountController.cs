@@ -68,7 +68,7 @@ namespace distribution_copy.Controllers
             };
             var content = JsonConvert.SerializeObject(wiql);
             var Uri = "https://dev.azure.com/" + inp.OrganizationName + "/_apis/wit/wiql?api-version=5.1";
-            ResponseWI wiqlResponse = service.GetApi<ResponseWI>(Uri, "POST", content);
+            ResponseWI wiqlResponse =service.GetApi<ResponseWI>(Uri, "POST", content);
 
             if (wiqlResponse == null)
                 return null;
